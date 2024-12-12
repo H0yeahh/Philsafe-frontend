@@ -36,9 +36,10 @@ import { ManageStationComponent } from './manage-station/manage-station.componen
 import { StationAddLocationComponent } from './station-add-location/station-add-location.component';
 import { AddPersonComponent } from './add-person/add-person.component';
 import { EditReportComponent } from './edit-report/edit-report.component';
-import { ReportendorseComponent } from './reportendorse/reportendorse.component';
+import { ReportEndorseComponent } from './reportendorse/reportendorse.component';
 import { EmailComponent } from './email/email.component';
 import { StationPoliceAccountsComponent } from './station-police-accounts/station-police-accounts.component';
+import { CaseManagementComponent } from './case-management/case-management.component';
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] } 
 
@@ -81,9 +82,12 @@ const routes: Routes = [
   { path: 'manage-station', component: ManageStationComponent },
   { path: 'add-person', component: AddPersonComponent },// Route for Manage Station
   { path: 'edit-report', component: EditReportComponent},
-  { path: 'report-endorse', component: ReportendorseComponent },
+  { path: 'report-endorse', component: ReportEndorseComponent },
   { path: 'station-police-accounts', component: StationPoliceAccountsComponent},
-  { path: 'email', component: EmailComponent },
+  { path: 'email', component: EmailComponent},
+  { path: 'manage-users', component: ManageStationComponent},
+  { path: 'case-management', component: CaseManagementComponent},
+ 
 
   // { path: '', redirectTo: '/home-page', pathMatch: 'full' },
   { path: '', redirectTo: '/station-register', pathMatch: 'full' }, // Redirect to registration by default

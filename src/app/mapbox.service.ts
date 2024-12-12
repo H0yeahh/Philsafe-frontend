@@ -38,7 +38,8 @@ interface Coordinate {
 })
 export class MapboxService {
   private map!: mapboxgl.Map;
-  private markersUrl = 'assets/styles.json'; // Path to your markers JSON file
+  // private markersUrl = 'assets/styles.json'; // Path to your markers JSON file
+  private markersUrl = 'https://localhost:7108/api/location/retrieve/mapcoordinates'; // Path to your markers JSON file
   private coordinatesUrl = 'https://localhost:7108/api/case/retrieve/nationwide'; // URL to fetch coordinates from backend
   private markers: mapboxgl.Marker[] = []
   constructor(private http: HttpClient) { }

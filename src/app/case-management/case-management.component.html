@@ -1,0 +1,319 @@
+<!-- <div class="container">
+    <div class="emergency-banner">
+        In case of emergencies, please dial your local emergency services number
+    </div>
+    <div class="flex h-screen">
+        <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
+            <div class="p-4 text-center">
+                <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
+                <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
+                <p class="text-sm text-zinc-600">CCPO Admin Personnel</p>
+            </div>
+            <nav class="mt-4">
+                <ul class="list-none p-0">
+                    <li>
+                        <a routerLink="/dashboard" class="nav-link">
+                            <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                            <span>DASHBOARD</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/manage-users" class="nav-link">
+                            <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
+                            <span>MANAGE USER</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/ticket-request" class="nav-link">
+                            <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
+                            <span>TICKET REQUESTS</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/manage-station" class="nav-link">
+                            <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
+                            <span>MANAGE STATION</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/station-crime-map" class="nav-link">
+                            <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                            <span>CRIME MAP</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button type="button" class="logout-button mt-auto" routerLink="/login">LOG OUT</button>
+        </aside>
+
+
+        <div class="main-content"></div>
+            <table class="cases-table">
+                <thead>
+                    <tr>
+                        <th>Blotter Number</th>
+                        <th>Crime</th>
+                        <th>Status</th>
+                        <th>Date Received</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>076201-202405-01211422</td>
+                        <td>Robbery</td>
+                        <td>
+                            <div class="status solved">
+                                <div class="status-wrapper">
+                                    <div class="status-bar"></div>
+                                    <span class="status-label">Solved</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>May 20, 2024</td>
+                        <td><button class="edit-btn">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>076201-202405-01211319</td>
+                        <td>Illegal Drug Operation</td>
+                        <td>
+                            <div class="status reviewing">
+                                <div class="status-wrapper">
+                                    <div class="status-bar"></div>
+                                    <span class="status-label">Reviewing</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>May 29, 2024</td>
+                        <td><button class="edit-btn">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>076201-202405-01211422</td>
+                        <td>Robbery</td>
+                        <td>
+                            <div class="status under-investigation">
+                                <div class="status-wrapper">
+                                    <div class="status-bar"></div>
+                                    <span class="status-label">Under Investigation</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>June 01, 2024</td>
+                        <td><button class="edit-btn">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>076201-202405-01211319</td>
+                        <td>Illegal Drug Operation</td>
+                        <td>
+                            <div class="status reviewing">
+                                <div class="status-wrapper">
+                                    <div class="status-bar"></div>
+                                    <span class="status-label">Reviewing</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>June 11, 2024</td>
+                        <td><button class="edit-btn">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> -->
+
+<div class="container">
+  <div class="emergency-banner">
+    In case of emergencies, please dial your local emergency services number
+  </div>
+  <div class="flex h-screen">
+    <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
+      <!-- <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button> -->
+      <div class="p-4 text-center">
+        <img
+          src="assets/general.png"
+          alt="Profile Picture"
+          class="rounded-full mb-4"
+          style="width: 180px; height: 180px"
+        />
+        <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
+        <p class="text-sm text-zinc-600">CCPO Admin Personnel</p>
+      </div>
+      <nav class="mt-4">
+        <ul class="list-none p-0">
+          <li>
+            <a routerLink="/dashboard" class="nav-link">
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/manage-users" class="nav-link">
+              <img
+                src="assets/manage user.svg"
+                alt="Manage User Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>MANAGE USER</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/ticket-request" class="nav-link">
+              <img
+                src="assets/ticket request.svg"
+                alt="Ticket Request Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>TICKET REQUESTS</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/manage-station" class="nav-link">
+              <img
+                src="assets/manage station.svg"
+                alt="Manage Station Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>MANAGE STATION</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/station-crime-map" class="nav-link">
+              <img
+                src="assets/crime-map.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CRIME MAP</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <button type="button" class="logout-button mt-auto" routerLink="/login">
+        LOG OUT
+      </button>
+    </aside>
+
+    <!-- <div class="table-container">
+      <form [formGroup]="manageCasesForm" (ngSubmit)="onSubmit()">
+        <table class="cases-table">
+          <thead>
+            <tr>
+              <th>Blotter Number</th>
+              <th>Crime</th>
+              <th>Status</th>
+              <th>Date Received</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let caseData of reports; let i = index"
+              [formGroupName]="i"
+            >
+              <td>{{ caseData.blotterNum }}</td>
+              <td>{{ caseData.subcategory_name }}</td>
+              <td>
+                <div
+                  class="status"
+                  [ngClass]="{
+                    'on-process': caseData.status === 'On Process',
+                    reviewing: caseData.status === 'Reviewing',
+                    done: caseData.status === 'Done'
+                  }"
+                >
+                  <div class="status-wrapper">
+                    <div
+                      [style.backgroundColor]="caseData.color"
+                      class="status-bar"
+                    >
+                      {{ caseData.status }}
+                    </div>
+                    <span class="status-label">{{ caseData.status }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ caseData.DateTimeReportedDate }}</td>
+              <td>
+                <div
+                  class="status"
+                  [ngClass]="{
+                    'on-process': caseData.status === 'On Process',
+                    reviewing: caseData.status === 'Reviewing',
+                    done: caseData.status === 'Done'
+                  }"
+                >
+                  <button type="button" class="edit-btn" (click)="editCase(i)">
+                    Edit
+                  </button>
+                </div>
+              </td>
+            </tr>  
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+<div class="table-container">
+    <form [formGroup]="manageCasesForm" (ngSubmit)="onSubmit()">
+      <table class="cases-table">
+        <thead>
+          <tr>
+            <th>Blotter Number</th>
+            <th>Crime</th>
+            <th>Status</th>
+            <th>Date Received</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let caseData of reports; let i = index" [formGroupName]="i">
+            <td>{{ caseData.blotterNum }}</td>
+            <td>{{ caseData.subcategory_name }}</td>
+            <td>
+              <div
+                class="status"
+                [ngClass]="{
+                  'on-process': caseData.status === 'On Process',
+                  reviewing: caseData.status === 'Reviewing',
+                  done: caseData.status === 'Done'
+                }"
+              >
+                
+                <ng-container *ngIf="editingRow === i; else displayStatus">
+                  <select
+                    class="status-dropdown"
+                    [(ngModel)]="caseData.status"
+                    (change)="updateStatus(i, caseData.status)"
+                  >
+                    <option value="On Process">On Process</option>
+                    <option value="Reviewing">Reviewing</option>
+                    <option value="Done">Done</option>
+                  </select>
+                </ng-container>
+                <!-- Display status text if not in edit mode -->
+                <ng-template #displayStatus>
+                  <span class="status-label">{{ caseData.status }}</span>
+                </ng-template>
+              </div>
+            </td>
+            <td>{{ caseData.DateTimeReportedDate }}</td>
+            <td>
+              <button
+                type="button"
+                class="edit-btn"
+                (click)="toggleEdit(i)"
+              >
+                {{ editingRow === i ? 'Save' : 'Edit' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  

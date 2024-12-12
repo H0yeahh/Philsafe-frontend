@@ -12,31 +12,31 @@
         <nav class="mt-7"> 
           <ul class="list-none p-0">
             <li>
-              <a  href="#" class="nav-link">
+              <a  href="station-dashboard" class="nav-link">
                 <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
                 <span>DASHBOARD</span>
               </a>
             </li>
             <li>
-              <a  href="#" class="nav-link">
+              <a  href="station-dashboard" class="nav-link">
                 <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
                 <span>INBOX</span>
               </a>
             </li>
             <li>
-              <a  href="#" class="nav-link">
+              <a  href="station-case-queue" class="nav-link">
                 <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
                 <span>REPORTS</span>
               </a>
             </li>
             <li>
-              <a  href="#" class="nav-link">
+              <a  href="station-crime-map" class="nav-link">
                 <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
                 <span>CRIME MAP</span>
               </a>
             </li>
             <li>
-              <a  href="#" class="nav-link">
+              <a  href="station-list-of-officers" class="nav-link">
                 <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
                 <span>STATION</span>
               </a>
@@ -51,67 +51,47 @@
         </nav>
       </aside>
 
-      <main class="main-content">
-        <div class="header">
-            <h1>List of Police Officers</h1>
-            <button class="add-officer">Add Officer</button>
+      <div class="table-container mt-8">
+        <div class="table-controls flex justify-between items-center mb-4">
+          <form [formGroup]="officerForm" class="filter">
+            <input type="text" placeholder="Search user" formControlName="search" class="search-bar">
+          </form>
+          <div class="pagination flex items-center">
+            <label for="entries">Display</label>
+            <select id="entries" formControlName="entries">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+            <!-- <span>/{{ totalUsers }}</span> -->
+          </div>
         </div>
-        <table class="officer-table">
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Rank</th>
-                    <th>Group</th>
-                    <th>Team Leader</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><img src="assets/acop.png" alt="Officer Image" class="officer-image"> Romeo Jun Acop</td>
-                    <td>Police Master Sergeant</td>
-                    <td>2</td>
-                    <td>PLT Tanggol Cruz</td>
-                    <td style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                      <button class="edit-btn">
-                          <img src="assets/edit.png" alt="Edit" style="width: 20px; height: 20px;">
-                      </button>
-                      <button class="delete-btn">
-                          <img src="assets/delete.png" alt="Delete" style="width: 20px; height: 20px;">
-                      </button>
-                  </td>
-                </tr>
-                <tr>
-                    <td><img src="assets/jimenez.png" alt="Officer Image" class="officer-image"> Ashley Gimenez</td>
-                    <td>Police Staff Sergeant</td>
-                    <td>1</td>
-                    <td>PCPT Jason Enriquez</td>
-                    <td style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                      <button class="edit-btn">
-                          <img src="assets/edit.png" alt="Edit" style="width: 20px; height: 20px;">
-                      </button>
-                      <button class="delete-btn">
-                          <img src="assets/delete.png" alt="Delete" style="width: 20px; height: 20px;">
-                      </button>
-                  </td>
-                </tr>
-                <tr>
-                    <td><img src="assets/noble.png" alt="Officer Image" class="officer-image"> Rigor Dimaguiba</td>
-                    <td>Patrolman</td>
-                    <td>1</td>
-                    <td>PCPT Jason Enriquez</td>
-                    <td style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                      <button class="edit-btn">
-                          <img src="assets/edit.png" alt="Edit" style="width: 20px; height: 20px;">
-                      </button>
-                      <button class="delete-btn">
-                          <img src="assets/delete.png" alt="Delete" style="width: 20px; height: 20px;">
-                      </button>
-                  </td>
-                </tr>
-            </tbody>
+        <table class="user-table w-full border-collapse">
+          <thead>
+            <tr>
+              <th class="border border-zinc-300 p-2">FULLNAME</th>
+              <th class="border border-zinc-300 p-2">RANK</th>
+              <th class="border border-zinc-300 p-2">GROUP</th>
+              <th class="border border-zinc-300 p-2">STATION</th>
+              <th class="border border-zinc-300 p-2">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let officer of police">
+              <td class="border border-zinc-300 p-2">{{ officer.personID }}</td>
+              <td class="border border-zinc-300 p-2">{{ officer.rankID}}</td>
+              <td class="border border-zinc-300 p-2">{{ officer.unit }}</td>
+              <td class="border border-zinc-300 p-2">{{ officer.stationID}}</td>
+              <td class="border border-zinc-300 p-2">
+                <button (click)="editPolice(officer)" class="action-btn edit">✏️</button>
+                <!-- <button (click)="deletePolice(officer.personID)" class="action-btn delete">🗑️</button> -->
+                <button *ngIf="officer.personID !== undefined" (click)="deletePolice(officer.personID)" class="action-btn delete">🗑️</button>
+                <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+              </td>
+            </tr>
+          </tbody>
         </table>
-    </main>
+      </div>
 </div>
 
 

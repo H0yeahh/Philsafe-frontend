@@ -96,101 +96,159 @@
         </div>
       </div> -->
 
+<div class="container">
+  <div class="emergency-banner">
+    In case of emergencies, please dial your local emergency services number
+  </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-4 text-center">
+        <img
+          src="assets/station10.png"
+          alt="CCPO Logo"
+          class="mx-auto mb-4 logo"
+        />
+        <h2 class="text-lg font-semibold">Punta Princesa Police Station 10</h2>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+      </div>
+      <nav class="mt-7">
+        <ul class="list-none p-0">
+          <li>
+            <a href="/station-dashboard" class="nav-link">
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+          <li>
+            <a href="/station-dashboard" class="nav-link">
+              <img
+                src="assets/inbox.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>INBOX</span>
+            </a>
+          </li>
+          <li>
+            <a href="/station-case-queue" class="nav-link">
+              <img
+                src="assets/reports.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>REPORTS</span>
+            </a>
+          </li>
+          <li>
+            <a href="/station-crime-map" class="nav-link">
+              <img
+                src="assets/crime-map.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CRIME MAP</span>
+            </a>
+          </li>
+          <li>
+            <a href="/station-list-of-officers" class="nav-link">
+              <img
+                src="assets/station.svg"
+                alt="Station Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>STATION</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">
+              <img
+                src="assets/support.svg"
+                alt="Contact Support Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CONTACT SUPPORT</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
 
-      <div class="container">
-        <div class="emergency-banner">
-          In case of emergencies, please dial your local emergency services number
-        </div>
-        <div class="min-h-screen bg-zinc-100 flex">
-          <aside class="w-64 bg-white shadow-md">
-            <div class="p-4 text-center">
-              <img src="assets/police.svg" alt="CCPO Logo" class="mx-auto mb-4 logo">
-              <h2 class="text-lg font-semibold">Abellana Police Station 2</h2>
-              <p class="text-sm text-zinc-600">Cebu City Police Office</p>
-            </div>
-            <nav class="mt-7">
-              <ul class="list-none p-0">
-                <li>
-                  <a href="#" class="nav-link">
-                    <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                    <span>DASHBOARD</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/station-dashboard" class="nav-link">
-                    <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                    <span>INBOX</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/station-reports" class="nav-link">
-                    <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                    <span>REPORTS</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/station-crime-map" class="nav-link">
-                    <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                    <span>CRIME MAP</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/manage-station" class="nav-link">
-                    <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
-                    <span>STATION</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="nav-link">
-                    <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
-                    <span>CONTACT SUPPORT</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </aside>
-            
-          <div class="main-content bg-background p-6">
-            <div class="flex justify-between items-center mb-6">
-              <h1 class="text-2xl font-bold">DASHBOARD</h1>
-              <div class="flex items-center space-x-4">
-                <select class="border border-zinc-300 rounded p-2">
-                  <option>Quarterly</option>
-                  <option>Monthly</option>
-                  <option>Yearly</option>
-                </select>
-                <button class="button-reset flex items-center space-x-2 text-primary">
-                  <img src="assets/refresh.svg" alt="Refresh Icon" class="icon-small">
-                  <span>Refresh</span>
-                </button>
-                <button class="button-reset flex items-center space-x-2 text-primary">
-                  <img src="assets/notification.svg" alt="Notification Icon">
-                </button>
-              </div>
-            </div>
-        
-            <div class="grid grid-cols-4 gap-4 mb-6">
-              <div class="bg-blue-100 p-4 rounded-lg text-center">
-                <h2 class="text-lg font-bold">Daily Reports</h2>
-                <p class="text-4xl font-bold">{{ dailyReports }}</p>
-              </div>
-              <div class="bg-green-100 p-4 rounded-lg text-center">
-                <h2 class="text-lg font-bold">Weekly Reports</h2>
-                <p class="text-4xl font-bold">{{ weeklyReports }}</p>
-              </div>
-              <div class="bg-yellow-100 p-4 rounded-lg text-center">
-                <h2 class="text-lg font-bold">Monthly Reports</h2>
-                <p class="text-4xl font-bold">{{ monthlyReports }}</p>
-              </div>
-              <div class="bg-red-100 p-4 rounded-lg text-center">
-                <h2 class="text-lg font-bold">Annual Reports</h2>
-                <p class="text-4xl font-bold">{{ annualReports }}</p>
-              </div>
-            </div>
-        
-            <div class="bg-white p-4 rounded-lg">
-              <canvas id="myChart"></canvas>
-            </div>
+    <!-- <main class="content">
+      <div class="header">
+        <h1>DASHBOARD</h1>
+        <form [formGroup]="dashboardForm">
+          <div class="filter">
+            <select formControlName="timePeriod">
+              <option value="quarterly">Quarterly</option>
+            </select>
+            <button type="button" class="refresh-button" (click)="onRefresh()">
+              Refresh
+            </button>
           </div>
+        </form>
+      </div>
+
+      <section class="stats">
+        <div class="stat-box solved-cases">
+          <h3>Solved Cases</h3>
+          <p>{{ dashboardForm.status }}</p>
         </div>
-    </div>
+        <div class="stat-box reported-cases">
+          <h3>Number of Reported Cases</h3>
+          <p>{{ dashboardForm.value.reportedCases }}</p>
+        </div>
+        <div class="stat-box under-investigation">
+          <h3>Under Investigation</h3>
+          <p>{{ dashboardForm.value.underInvestigation }}</p>
+        </div>
+      </section>
+
+      <section class="graph-section">
+        <canvas id="casesGraph"></canvas>
+      </section>
+    </main>
+  </div>
+</div> -->
+
+    <main class="content">
+      <div class="header">
+        <h1>DASHBOARD</h1>
+        <form [formGroup]="dashboardForm">
+          <div class="filter">
+            <label for="timePeriodSelect">Select Time Period:</label>
+            <select id="timePeriodSelect" formControlName="timePeriod">
+              <option value="quarterly">Quarterly</option>
+              <!-- Add more options as needed -->
+            </select>
+            <button type="button" class="refresh-button" (click)="onRefresh()">
+              Refresh
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <section class="stats">
+        <div class="stat-box solved-cases">
+          <h3>Weekly Reports</h3>
+          <p>{{ dashboardForm.get("status")?.value }}</p>
+        </div>
+        <div class="stat-box reported-cases">
+          <h3>Monthly Reports</h3>
+          <p>{{ dashboardForm.get("reportedCases")?.value }}</p>
+        </div>
+        <div class="stat-box under-investigation">
+          <h3>Annually Reports</h3>
+          <p>{{ dashboardForm.get("underInvestigation")?.value }}</p>
+        </div>
+      </section>
+
+      <section class="graph-section">
+        <canvas id="casesGraph"></canvas>
+      </section>
+    </main>
+  </div>
+</div>

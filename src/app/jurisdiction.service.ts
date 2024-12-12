@@ -37,6 +37,39 @@ export interface IPerson {
   bioStatus: boolean;
 }
 
+// @Injectable({
+//   providedIn: 'root'
+// })
+// export class JurisdictionService {
+//   private base = 'https://localhost:7108';
+
+//   constructor(private http: HttpClient) { }
+
+//   create(data: ICreateParam): Observable<any> {
+//     const url = `${this.base}/api/jurisdiction`;
+//     return this.http.post(url, data).pipe(
+//       catchError(this.handleError)
+//     );
+//   }
+
+//   getAll(): Observable<any> {
+//     const url = `${this.base}/api/jurisdiction/collect`;
+//     return this.http.get(url).pipe(
+//       catchError(this.handleError)
+//     );
+//   }
+
+//   private handleError(error: HttpErrorResponse) {
+//     let errorMessage = 'Unknown error!';
+//     if (error.error instanceof ErrorEvent) {
+//       errorMessage = `Error: ${error.error.message}`;
+//     } else {
+//       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+//     }
+//     return throwError(errorMessage);
+//   }
+// }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -59,6 +92,14 @@ export class JurisdictionService {
     );
   }
 
+  // Delete station method
+  delete(stationId: number): Observable<any> {
+    const url = `${this.base}/api/jurisdiction/discard/{StationId}`;
+    return this.http.delete(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error!';
     if (error.error instanceof ErrorEvent) {
@@ -69,4 +110,3 @@ export class JurisdictionService {
     return throwError(errorMessage);
   }
 }
-

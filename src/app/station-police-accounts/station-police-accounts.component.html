@@ -331,7 +331,7 @@
           <div class="section-header">Police Information</div>
           <div class="form-group">
             <label for="rank">Rank</label>
-            <select formControlName="rank_id" class="rank-select" placeholder="Rank">
+            <select  formControlName="rank_id" class="rank-select" placeholder="Rank">
               <option value="" disabled selected>Select Rank</option>
               <option *ngFor="let rank of ranks" [value]="rank.rank_id">
                 {{ rank.rank_full }}
@@ -343,6 +343,7 @@
             <label for="role">Role</label>
               <select formControlName="role" class="role-select" placeholder="Role">
                 <option value="" disabled selected>Select Role</option>
+                <option value="Chief">Admin</option>
                 <option value="Chief">Chief</option>
                 <option value="Police">Police</option>
               </select>
@@ -355,7 +356,7 @@
         </div>
 
         <div class="form-group">
-            <label for="badge-number">Badge Number</label>
+            <label for="badgeNumber">Badge Number</label>
             <input type="text" formControlName="badgeNumber" placeholder="Badge Number" required>
         </div>  
 
@@ -363,6 +364,11 @@
             <label for="debut-date">Debut Date</label>
             <input type="date" formControlName="debutDate" placeholder="Debut Date" required>
         </div>  
+
+        <div class="form-group">
+          <label for="datetimeCreated">Date Time Created</label>
+          <input type="date" formControlName="datetimeCreated" placeholder="Date Time Date" required>
+      </div>  
 
         <div class="form-group">
             <label for="station-id">Station</label>

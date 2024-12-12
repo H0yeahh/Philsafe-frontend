@@ -289,6 +289,7 @@
   
   .logo {
     margin-top: 1rem;
+    margin-right: 1000%;
   }
 
   .button-reset {
@@ -306,3 +307,104 @@
     width: 1px; /* Adjust the size as needed */
     height: 16px; /* Adjust the size as needed */
   }
+
+
+/* dashboard main content */
+
+
+.content {
+  margin-left: 10px;
+  /* display: flex; */
+  padding: 40px;
+  width: 100%;
+  background-color: #9BE8E8;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: black;
+}
+
+.filter select, .refresh-button {
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-button {
+  background-color: black;
+  color: white;
+}
+
+.refresh-button:hover {
+  background-color: #394a70;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+}
+
+.stat-box {
+  flex: 1;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-right: 20px;
+  transition: transform 0.2s ease;
+  width: 100%;
+}
+
+.stat-box:hover {
+  transform: translateY(-10px);
+}
+
+.stat-box h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 500;
+  color: black;
+}
+
+.stat-box p {
+  font-size: 36px;
+  font-weight: 700;
+  color: black;
+}
+
+.stat-box:last-child {
+  margin-right: 0;
+}
+
+.solved-cases {
+  background-color: #eaf4fc;
+}
+
+.reported-cases {
+  background-color: #e8f8ea;
+}
+
+.under-investigation {
+  background-color: #fcf0e6;
+}
+
+.graph-section {
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}

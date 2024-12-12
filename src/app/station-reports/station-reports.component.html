@@ -36,7 +36,7 @@
             </a>
           </li>
           <li>
-            <a href="/manage-station" class="nav-link">
+            <a href="/station-list-of-officers" class="nav-link">
               <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
               <span>STATION</span>
             </a>
@@ -51,37 +51,53 @@
       </nav>
     </aside>
 
-    <div class="content"> 
-      <div class="reports">
-        <h2>Reports</h2>
-        <form [formGroup]="reportsForm" (ngSubmit)="onSubmit()">
-          <div class="search-bar">
-            <input type="text" formControlName="search" placeholder="Search">
-            <div class="case-queue">NEW REPORTS></div>
+    <div class="main-content">
+      <div class="header">
+          <div class="header-title">
+              <h1>CASE REPORTS</h1>
           </div>
+          <div class="header-info">
+              <p>Date: May 24, 2024</p>
+              <p>Time: 0100</p>
+              <div class="new-reports-container">
+                <a href="/station-case-queue" class="new-reports-link">
+                    NEW REPORTS
+                    <span class="new-reports-badge"></span>
+                </a>
+            </div>
+          </div>
+      </div> 
+    <main class="main-content">
+      <header class="header"></header>
+  
+      <section class="new-reports">
+          <form [formGroup]="casesForm" (ngSubmit)="onSubmit()"> 
+              <table class="reports-table">
+                  <thead>
+                      <tr>
+                          <th>RECEIVED BY</th>
+                          <th>BLOTTER ID</th>
+                          <th>INCIDENT TYPE</th>
+                          <th>COMPLAINT</th>
+                          <!-- <th>ENDORSED TO</th> -->
 
-          <table>
-            <tr>
-              <th>Received By</th>
-              <th>Blotter Number</th>
-              <th>Incident Type</th>
-              <th>Complainant</th>
-              <th>Assigned To</th>
-            </tr>
-            <tr>
-              <!-- <td><input type="text" formControlName="receivedBy"></td>
-              <td><input type="text" formControlName="blotterNumber"></td>
-              <td><input type="text" formControlName="incidentType"></td>
-              <td><input type="text" formControlName="complainant"></td>
-              <td><input type="text" formControlName="endorsedTo"></td> -->
-            </tr>
-          </table>
-
-          <!-- Submit Button -->
-          <!-- <button type="submit">Submit</button> -->
-        </form>
-        <!-- Angular Form Ends -->
-      </div>
-    </div>
+                      </tr>
+                  </thead>
+                   <tbody>
+                      <tr *ngFor="let case of reports">
+                          <!-- <td><a href="#" (click)="onSelectReport(report)">{{ report.report_id}}</a></td> -->
+                          <!-- <td><a href="/report-endorse">{{ case.report_id}}</a></td> -->
+                          <td>{{ case.stationID}}</td>
+                          <td>{{ case.blotterNum }}</td>
+                          <td>{{ case.type }}</td>
+                          <td>{{ case.complainant }}</td>
+                          <!-- <td>{{ case.endorsed_to }}</td> -->
+                      </tr>
+                  </tbody>
+              </table>
+          </form>
+      </section>
+  </main>
+  </div> 
   </div>
 </div>

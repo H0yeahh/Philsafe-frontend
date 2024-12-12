@@ -42,9 +42,11 @@ import { StationAddLocationComponent } from './station-add-location/station-add-
 import { AddPersonComponent } from './add-person/add-person.component';
 import { StationReportsComponent } from './station-reports/station-reports.component';
 import { EditReportComponent } from './edit-report/edit-report.component';
-import { ReportendorseComponent } from './reportendorse/reportendorse.component';
+import { ReportEndorseComponent } from './reportendorse/reportendorse.component';
 import { EmailComponent } from './email/email.component';
 import { StationPoliceAccountsComponent } from './station-police-accounts/station-police-accounts.component';
+import { CaseManagementComponent } from './case-management/case-management.component';
+import { StationListOfOfficersComponent } from './station-list-of-officers/station-list-of-officers.component';
 
 @NgModule({
   declarations: [
@@ -85,9 +87,11 @@ import { StationPoliceAccountsComponent } from './station-police-accounts/statio
     AddPersonComponent,
     StationReportsComponent,
     EditReportComponent,
-    ReportendorseComponent,
+    ReportEndorseComponent,
     EmailComponent,
     StationPoliceAccountsComponent,
+    CaseManagementComponent,
+    StationListOfOfficersComponent
   ],
   imports: [
     BrowserModule,

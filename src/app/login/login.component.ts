@@ -82,12 +82,21 @@ async onSubmit() {
     const signInType = this.identifySignInType(username); // Identify sign-in type
     const loginReq: Account = await this.submitLogin({ email: username, password });
     console.log(loginReq);
-    this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'admin' });
-    if(loginReq.role==='Admin'){
-      this.router.navigate(['/manage-station'])
-    } else if(loginReq.role==='Chief'){
-      this.router.navigate(['/station-case-queue'])
+    // this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'admin' });
+    this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'Admin' });
+    // if(loginReq.role==='Admin'){
+    //   this.router.navigate(['/manage-station'])
+    // } else if(loginReq.role==='Chief'){
+    //   this.router.navigate(['/station-case-queue'])
+    // }
+    if (loginReq.role === 'Admin') {
+      this.router.navigate(['/manage-station']);
+    } else if (loginReq.role === 'Chief') {
+      this.router.navigate(['/station-case-queue']);
+    } else if (loginReq.role === 'Police') {
+      this.router.navigate(['/station-dashboard']);
     }
+    
   }
 }
 }

@@ -6,7 +6,6 @@ import { catchError } from 'rxjs/operators';
 export interface IReport{
 message: string;
 code: number;
-
 }
 @Injectable({
   providedIn: 'root'

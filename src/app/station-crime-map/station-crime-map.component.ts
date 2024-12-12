@@ -17,7 +17,8 @@ export interface crimeDetail {
     incident_type: string;
     offense_type: string;
     latitude: number;
-    'longitude.': number;
+    // 'longitude.': number;
+    longitude: number;
 }
 
 @Component({
@@ -98,7 +99,7 @@ export class StationCrimeMapComponent implements OnInit {
   }
 
   fetchCrimeDetails() {
-    this.http.get<crimeDetail[]>('https://localhost:7108/api/case/retrieve/nationwide').subscribe((data) => {
+    this.http.get<crimeDetail[]>('https://172.29.11.255:7108/api/case/retrieve/nationwide').subscribe((data) => {
       this.crimeDetails = data || [];
       this.filteredCrimes = data || [];
       console.log('Fetched Crimes:', this.crimeDetails)
@@ -132,7 +133,8 @@ export class StationCrimeMapComponent implements OnInit {
     console.log(this.summary)
     this.mapboxService.removeAllMarkers()
     this.filteredCrimes.forEach((crime: crimeDetail) => {
-      this.mapboxService.addMarkers({longitude: crime['longitude.'], latitude: crime.latitude}, crime.incident_type)
+      // this.mapboxService.addMarkers({longitude: crime['longitude.'], latitude: crime.latitude}, crime.incident_type)
+      this.mapboxService.addMarkers({longitude: crime.longitude, latitude: crime.latitude}, crime.incident_type)
     })
   }
 }

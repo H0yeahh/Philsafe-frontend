@@ -369,7 +369,7 @@
 
   /* for the list of officers */
 
-  .main-content {
+  /* .main-content {
     flex-grow: 1;
     padding: 30px;
     background-color: #9BE8E8;
@@ -414,11 +414,11 @@
 .officer-table th, .officer-table td {
     padding: 15px;
     text-align: center; /* Center align text in table cells and headers */
-    border-bottom: 1px solid #e5e7eb;
-    vertical-align: middle; /* Center align text vertically */
-}
+    /* border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle; Center align text vertically
+} */
 
-.officer-table th {
+/* .officer-table th {
     background-color: #1e40af;
     color: #fff;
     font-weight: 700;
@@ -445,7 +445,7 @@
     cursor: pointer;
     margin-right: 5px;
     transition: transform 0.2s ease;
-}
+}  */
 
 /* .edit-btn {
     background-image: url('assets/acop.png');
@@ -455,6 +455,111 @@
     background-image: url('assets/noble.png');
 } */
 
-.edit-btn:hover, .delete-btn:hover {
+/* .edit-btn:hover, .delete-btn:hover {
     transform: scale(1.1);
+} */
+
+
+.main-content {
+  flex-grow: 1;
+  background-color: #eaf4fc; 
+  /* background-color: #B3E7E9;s */
+  padding: 30px;
+  margin-top: 40px;
+}
+
+.top-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  text-align: center;
+  background-color: #b3e5fc;
+  padding: 15px;
+  border-radius: 5px;
+  flex: 1;
+  margin: 0 10px;
+}
+
+.stat-item h2 {
+  margin-bottom: 5px;
+  font-size: 24px;
+  color: #000;
+}
+
+.stat-item p {
+  font-size: 14px;
+  color: #555;
+}
+
+.table-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.search-bar {
+  padding: 8px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
+.pagination label {
+  margin-right: 10px;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th, .user-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.user-table th {
+  background-color: #e0e0e0;
+}
+
+.action-btn {
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.action-btn.edit {
+  background-color: #0275d8;
+  color: white;
+  border-radius: 3px;
+}
+
+.action-btn.delete {
+  background-color: #d9534f;
+  color: white;
+  border-radius: 3px;
+}
+
+.action-btn.reinstate {
+  background-color: #5cb85c;
+  color: white;
+  border-radius: 3px;
 }

@@ -44,6 +44,7 @@ export class StationRegistrationComponent implements OnInit {
       location_id: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
+      is_approved: [true],
     });
   }
 
@@ -128,6 +129,8 @@ export class StationRegistrationComponent implements OnInit {
         location_id: this.stationForm.get('location_id')?.errors,
         email: this.stationForm.get('email')?.errors,
         password: this.stationForm.get('password')?.errors,
+        is_approved: this.stationForm.get('is_approved')?.errors,
+
       });
       alert('Please fill all required fields correctly.');
       return;

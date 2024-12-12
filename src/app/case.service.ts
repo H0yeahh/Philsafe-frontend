@@ -1,110 +1,3 @@
-// import { Injectable } from '@angular/core';
-// import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-// import { Observable, catchError, throwError } from 'rxjs';
-
-// export interface IReport {
-//   reportBody: string;
-//   citizenId: number,
-//   reportSubCategoryId: number,
-//   locationId?: number,
-//   stationId: number,
-//   crimeId?: number,
-//   repotedDate: string,
-//   incidentDate?: string,
-//   blotterNum: string,
-//   hasAccount: boolean,
-//   eSigniture: number[] | Uint8Array | Blob,
-
-//   report_id: number;
-//   type: string;
-//   complaint: string;
-//   datteReceived: string;
-// }
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class CaseService {
-//   getReports() {
-//     throw new Error('Method not implemented.');
-//   }
-//   private base = 'https://localhost';
-
-//   constructor(private http: HttpClient) { }
-
-//   getAll(): Observable<any> {
-//     const url = `${this.base}/api/report/retrieve/citizen`;
-//     return this.http.get(url).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-
-//   private handleError(error: HttpErrorResponse) {
-//     let errorMessage = 'Unknown error!';
-//     if (error.error instanceof ErrorEvent) {
-//       errorMessage = `Error: ${error.error.message}`;
-//     } else {
-//       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-//     }
-//     return throwError(errorMessage);
-//   }
-// }
-
-// import { Injectable } from '@angular/core';
-// import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-// import { Observable, catchError, throwError } from 'rxjs';
-
-// export interface IReport {
-//   reportBody: string;
-//   citizenId: number;
-//   reportSubCategoryId: number;
-//   locationId?: number;
-//   stationId: number;
-//   crimeId?: number;
-//   reportedDate: string;  // Fixed typo 'repotedDate' -> 'reportedDate'
-//   incidentDate?: string;
-//   blotterNum: string;
-//   hasAccount: boolean;
-//   eSignature: number[] | Uint8Array | Blob;  // Renamed 'eSigniture' -> 'eSignature'
-  
-//   report_id: number;
-//   type: string;
-//   complainant: string;  // Changed from 'complaint' to 'complainant'
-//   dateReceived: string;  // Fixed typo 'datteReceived' -> 'dateReceived'
-// }
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class CaseService {
-//   private base = 'https://localhost';
-
-//   constructor(private http: HttpClient) {}
-
-//   getAll(): Observable<IReport[]> {  // Strongly typed response
-//     const url = `${this.base}/api/report/retrieve/citizen`;
-//     return this.http.get<IReport[]>(url).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-
-//   private handleError(error: HttpErrorResponse) {
-//     let errorMessage = 'Unknown error!';
-//     if (error.error instanceof ErrorEvent) {
-//       // Client-side error
-//       errorMessage = `Client-side error: ${error.error.message}`;
-//     } else {
-//       // Server-side error
-//       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-//     }
-
-//     // Log full error for debugging
-//     console.error('Full error:', error);
-
-//     return throwError(errorMessage);
-//   }
-// }
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -112,28 +5,43 @@ import { catchError } from 'rxjs/operators';
 
 export interface IReport {
   reportBody: string;
-  citizenID: number;
+  citizen_id: number;
   reportSubCategoryID: number;
   locationID?: number;
   stationID: number;
   crimeID?: number;
-  reportedDate: string;  // Fixed typo 'repotedDate' -> 'reportedDate'
+  // reportedDate: string;  
   incidentDate?: string;
   blotterNum: string;
   hasAccount: boolean;
-  eSignature: number[] | Uint8Array | Blob;  // Fixed typo 'eSigniture' -> 'eSignature'
-  
+  eSignature: number[] | Uint8Array | Blob;  
+  reportSubCategory: string;
+  subcategory_name: string;
   report_id: number;
   type: string;
   complainant: string;
-  dateReceived: string;  // Fixed typo 'datteReceived' -> 'dateReceived'
+  reported_date: string;  
+
+  ReportBody: string; 
+  ReportSubCategoryId: string;
+  DateTimeReportedDate: string;
+  DateTimeIncidentDate?: string;
+  HasAccount: string;
+  color: string;
+  status: string;
+  is_spam: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class CaseService {
-  private base = 'https://localhost:7108';  // Updated to match the previous service's base URL
+  private readonly baseUrl = 'https://localhost:7108/api/report'; // Base URL
+  private readonly endpoints = {
+    // getAll: `${this.baseUrl}/retrieve/citizen`,
+    getAll: `${this.baseUrl}/retrieve/nationwide`,
+    submitReport: `${this.baseUrl}/submit`, // Add the endpoint for submitting reports
+  };
 
   constructor(private http: HttpClient) {}
 
@@ -152,10 +60,18 @@ export class CaseService {
 
   // Fetch all citizen reports
   getAll(): Observable<IReport[]> {  // Strongly typed response
-    const url = `${this.base}/api/report/retrieve/citizen`;
     const headers = this.getHeaders();  // Add headers with session token
     
-    return this.http.get<IReport[]>(url, { headers }).pipe(
+    return this.http.get<IReport[]>(this.endpoints.getAll, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Submit a new report
+  submitReport(report: IReport): Observable<IReport> {  // Assuming the server returns the submitted report
+    const headers = this.getHeaders();  // Add headers with session token
+    
+    return this.http.post<IReport>(this.endpoints.submitReport, report, { headers }).pipe(
       catchError(this.handleError)
     );
   }

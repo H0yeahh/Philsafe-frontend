@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
     <div class="emergency-banner">
         In case of emergencies, please dial your local emergency services number
     </div>
@@ -47,10 +47,7 @@
             <button type="submit" class="logout-button mt-auto">LOG OUT</button>
         </aside>
 
-
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Statistics -->
             <div class="top-stats grid grid-cols-3 gap-4">
                 <div class="stat-item bg-blue-100 rounded-lg p-4 text-center">
                     <h2 class="text-4xl font-bold text-primary">228,000</h2>
@@ -66,7 +63,7 @@
                 </div>
             </div>
 
-            <!-- User Table -->
+           
             <div class="table-container mt-8">
                 <div class="table-controls flex justify-between items-center mb-4">
                     <div class="filter">
@@ -104,10 +101,92 @@
                                 <button class="action-btn reinstate">REINSTATE</button>
                             </td>
                         </tr>
-                        <!-- More rows as needed -->
+                       
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+
+<div class="container">
+    <div class="emergency-banner">
+      In case of emergencies, please dial your local emergency services number
+    </div>
+    <div class="flex h-screen">
+
+      <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
+        <button type="button" class="back-button mt-6" style="align-self: flex-start;">BACK</button>
+        <div class="p-4 text-center">
+          <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
+          <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
+          <p class="text-sm text-zinc-600">CCPO Admin Personnels</p>
+        </div>
+        <nav class="mt-4">
+          <ul class="list-none p-0">
+            <li><a href="/dashboard" class="nav-link">DASHBOARD</a></li>
+            <li><a href="/manage-users" class="nav-link">MANAGE USER</a></li>
+            <li><a href="/ticket-requests" class="nav-link">TICKET REQUESTS</a></li>
+            <li><a href="/manage-station" class="nav-link" >MANAGE STATION</a></li>
+            <li><a href="/crime-map" class="nav-link">CRIME MAP</a></li>
+          </ul>
+        </nav>
+        <button type="button" class="logout-button mt-auto">LOG OUT</button>            
+      </aside>
+  
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Top Statistics -->
+        <div class="top-stats grid grid-cols-3 gap-4">
+          <div class="stat-item bg-blue-100 rounded-lg p-4 text-center">
+            <!-- <h2 class="text-4xl font-bold text-primary">{{ totalUsers }}</h2> -->
+            <p class="text-lg font-semibold">No. of users</p>
+          </div>
+        </div>
+  
+        <!-- User Table -->
+        <div class="table-container mt-8">
+          <div class="table-controls flex justify-between items-center mb-4">
+            <form [formGroup]="userForm" class="filter">
+              <input type="text" placeholder="Search user" formControlName="search" class="search-bar">
+            </form>
+            <div class="pagination flex items-center">
+              <label for="entries">Display</label>
+              <select id="entries" formControlName="entries">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+              <!-- <span>/{{ totalUsers }}</span> -->
+            </div>
+          </div>
+          <table class="user-table w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="border border-zinc-300 p-2">ID NUM</th>
+                <th class="border border-zinc-300 p-2">USER LIST</th>
+                <th class="border border-zinc-300 p-2">STATUS</th>
+                <th class="border border-zinc-300 p-2">ADDRESS</th>
+                <th class="border border-zinc-300 p-2">ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of citizen">
+                <td class="border border-zinc-300 p-2">{{ user.citizen_id }}</td>
+                <td class="border border-zinc-300 p-2">{{ user.firstname }}{{ user.middlename}}{{ user.lastname }}</td>
+                <td class="border border-zinc-300 p-2">{{ user.civil_status }}</td>
+                <td class="border border-zinc-300 p-2">{{ user.location_id}}</td>
+                <td class="border border-zinc-300 p-2">
+                  <button (click)="editCitizen(user)" class="action-btn edit">✏️</button>
+                  <button (click)="deleteCitizen(+user.citizen_id)" class="action-btn delete">🗑️</button>
+                  <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  

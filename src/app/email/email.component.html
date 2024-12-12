@@ -1,4 +1,4 @@
-<div class="email-container">
+<!-- <div class="email-container">
     <div class="email-header">
         <div class="header-info">
             <p><span class="label">From:</span> ps02&#64;pnp.gov.ph</p>
@@ -48,4 +48,83 @@
         <p><strong>Recorded By:</strong> [Duty Officer]</p>
         <p><strong>Acknowledged By:</strong> [Chief of Police]</p>
     </div>
-</div>
+</div> -->
+
+
+<form [formGroup]="incidentForm" (ngSubmit)="onSubmit()">
+    <div class="email-container">
+      <div class="email-header">
+        <div class="header-info">
+          <label><span class="label">From:</span></label>
+          <input formControlName="from" type="email" />
+          
+          <label><span class="label">To:</span></label>
+          <input formControlName="to" type="email" />
+          
+          <label><span class="label">Subject:</span></label>
+          <input formControlName="subject" type="text" />
+        </div>
+      </div>
+  
+      <div class="email-content">
+        <label class="intro-text">
+          This is to certify that
+          <input formControlName="reportingPerson" placeholder="[Name of reporting person]" />
+          residing at
+          <input formControlName="address" placeholder="[Address of reporting person]" />
+          has reported an incident for record in the police blotter.
+        </label>
+  
+        <table class="incident-details">
+          <tr>
+            <td><strong>Type of Incident:</strong></td>
+            <td>
+              <input formControlName="typeOfIncident" type="text" />
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Date/Time of Incident:</strong></td>
+            <td>
+              <input formControlName="dateTimeOfIncident" type="datetime-local" />
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Place of Incident:</strong></td>
+            <td>
+              <input formControlName="placeOfIncident" type="text" />
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Date/Time of Report:</strong></td>
+            <td>
+              <input formControlName="dateTimeOfReport" type="datetime-local" />
+            </td>
+          </tr>
+        </table>
+  
+        <p class="payment-info">
+          To proceed with the Blotter Record, kindly settle the payment of
+          <strong>₱50.00</strong> through the portal using the Transaction ID below:
+        </p>
+  
+        <div class="transaction-id">
+          <input formControlName="transactionId" placeholder="Transaction ID" />
+        </div>
+  
+        <p class="closing-text">
+          Thank you for your attention and cooperation.
+        </p>
+      </div>
+  
+      <div class="email-footer">
+        <label><strong>Recorded By:</strong></label>
+        <input formControlName="recordedBy" type="text" />
+        
+        <label><strong>Acknowledged By:</strong></label>
+        <input formControlName="acknowledgedBy" type="text" />
+      </div>
+  
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+  

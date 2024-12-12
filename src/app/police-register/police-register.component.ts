@@ -199,7 +199,7 @@ export class PoliceRegisterComponent implements OnInit {
         this.successMessage = 'Registration successful!';
         this.errorMessage = null;
         this.policeForm.reset(); // Clear the form after successful submission
-        this.router.navigate(['/station-case-queue']); // Redirect after successful registration
+        this.router.navigate(['/manage-station']); // Redirect after successful registration
       },
       (error) => {
         this.isLoading = false;

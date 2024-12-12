@@ -5,38 +5,38 @@
     <div class="min-h-screen bg-zinc-100 flex">
       <aside class="w-64 bg-white shadow-md">
         <div class="p-4 text-center">
-          <img src="assets/police.svg" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
-           <h2 class="text-lg font-semibold">Abellana Police Station 2</h2>
+          <img src="assets/station10.png" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
+           <h2 class="text-lg font-semibold">Punta Princesa Police Station 10</h2>
           <p class="text-sm text-zinc-600">Cebu City Police Office</p>
         </div>
         <nav class="mt-7"> 
            <ul class="list-none p-0">
             <li>
-              <a href="#" class="nav-link">
+              <a href="/station-dashboard" class="nav-link">
                 <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
                 <span>DASHBOARD</span>
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link">
+              <a href="/station-dashboard" class="nav-link">
                 <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
                 <span>INBOX</span>
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link">
+              <a href="/station-case-queue" class="nav-link">
                 <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
                 <span>REPORTS</span>
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link">
+              <a href="/station-crime-map" class="nav-link">
                 <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
                 <span>CRIME MAP</span>
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link">
+              <a href="station-list-of-officers" class="nav-link">
                 <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
                 <span>STATION</span>
               </a>
@@ -51,7 +51,7 @@
         </nav>
       </aside>
 
-      <div class="main-content">
+       <!-- <div class="main-content">
         <div class="header">
             <div class="header-title">
                 <h1>NEW REPORTS</h1>
@@ -76,34 +76,63 @@
                         </tr>
                     </thead>
                      <tbody>
-                        <tr *ngFor="let report of reports">
-                            <td><a href="#">{{ report.report_id}}</a></td>
-                            <td>{{ report.type }}</td>
-                            <td>{{ report.complainant }}</td>
-                            <td>{{ report.dateReceived }}</td>
+                        <tr *ngFor="let report of reports"> 
+                          
+                             <td><a href="/report-endorse">{{ report.report_id}}</a></td>
+                            <td>{{ report.subcategory_name }}</td>
+                            <td>{{ report.citizen_id }}</td>
+                            <td>{{ report.reported_date }}</td>
                         </tr>
-                         <tr>
-                          <td><a href="#">ABCDEDFFFF</a></td>
-                          <td>Robbery</td>
-                          <td>Nicolas Pogoy</td>
-                          <td>2024-05-16 14:15:20</td>
-                      </tr>
-                      <tr>
-                          <td><a href="#">ZYXKLMNOP</a></td>
-                          <td>Rape</td>
-                          <td>Emilia Phillips</td>
-                          <td>2024-05-16 14:15:20</td>
-                      </tr>
-                      <tr>
-                          <td><a href="#">RXQTUVDEFG</a></td>
-                          <td>Online Scam</td>
-                          <td>Daliah Verallo</td>
-                          <td>2024-05-16 14:15:20</td>
-                      </tr> 
                     </tbody>
                 </table>
             </form>
         </section>
     </main>
-    </div> 
+    </div>  
      
+     -->
+
+     <div class="main-content">
+      <div class="header">
+          <div class="header-title">
+              <h1>NEW REPORTS</h1>
+          </div>
+          <div class="header-info">
+              <p>Date: May 24, 2024</p>
+              <p>Time: 0100</p>
+              <div class="new-reports-container">
+                  <a href="/station-reports" class="new-reports-link">
+                      CASE REPORTS
+                      <span class="new-reports-badge"></span>
+                  </a>
+              </div>
+          </div>
+      </div>
+      <main class="main-content">
+          <header class="header"></header>
+  
+          <section class="new-reports">
+              <form [formGroup]="reportsForm" (ngSubmit)="onSubmit()">
+                  <table class="reports-table">
+                      <thead>
+                          <tr>
+                              <th>Report ID</th>
+                              <th>Incident Type</th>
+                              <th>Complainant</th>
+                              <th>Date Received</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let report of reports">
+                              <td><a href="/report-endorse">{{ report.report_id }}</a></td>
+                              <td>{{ report.subcategory_name }}</td>
+                              <td>{{ report.citizen_id }}</td>
+                              <td>{{ report.reported_date }}</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </form>
+          </section>
+      </main>
+  </div>
+  
