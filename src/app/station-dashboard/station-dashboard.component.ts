@@ -24,6 +24,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   reports: IReport[] = [];
   stations: IStation[] = [];
   persons: IPerson[] = [];
+
   ranks: IRank[] = [];
 
   stationID: string | null = null;
