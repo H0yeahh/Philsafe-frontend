@@ -18,7 +18,8 @@ export class StationCaseQueueComponent implements OnInit {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  reports: IReport[] = [];  // Array to hold fetched reports
+  reports: IReport[] = [];  // Array to hold fetched reports`3
+  
   stations: IStation[] = [];
   persons: IPerson[] = [];
   ranks: IRank[] = [];
