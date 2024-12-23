@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
@@ -9,26 +10,24 @@ import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-station-case-queue',
-  templateUrl: './station-case-queue.component.html',
-  styleUrls: ['./station-case-queue.component.css']
+  selector: 'app-police-reports',
+  templateUrl: './police-reports.component.html',
+  styleUrl: './police-reports.component.css'
 })
-export class StationCaseQueueComponent implements OnInit {
-  reportsForm!: FormGroup;  // Form group for report submission
+export class PoliceReportsComponent implements OnInit {
+  policereportsForm!: FormGroup;  // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  //reports: IReport[] = [];  // Array to hold fetched reports`3
-  reports: any;
+  reports: IReport[] = [];  // Array to hold fetched reports`3
   
   stations: IStation[] = [];
   persons: IPerson[] = [];
   ranks: IRank[] = [];
   
   stationID: string | null = null;
-  citizenId: number = 0;
+  citizenId: number | null = null;
   fetch_Report: any;
-  citizens: any;
 
   constructor(
     private fb: FormBuilder,
@@ -43,18 +42,17 @@ export class StationCaseQueueComponent implements OnInit {
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
     this.initializeForm();
-    //this.getOfficerStationId(); // Fetch officer's station ID on init
+    this.getOfficerStationId(); // Fetch officer's station ID on init
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
     this.fetchnationwideReports();
-    //this.fetchReport();
-    this.fetchCitizens();
+    this.fetchReport();
   }
 
   // Define the form controls
   initializeForm(): void {
-    this.reportsForm = this.fb.group({
+    this.policereportsForm = this.fb.group({
       reportID: ['', Validators.required],
       type: ['', Validators.required],
       complainant: ['', Validators.required],
@@ -81,53 +79,87 @@ export class StationCaseQueueComponent implements OnInit {
   }
 
   // Get the officer's station ID from the logged-in account
-  // getOfficerStationId(): void {
-  //   // Assuming the officer's details are stored in localStorage after login
-  //   const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-  //   this.stationID = officerDetails.stationId || null;
+  getOfficerStationId(): void {
+    // Assuming the officer's details are stored in localStorage after login
+    const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
+    this.stationID = officerDetails.stationId || null;
     
-  //   if (this.stationID) {
-  //     this.fetchReports(this.stationID); // Fetch reports using the station ID
-  //   } else {
-  //     this.errorMessage = 'Station ID not found.';
-  //   }
-  // }
+    if (this.stationID) {
+      this.fetchReports(this.stationID); // Fetch reports using the station ID
+    } else {
+      this.errorMessage = 'Station ID not found.';
+    }
+  }
 
-  // // Fetch reports from the backend service
-  // fetchReports(stationId: string): void {
-  //   this.isLoading = true;  // Set loading state to true
-  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
-  //     (response) => {
-  //       if (Array.isArray(response)) {
-  //         this.reports = response as IReport[];
-  //         console.log('Fetched reports:', this.reports);
-  //       } else {
-  //         this.errorMessage = 'Unexpected response from server.';
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching reports:', error);
-  //       this.errorMessage = 'Failed to load reports. Please try again.';
-  //       this.isLoading = false;
-  //     }
-  //   );
-  // }
+  // Fetch reports from the backend service
+  fetchReports(stationId: string): void {
+    this.isLoading = true;  // Set loading state to true
+    this.caseQueueService.getReports(Number(stationId)).subscribe(
+      (response) => {
+        if (Array.isArray(response)) {
+          this.reports = response as IReport[];
+          console.log('Fetched reports:', this.reports);
+        } else {
+          this.errorMessage = 'Unexpected response from server.';
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error fetching reports:', error);
+        this.errorMessage = 'Failed to load reports. Please try again.';
+        this.isLoading = false;
+      }
+    );
+  }
 
   fetchnationwideReports(): void {
     this.isLoading = true;  // Set loading state to true
     this.caseQueueService.getNationwideReports().subscribe(
       (response) => {
         if (Array.isArray(response)) {
-        this.reports = response as IReport[];
-      
-          console.log('Fetched reports:', response);
-          this.reports.forEach((report: { citizen_id: any; }) => {
-            // console.log(report.citizen_id);
-            this.citizenId = report.citizen_id
-          });
+          this.reports = response as IReport[];
+          console.log('Fetched reports:', this.reports);
 
-         
+          if (this.reports.length > 0) {
+            this.citizenId = this.reports[0].citizen_id; // Store citizenId from the first report
+            this.fetchReport(); // Call fetchReport with the new citizenId
+          }
+        } else {
+          this.errorMessage = 'Unexpected response from server.';
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error fetching reports:', error);
+        this.errorMessage = 'Failed to load reports. Please try again.';
+        this.isLoading = false;
+      }
+    );
+  }
+
+  fetchReport(): void {
+    // if (!citizenId) {
+    //   this.errorMessage = 'Citizen ID is required.';
+    //   return;
+    // }
+
+
+    this.isLoading = true;
+    // const url = `https://172.20.10.3:7108/api/retrieve/citizen/${this.citizenId}`;
+    const url = `https://172.20.10.3:7108/api/retrieve/citizen/${this.citizenId}`;
+    this.http.get(url).subscribe(
+      (response) => {
+        if (Array.isArray(response)) {
+          // const fetchReports = response;
+          this.fetch_Report = response;
+          let fetch: any = '';
+          // this.reports = response as IReport[];
+          fetch = {
+            reportId: this.fetch_Report.report_id,
+            citizenId: this.fetch_Report.citizen_id
+          }
+          this.citizenId = fetch.citizen_id;
+          console.log('Fetched report of citizen:', fetch);
         } else {
           this.errorMessage = 'Unexpected response from server.';
         }
@@ -142,6 +174,7 @@ export class StationCaseQueueComponent implements OnInit {
   }
 
 
+
   // Fetch stations
   fetchStations(): void {
     this.jurisdictionService.getAll().subscribe(
@@ -153,24 +186,6 @@ export class StationCaseQueueComponent implements OnInit {
         this.errorMessage = 'Failed to load stations. Please try again.';
       }
     );
-  }
-
-  fetchCitizens(): void {
-    this.caseQueueService.getCitizens().subscribe(
-      (response) => {
-        this.citizens = response;
-        console.log('Fetched citizens:', response);
-      },
-      (error) => {
-        console.error('Error fetching citizens:', error);
-        this.errorMessage = 'Failed to load citizens. Please try again.';
-      }
-    );
-  }
-
-  getCitizenName(citizenId: number): string {
-    const citizen = this.citizens.find((c: any) => c.citizen_id === citizenId);
-    return citizen ? `${citizen.firstname} ${citizen.lastname}` : 'Unknown';
   }
 
   // Fetch ranks
@@ -201,13 +216,13 @@ export class StationCaseQueueComponent implements OnInit {
 
   // Submit the form
   onSubmit(): void {
-    if (this.reportsForm.invalid) {
+    if (this.policereportsForm.invalid) {
       alert('Please fill all required fields correctly.');
       return;
     }
 
     this.isLoading = true;
-    const formData = this.reportsForm.value;
+    const formData = this.policereportsForm.value;
 
     const report: IReport = {
       reportBody: formData.reportBody,
@@ -248,17 +263,18 @@ export class StationCaseQueueComponent implements OnInit {
 // }
 
 
-navigateToReportEndorse(citizenId: number): void {
-  if (citizenId) {
-    console.log('Navigating with Citizen ID:', citizenId);
-    this.router.navigate(['/report-endorse'], { queryParams: { citizenID: citizenId } });
+navigateToReportEndorse(): void {
+  //  this.citizenId = this.fetch_Report.citizen_id;  // Access citizen_id from the selected report
+   let citizenID: number | null;
+   citizenID = this.citizenId
+  if (citizenID) {
+    alert(`Citizen found ${citizenID}`)
+    this.router.navigate(['/report-endorse'], { state: { citizenID } });
   } else {
     console.error('Citizen ID not found for the selected report.');
-    alert('Invalid citizen ID. Please select a valid report.');
+    alert('Invalid citizen ID. Please select a valid report.');  // Alert user about the invalid ID
   }
 }
-
-
   goBack(): void {
     this.router.navigate(['/manage-police']);
   }

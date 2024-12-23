@@ -47,6 +47,10 @@ import { EmailComponent } from './email/email.component';
 import { StationPoliceAccountsComponent } from './station-police-accounts/station-police-accounts.component';
 import { CaseManagementComponent } from './case-management/case-management.component';
 import { StationListOfOfficersComponent } from './station-list-of-officers/station-list-of-officers.component';
+import { PoliceReportsComponent } from './police-reports/police-reports.component';
+import { PoliceCasesComponent } from './police-cases/police-cases.component';
+import { CasesComponent } from './cases/cases.component';
+
 
 @NgModule({
   declarations: [
@@ -91,7 +95,10 @@ import { StationListOfOfficersComponent } from './station-list-of-officers/stati
     EmailComponent,
     StationPoliceAccountsComponent,
     CaseManagementComponent,
-    StationListOfOfficersComponent
+    StationListOfOfficersComponent,
+    PoliceReportsComponent,
+    PoliceCasesComponent,
+    CasesComponent
   ],
   imports: [
     BrowserModule,

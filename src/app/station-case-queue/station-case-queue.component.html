@@ -117,17 +117,17 @@
                       <thead>
                           <tr>
                               <th>Report ID</th>
-                              <th>Incident Type</th>
-                              <th>Complainant</th>
+                              <th>Complainant ID</th>
+                              <th>Complainant Name</th>
                               <th>Date Received</th>
                           </tr>
                       </thead>
                       <tbody>
                           <tr *ngFor="let report of reports">
-                              <td><a href="/report-endorse">{{ report.report_id }}</a></td>
-                              <td>{{ report.subcategory_name }}</td>
+                              <td><a (click)="navigateToReportEndorse(report.citizen_id)">{{ report.report_id }}</a></td>
                               <td>{{ report.citizen_id }}</td>
-                              <td>{{ report.reported_date }}</td>
+                              <td>{{ getCitizenName(report.citizen_id) }}</td>
+                              <td>{{ report.reported_date | date }}</td>
                           </tr>
                       </tbody>
                   </table>

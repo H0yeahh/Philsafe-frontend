@@ -1,702 +1,35 @@
-// import { Component, OnInit } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { CaseQueueService } from '../case-queue.service';
-// import { Router } from '@angular/router';
-// import { IReport } from '../case.service';
-// import { IStation, JurisdictionService } from '../jurisdiction.service';
-// import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
-// import { PersonService } from '../person.service';
-
-// @Component({
-//   selector: 'app-reportendorse',
-//   templateUrl: './reportendorse.component.html',
-//   styleUrls: ['./reportendorse.component.css']
-// })
-// export class ReportEndorseComponent implements OnInit {
-// onSendBlotter() {
-// throw new Error('Method not implemented.');
-// }
-//   endorseForm!: FormGroup;  // Form group for report submission
-//   isLoading = false;
-//   successMessage: string | null = null;
-//   errorMessage: string | null = null;
-//   reports: IReport[] = [];  // Array to hold fetched reports
-//   stations: IStation[] = [];
-//   persons: IPerson[] = [];
-//   ranks: IRank[] = [];
-  
-//   stationID: string | null = null;
-
-//   constructor(
-//     private fb: FormBuilder,
-//     private caseQueueService: CaseQueueService,
-//     private jurisdictionService: JurisdictionService,
-//     private policeAccountsService: PoliceAccountsService,
-//     private personService: PersonService,
-//     private router: Router
-//   ) {}
-
-//   ngOnInit(): void {
-//     this.initializeForm();
-//     this.getOfficerStationId();
-//     this.fetchRanks();
-//     this.fetchStations();
-//     this.fetchPersons();
-//     this.fetchnationwideReports();
-//   }
-
-//   initializeForm(): void {
-//     this.endorseForm = this.fb.group({
-//       reportID: ['', Validators.required],
-//       type: ['', Validators.required],
-//       complainant: ['', Validators.required],
-//       dateReceived: ['', Validators.required],
-//       reportBody: ['', Validators.required],
-//       citizen_id: ['', Validators.required],
-//       reportSubCategoryID: ['', Validators.required],
-//       locationID: [''],
-//       stationID: ['', Validators.required],
-//       crimeID: [''],
-//       reportedDate: ['', Validators.required],  // Use camelCase here
-//       incidentDate: [''],
-//       blotterNum: ['', Validators.required],
-//       hasAccount: [true],
-//       eSignature: ['', Validators.required],
-//       rankID: ['', Validators.required],
-//       personID: ['', Validators.required],
-//       reportSubCategory: ['', Validators.required],
-//       subcategory_name: ['', Validators.required], 
-//       status: ['', Validators.required], 
-//       is_spam: [true]
-//     });
-//   }
-
-//   getOfficerStationId(): void {
-//     const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-//     this.stationID = officerDetails.stationId || null;
-    
-//     if (this.stationID) {
-//       this.fetchReports(this.stationID);
-//     } else {
-//       this.errorMessage = 'Station ID not found.';
-//     }
-//   }
-
-//   fetchReports(stationId: string): void {
-//     this.isLoading = true;
-//     this.caseQueueService.getReports(Number(stationId)).subscribe(
-//       (response) => {
-//         if (Array.isArray(response)) {
-//           this.reports = response as IReport[];
-//           console.log('Fetched reports:', this.reports);
-//         } else {
-//           this.errorMessage = 'Unexpected response from server.';
-//         }
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error fetching reports:', error);
-//         this.errorMessage = 'Failed to load reports. Please try again.';
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-
-//   // fetchnationwideReports(): void {
-//   //   this.isLoading = true;
-//   //   this.caseQueueService.getNationwideReports().subscribe(
-//   //     (response) => {
-//   //       if (Array.isArray(response)) {
-//   //         this.reports = response as IReport[];
-//   //         console.log('Fetched reports:', this.reports);
-//   //       } else {
-//   //         this.errorMessage = 'Unexpected response from server.';
-//   //       }
-//   //       this.isLoading = false;
-//   //     },
-//   //     (error) => {
-//   //       console.error('Error fetching reports:', error);
-//   //       this.errorMessage = 'Failed to load reports. Please try again.';
-//   //       this.isLoading = false;
-//   //     }
-//   //   );
-//   // }
-
-//   fetchnationwideReports(): void {
-//     this.isLoading = true;
-//     this.caseQueueService.getNationwideReports().subscribe(
-//       (response) => {
-//         if (Array.isArray(response)) {
-//           this.reports = response as IReport[];
-//           console.log('Fetched reports:', this.reports);
-//         } else {
-//           this.errorMessage = 'Unexpected response from server.';
-//         }
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error fetching reports:', error);
-//         this.errorMessage = 'Failed to load reports. Please try again.';
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-  
-
-//   fetchStations(): void {
-//     this.jurisdictionService.getAll().subscribe(
-//       (response: IStation[]) => {
-//         this.stations = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching stations:', error);
-//         this.errorMessage = 'Failed to load stations. Please try again.';
-//       }
-//     );
-//   }
-
-//   fetchRanks(): void {
-//     this.policeAccountsService.getRanks().subscribe(
-//       (response: IRank[]) => {
-//         this.ranks = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching ranks:', error);
-//         this.errorMessage = 'Failed to load ranks. Please try again.';
-//       }
-//     );
-//   }
-
-//   fetchPersons(): void {
-//     this.personService.getAll().subscribe(
-//       (response: IPerson[]) => {
-//         this.persons = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching persons:', error);
-//         this.errorMessage = 'Failed to load persons. Please try again.';
-//       }
-//     );
-//   }
-
-//   onSubmit(): void {
-//     if (this.endorseForm.invalid) {
-//       alert('Please fill all required fields correctly.');
-//       return;
-//     }
-
-//     this.isLoading = true;
-//     const formData = this.endorseForm.value;
-
-//       const report: IReport = {
-//       reportBody: formData.reportBody,
-//       citizen_id: formData.citizen_id,
-//       reportSubCategoryID: formData.reportSubCategoryID,
-//       locationID: formData.locationID || null,
-//       stationID: formData.stationID,
-//       crimeID: formData.crimeID || null,
-//       reported_date: formData.reportedDate,  // Ensure camelCase here
-//       incidentDate: formData.incidentDate || null,
-//       blotterNum: formData.blotterNum,
-//       hasAccount: formData.hasAccount,
-//       eSignature: formData.eSignature,
-//       report_id: 0,
-//       type: formData.type,
-//       complainant: formData.complainant,
-//       ReportBody: formData.reportBody,
-//       subcategory_name: formData.subcategory_name,
-//       reportSubCategory: formData.reportSubCategory,
-//       ReportSubCategoryId: formData.reportSubCategoryID.toString(),
-//       DateTimeReportedDate: new Date().toISOString(),
-//       HasAccount: formData.hasAccount.toString(),
-//       status: formData.status,
-//       is_spam: formData.is_spam
-//     };
-
-//     console.log('Submitting report with data:', report);
-//     this.submitReportForm(report);
-//   }
-
-//   submitReportForm(report: IReport): void {
-//     this.caseQueueService.submitReport(report).subscribe(
-//       (response: any) => {
-//         this.isLoading = false;
-//         this.successMessage = 'Report submitted successfully!';
-//         this.errorMessage = null;
-//         this.endorseForm.reset();
-//         this.router.navigate(['/station-case-queue']);
-//       },
-//       (error) => {
-//         this.isLoading = false;
-//         console.error('Error during report submission:', error);
-//         this.errorMessage = 'Submission failed. Please try again.';
-//       }
-//     );
-//   }
-
-//   onEndorse(): void {
-//     const reportId = this.endorseForm.get('reportID')?.value;
-//     console.log(`Endorsing report with ID: ${reportId}`);
-//     this.successMessage = 'Report endorsed successfully!';
-//   }
-
-//   onDismiss(): void {
-//     const reportId = this.endorseForm.get('reportID')?.value;
-//     console.log(`Dismissing report with ID: ${reportId}`);
-//     this.successMessage = 'Report dismissed successfully!';
-//   }
-
-//   goBack(): void {
-//     this.router.navigate(['/manage-police']);
-//   }
-// }
-// // } 
-
-// import { Component, OnInit } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { CaseQueueService } from '../case-queue.service';
-// import { Router } from '@angular/router';
-// import { IReport } from '../case.service';
-// import { IStation, JurisdictionService } from '../jurisdiction.service';
-// import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
-// import { PersonService } from '../person.service';
-
-// @Component({
-//   selector: 'app-reportendorse',
-//   templateUrl: './reportendorse.component.html',
-//   styleUrls: ['./reportendorse.component.css']
-// })
-// export class ReportEndorseComponent implements OnInit {
-//   endorseForm!: FormGroup; // Form group for report submission
-//   isLoading = false;
-//   successMessage: string | null = null;
-//   errorMessage: string | null = null;
-//   reports: IReport[] = [];
-//   stations: IStation[] = [];
-//   persons: IPerson[] = [];
-//   ranks: IRank[] = [];
-//   stationID: string | null = null;
-
-//   constructor(
-//     private fb: FormBuilder,
-//     private caseQueueService: CaseQueueService,
-//     private jurisdictionService: JurisdictionService,
-//     private policeAccountsService: PoliceAccountsService,
-//     private personService: PersonService,
-//     private router: Router
-//   ) {}
-
-//   ngOnInit(): void {
-//     this.initializeForm();
-//     this.getOfficerStationId();
-//     this.fetchRanks();
-//     this.fetchStations();
-//     this.fetchPersons();
-//     this.fetchnationwideReports();
-//   }
-
-//   initializeForm(): void {
-//     this.endorseForm = this.fb.group({
-//       reportID: ['', Validators.required],
-//       type: ['', Validators.required],
-//       complainant: ['', Validators.required],
-//       dateReceived: ['', Validators.required],
-//       reportBody: ['', Validators.required],
-//       citizen_id: ['', Validators.required],
-//       reportSubCategoryID: ['', Validators.required],
-//       locationID: [''],
-//       stationID: ['', Validators.required],
-//       crimeID: [''],
-//       reportedDate: ['', Validators.required],
-//       incidentDate: [''],
-//       blotterNum: ['', Validators.required],
-//       hasAccount: [true],
-//       eSignature: ['', Validators.required],
-//       rankID: ['', Validators.required],
-//       personID: ['', Validators.required],
-//       reportSubCategory: ['', Validators.required],
-//       subcategory_name: ['', Validators.required],
-//       status: ['', Validators.required],
-//       is_spam: [true],
-//     });
-//   }
-
-//   getOfficerStationId(): void {
-//     const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-//     this.stationID = officerDetails.stationId || null;
-
-//     if (this.stationID) {
-//       this.fetchReports(this.stationID);
-//     } else {
-//       this.errorMessage = 'Station ID not found.';
-//     }
-//   }
-
-//   fetchReports(stationId: string): void {
-//     this.isLoading = true;
-//     this.caseQueueService.getReports(Number(stationId)).subscribe(
-//       (response) => {
-//         if (Array.isArray(response)) {
-//           this.reports = response as IReport[];
-//           console.log('Fetched reports:', this.reports);
-//         } else {
-//           this.errorMessage = 'Unexpected response from server.';
-//         }
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error fetching reports:', error);
-//         this.errorMessage = 'Failed to load reports. Please try again.';
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-
-//   fetchnationwideReports(): void {
-//     this.isLoading = true;
-//     this.caseQueueService.getNationwideReports().subscribe(
-//       (response) => {
-//         if (Array.isArray(response)) {
-//           this.reports = response as IReport[];
-//           console.log('Fetched reports:', this.reports);
-//         } else {
-//           this.errorMessage = 'Unexpected response from server.';
-//         }
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error fetching nationwide reports:', error);
-//         this.errorMessage = 'Failed to load nationwide reports. Please try again.';
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-
-//   fetchStations(): void {
-//     this.jurisdictionService.getAll().subscribe(
-//       (response: IStation[]) => {
-//         this.stations = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching stations:', error);
-//         this.errorMessage = 'Failed to load stations. Please try again.';
-//       }
-//     );
-//   }
-
-//   fetchRanks(): void {
-//     this.policeAccountsService.getRanks().subscribe(
-//       (response: IRank[]) => {
-//         this.ranks = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching ranks:', error);
-//         this.errorMessage = 'Failed to load ranks. Please try again.';
-//       }
-//     );
-//   }
-
-//   fetchPersons(): void {
-//     this.personService.getAll().subscribe(
-//       (response: IPerson[]) => {
-//         this.persons = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching persons:', error);
-//         this.errorMessage = 'Failed to load persons. Please try again.';
-//       }
-//     );
-//   }
-
-//   onSubmit(): void {
-//     if (this.endorseForm.invalid) {
-//       alert('Please fill all required fields correctly.');
-//       return;
-//     }
-
-//     this.isLoading = true;
-//     const formData = this.endorseForm.value;
-
-//     const report: IReport = {
-//       reportBody: formData.reportBody,
-//       citizen_id: formData.citizen_id,
-//       reportSubCategoryID: formData.reportSubCategoryID,
-//       locationID: formData.locationID || null,
-//       stationID: formData.stationID,
-//       crimeID: formData.crimeID || null,
-//       reported_date: formData.reportedDate,
-//       incidentDate: formData.incidentDate || null,
-//       blotterNum: formData.blotterNum,
-//       hasAccount: formData.hasAccount,
-//       eSignature: formData.eSignature,
-//       report_id: 0,
-//       type: formData.type,
-//       complainant: formData.complainant,
-//       ReportBody: formData.reportBody,
-//       subcategory_name: formData.subcategory_name,
-//       reportSubCategory: formData.reportSubCategory,
-//       ReportSubCategoryId: formData.reportSubCategoryID.toString(),
-//       DateTimeReportedDate: new Date().toISOString(),
-//       HasAccount: formData.hasAccount.toString(),
-//       status: formData.status,
-//       is_spam: formData.is_spam,
-//     };
-
-//     console.log('Submitting report with data:', report);
-//     this.submitReportForm(report);
-//   }
-
-//   submitReportForm(report: IReport): void {
-//     this.caseQueueService.submitReport(report).subscribe(
-//       (response: any) => {
-//         this.isLoading = false;
-//         this.successMessage = 'Report submitted successfully!';
-//         this.errorMessage = null;
-//         this.endorseForm.reset();
-//         this.router.navigate(['/station-case-queue']);
-//       },
-//       (error) => {
-//         this.isLoading = false;
-//         console.error('Error during report submission:', error);
-//         this.errorMessage = 'Submission failed. Please try again.';
-//       }
-//     );
-//   }
-
-//   onEndorse(): void {
-//     const reportId = this.endorseForm.get('reportID')?.value;
-//     console.log(`Endorsing report with ID: ${reportId}`);
-//     this.successMessage = 'Report endorsed successfully!';
-//   }
-
-//   onDismiss(): void {
-//     const reportId = this.endorseForm.get('reportID')?.value;
-//     console.log(`Dismissing report with ID: ${reportId}`);
-//     this.successMessage = 'Report dismissed successfully!';
-//   }
-
-//   goBack(): void {
-//     this.router.navigate(['/manage-police']);
-//   }
-// }
-
-
-
-// import { Component, OnInit } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { CaseQueueService } from '../case-queue.service';
-// import { Router } from '@angular/router';
-// import { IReport } from '../case.service';
-// import { IStation, JurisdictionService } from '../jurisdiction.service';
-// import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
-// import { PersonService } from '../person.service';
-
-// @Component({
-//   selector: 'app-reportendorse',
-//   templateUrl: './reportendorse.component.html',
-//   styleUrls: ['./reportendorse.component.css']
-// })
-// export class ReportEndorseComponent implements OnInit {
-//   endorseForm!: FormGroup; // Form group for report submission
-//   isLoading = false;
-//   successMessage: string | null = null;
-//   errorMessage: string | null = null;
-//   reports: IReport[] = [];
-//   stations: IStation[] = [];
-//   persons: IPerson[] = [];
-//   ranks: IRank[] = [];
-//   stationID: string | null = null;
-
-//   constructor(
-//     private fb: FormBuilder,
-//     private caseQueueService: CaseQueueService,
-//     private jurisdictionService: JurisdictionService,
-//     private policeAccountsService: PoliceAccountsService,
-//     private personService: PersonService,
-//     private router: Router
-//   ) {}
-
-//   ngOnInit(): void {
-//     this.initializeForm();
-//     this.getOfficerStationId();
-//     this.fetchRanks();
-//     this.fetchStations();
-//     this.fetchPersons();
-//     this.fetchnationwideReports();
-//   }
-
-//   initializeForm(): void {
-//     this.endorseForm = this.fb.group({
-//       reportID: ['', Validators.required],
-//       type: ['', Validators.required],
-//       complainant: ['', Validators.required],
-//       dateReceived: ['', Validators.required],
-//       reportBody: ['', Validators.required],
-//       citizen_id: ['', Validators.required],
-//       reportSubCategoryID: ['', Validators.required],
-//       locationID: [''],
-//       stationID: ['', Validators.required],
-//       crimeID: [''],
-//       reportedDate: ['', Validators.required],
-//       incidentDate: [''],
-//       blotterNum: ['', Validators.required],
-//       hasAccount: [true],
-//       eSignature: ['', Validators.required],
-//       rankID: ['', Validators.required],
-//       personID: ['', Validators.required],
-//       reportSubCategory: ['', Validators.required],
-//       subcategory_name: ['', Validators.required],
-//       status: ['', Validators.required],
-//       is_spam: [true],
-//     });
-//   }
-
-//   getOfficerStationId(): void {
-//     const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-//     this.stationID = officerDetails.stationId || null;
-
-//     if (this.stationID) {
-//       this.fetchReports(this.stationID);
-//     } else {
-//       this.errorMessage = 'Station ID not found.';
-//     }
-//   }
-
-//   fetchReports(stationId: string): void {
-//     this.isLoading = true;
-//     this.caseQueueService.getReports(Number(stationId)).subscribe(
-//       (response) => {
-//         if (Array.isArray(response)) {
-//           this.reports = response as IReport[];
-//           console.log('Fetched reports:', this.reports);
-//         } else {
-//           this.errorMessage = 'Unexpected response from server.';
-//         }
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error fetching reports:', error);
-//         this.errorMessage = 'Failed to load reports. Please try again.';
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-
-//   fetchnationwideReports(): void {
-//     this.isLoading = true;
-//     this.caseQueueService.getNationwideReports().subscribe(
-//       (response) => {
-//         if (Array.isArray(response)) {
-//           this.reports = response as IReport[];
-//           console.log('Fetched reports:', this.reports);
-//         } else {
-//           this.errorMessage = 'Unexpected response from server.';
-//         }
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error fetching nationwide reports:', error);
-//         this.errorMessage = 'Failed to load nationwide reports. Please try again.';
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-
-//   fetchStations(): void {
-//     this.jurisdictionService.getAll().subscribe(
-//       (response: IStation[]) => {
-//         this.stations = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching stations:', error);
-//         this.errorMessage = 'Failed to load stations. Please try again.';
-//       }
-//     );
-//   }
-
-//   fetchRanks(): void {
-//     this.policeAccountsService.getRanks().subscribe(
-//       (response: IRank[]) => {
-//         this.ranks = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching ranks:', error);
-//         this.errorMessage = 'Failed to load ranks. Please try again.';
-//       }
-//     );
-//   }
-
-//   fetchPersons(): void {
-//     this.personService.getAll().subscribe(
-//       (response: IPerson[]) => {
-//         this.persons = response;
-//       },
-//       (error) => {
-//         console.error('Error fetching persons:', error);
-//         this.errorMessage = 'Failed to load persons. Please try again.';
-//       }
-//     );
-//   }
-
-//   onEndorse(): void {
-//     const reportId = this.endorseForm.get('reportID')?.value;
-//     console.log(`Endorsing report with ID: ${reportId}`);
-//     this.successMessage = 'Report endorsed successfully!';
-//   }
-
-//   onDismiss(): void {
-//     const reportId = this.endorseForm.get('reportID')?.value;
-//     console.log(`Dismissing report with ID: ${reportId}`);
-//     this.successMessage = 'Report dismissed successfully!';
-//   }
-
-//   onSendBlotter(): void {
-//     const blotterNum = this.endorseForm.get('blotterNum')?.value;
-//     if (!blotterNum) {
-//       this.errorMessage = 'Blotter number is required!';
-//       return;
-//     }
-//     console.log(`Sending blotter with number: ${blotterNum}`);
-//     this.successMessage = `Blotter with number ${blotterNum} sent successfully!`;
-//   }
-
-//   openSignaturePad(): void {
-//     console.log('Opening signature pad for electronic signing...');
-//     // Logic for opening the signature pad can be implemented here.
-//     // If using a signature library or modal, trigger its initialization here.
-//     this.successMessage = 'Signature pad opened successfully!';
-//   }
-
-//   goBack(): void {
-//     this.router.navigate(['/manage-police']);
-//   }
-// }
-
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IReport } from '../case.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
-import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
+import {
+  IPerson,
+  IRank,
+  PoliceAccountsService,
+} from '../police-accounts.service';
 import { PersonService } from '../person.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-reportendorse',
   templateUrl: './reportendorse.component.html',
-  styleUrls: ['./reportendorse.component.css']
+  styleUrls: ['./reportendorse.component.css'],
 })
 export class ReportEndorseComponent implements OnInit {
-  endorseForm!: FormGroup; // Form group for report submission
+    endorseForm!: FormGroup; // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  reports: IReport[] = [];
+  reports: any[] = [];
   stations: IStation[] = [];
   persons: IPerson[] = [];
   ranks: IRank[] = [];
   stationID: string | null = null;
+  citizenId: number = 0;
+  fetch_Report: any;
+  citizens: any;
 
   constructor(
     private fb: FormBuilder,
@@ -704,16 +37,50 @@ export class ReportEndorseComponent implements OnInit {
     private jurisdictionService: JurisdictionService,
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    // console.log('ReportEndorseComponent initialized!');
+    // this.route.queryParams.subscribe(params => {
+    //   const citizenId = params['citizenID'];
+    //   console.log('Citizen ID:', citizenId);
+    // });
+
+    console.log('ReportEndorseComponent initialized!');
+    this.route.queryParams.subscribe((params) => {
+      const citizenId = params['citizenID'];
+      console.log('Citizen ID:', citizenId);
+
+      if (citizenId) {
+        this.citizenId = Number(citizenId); // Store citizen ID
+        this.fetchReport(this.citizenId); // Fetch the report
+      } else {
+        console.error('Citizen ID is missing in query parameters.');
+        this.errorMessage = 'Citizen ID is required to fetch the report.';
+      }
+    });
+
     this.initializeForm();
-    this.getOfficerStationId();
+    //this.getOfficerStationId();
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
-    this.fetchnationwideReports();
+    this.fetchCitizens();
+    //this.fetchReport(this.citizenId);
+
+    // const navigation = this.router.getCurrentNavigation();
+    // if (navigation?.extras.state) {
+    //   this.citizenId = navigation.extras.state['citizenID'];
+    //   console.log('Citizen ID:', this.citizenId); // Use the citizenId as needed
+    // if (this.citizenId) {
+    //   this.fetchReport(this.citizenId);
+    // } else {
+    //   this.errorMessage = 'Invalid citizen ID.';
+    // }
+    // }
   }
 
   initializeForm(): void {
@@ -739,32 +106,94 @@ export class ReportEndorseComponent implements OnInit {
       subcategory_name: ['', Validators.required],
       status: ['', Validators.required],
       is_spam: [true],
-     color: ['', Validators.required],
+      color: ['', Validators.required],
     });
   }
 
-  getOfficerStationId(): void {
-    const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-    this.stationID = officerDetails.stationId || null;
+  // getOfficerStationId(): void {
+  //   const officerDetails = JSON.parse(
+  //     localStorage.getItem('officer_details') || '{}'
+  //   );
+  //   this.stationID = officerDetails.stationId || null;
 
-    if (this.stationID) {
-      this.fetchReports(this.stationID);
-    } else {
-      this.errorMessage = 'Station ID not found.';
-    }
-  }
+  //   if (this.stationID) {
+  //     this.fetchReports(this.stationID);
+  //   } else {
+  //     this.errorMessage = 'Station ID not found.';
+  //   }
+  // }
 
-  fetchReports(stationId: string): void {
-    this.isLoading = true;
-    this.caseQueueService.getReports(Number(stationId)).subscribe(
+  // fetchReports(stationId: string): void {
+  //   this.isLoading = true;
+  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         this.reports = response as IReport[];
+  //         console.log('Fetched reports:', this.reports);
+  //       } else {
+  //         this.errorMessage = 'Unexpected response from server.';
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching reports:', error);
+  //       this.errorMessage = 'Failed to load reports. Please try again.';
+  //       this.isLoading = false;
+  //     }
+  //   );
+  // }
+
+  // fetchReport(citizenId: number): void {
+  //   if (!citizenId) {
+  //     this.errorMessage = 'Citizen ID is required.';
+  //     return;
+  //   }
+
+  //   this.isLoading = true;
+  //   const url = `https://172.30.1.26:7108/api/retrieve/citizen/${citizenId}`;
+  //   this.http.get(url).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         // const fetchReports = response;
+  //         this.fetch_Report = response;
+  //         let fetch: any = '';
+  //         // this.reports = response as IReport[];
+  //         fetch = {
+  //           reportId: this.fetch_Report.report_id,
+  //           citizenId: this.fetch_Report.citizen_id
+  //         }
+  //         console.log('Fetched report of citizen:', fetch);
+  //       } else {
+  //         this.errorMessage = 'Unexpected response from server.';
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching reports:', error);
+  //       this.errorMessage = 'Failed to load reports. Please try again.';
+  //       this.isLoading = false;
+  //     }
+  //   );
+  // }
+
+  fetchReport(citizenId: number): void {
+ 
+    this.caseQueueService.fetchReport(citizenId).subscribe(
       (response) => {
-        if (Array.isArray(response)) {
-          this.reports = response as IReport[];
-          console.log('Fetched reports:', this.reports);
-        } else {
-          this.errorMessage = 'Unexpected response from server.';
-        }
-        this.isLoading = false;
+      console.log('Fetched report:', response);
+      //  this.reports.push(response);
+      //  console.log("REPORT DATAAAAAAAAAA!!!!!!!!!", this.reports)
+      //   this.isLoading = false;
+      console.log('Fetched report:', response);
+            // Assuming response is an object with report data
+            if (response && response.data) {
+                this.reports.push(...response.data); // Use spread operator if response.data is an array
+            } else {
+                this.reports.push(response); // Push the response directly if it's a single report object
+            }
+            console.log("REPORT DATAAAAAAAAAA!!!!!!!!!", this.reports);
+            this.isLoading = false;
+        
       },
       (error) => {
         console.error('Error fetching reports:', error);
@@ -772,6 +201,66 @@ export class ReportEndorseComponent implements OnInit {
         this.isLoading = false;
       }
     );
+    
+  }
+
+  fetchCitizens(): void {
+    this.caseQueueService.getCitizens().subscribe(
+      (response) => {
+        this.citizens = response;
+        console.log('Fetched citizens:', response);
+      },
+      (error) => {
+        console.error('Error fetching citizens:', error);
+        this.errorMessage = 'Failed to load citizens. Please try again.';
+      }
+    );
+  }
+
+  getCitizenName(citizenId: number): string {
+    const citizen = this.citizens.find((c: any) => c.citizen_id === citizenId);
+    return citizen ? `${citizen.firstname} ${citizen.lastname}` : 'Unknown';
+  }
+
+
+  // Method to populate the form with fetched report data
+  populateForm(report: IReport): void {
+    // this.endorseForm.patchValue({
+    //   reportID: report.report_id,
+    //   policeId1: report.stationID, // Adjust based on your report structure
+    //   policeId2: report.stationID, // Adjust based on your report structure
+    //   // Add other fields as necessary
+    if (!report) {
+      console.error('No report data to populate the form.');
+      this.errorMessage = 'Failed to populate form. Report data is missing.';
+      return;
+    }
+
+    this.endorseForm.patchValue({
+      reportID: report.report_id,
+      type: report.type,
+      complainant: report.complainant,
+      dateReceived: report.reported_date, // Assuming reported_date is the field in queue params
+      reportBody: report.ReportBody, // Mapping from 'reportBody' in the form to 'ReportBody' in params
+      citizen_id: report.citizen_id,
+      reportSubCategoryID: report.ReportSubCategoryId, // Matching 'reportSubCategoryID' with 'ReportSubCategoryId'
+      locationID: report.locationID,
+      stationID: report.stationID,
+      crimeID: report.crimeID,
+      reportedDate: report.DateTimeReportedDate, // Mapping to DateTimeReportedDate in params
+      incidentDate: report.DateTimeIncidentDate, // Mapping to DateTimeIncidentDate
+      blotterNum: report.blotterNum,
+      hasAccount: report.HasAccount, // Assuming HasAccount should be mapped
+      eSignature: report.eSignature,
+      // rankID: report.rankID, // Ensure rankID is included if it's available in case params
+      // personID: report.personID, // Ensure personID is included if it's available in case params
+      reportSubCategory: report.reportSubCategory,
+      subcategory_name: report.subcategory_name,
+      status: report.status,
+      is_spam: report.is_spam, // Optional: only patch if available in service params
+      color: report.color, // Optional: only patch if available in service params
+    });
+    console.log('Form Value:', this.endorseForm.value);
   }
 
   fetchnationwideReports(): void {
@@ -779,7 +268,7 @@ export class ReportEndorseComponent implements OnInit {
     this.caseQueueService.getNationwideReports().subscribe(
       (response) => {
         if (Array.isArray(response)) {
-          this.reports = response as IReport[];
+          this.reports = response as IReport[]; // Use type assertion cautiously
           console.log('Fetched reports:', this.reports);
         } else {
           this.errorMessage = 'Unexpected response from server.';
@@ -788,7 +277,8 @@ export class ReportEndorseComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching nationwide reports:', error);
-        this.errorMessage = 'Failed to load nationwide reports. Please try again.';
+        this.errorMessage =
+          'Failed to load nationwide reports. Please try again.';
         this.isLoading = false;
       }
     );
@@ -830,59 +320,45 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
-  onSubmit(): void {
-    if (this.endorseForm.invalid) {
-      alert('Please fill all required fields correctly.');
-      return;
+  onReportClick(reportID: number): void {
+    console.log(`Report ID clicked: ${reportID}`);
+    
+    // Find the report data for the selected report ID
+    const selectedReport = this.reports.find((report: { report_id: number; }) => report.report_id === reportID);
+  
+    if (selectedReport) {
+      this.populateForm(selectedReport); // Populate the form with the report data
+    } else {
+      console.error('Selected report not found.');
+      this.errorMessage = 'Selected report not found.';
+    }
+  }
+  
+
+  onSendBlotter(): void {
+    const blotterNum = this.endorseForm.get('blotterNum')?.value;
+
+    if (!blotterNum) {
+      this.endorseForm.patchValue({
+        blotterNum: this.generateBlotterNumber(),
+      });
     }
 
-    this.isLoading = true;
-    const formData = this.endorseForm.value;
+    const updatedBlotterNum = this.endorseForm.get('blotterNum')?.value;
+    console.log(`Sending blotter with number: ${updatedBlotterNum}`);
 
-    const report: IReport = {
-      reportBody: formData.reportBody,
-      citizen_id: formData.citizen_id,
-      reportSubCategoryID: formData.reportSubCategoryID,
-      locationID: formData.locationID || null,
-      stationID: formData.stationID,
-      crimeID: formData.crimeID || null,
-      reported_date: formData.reportedDate,
-      incidentDate: formData.incidentDate || null,
-      blotterNum: formData.blotterNum,
-      hasAccount: formData.hasAccount,
-      eSignature: formData.eSignature,
-      report_id: 0,
-      type: formData.type,
-      complainant: formData.complainant,
-      ReportBody: formData.reportBody,
-      subcategory_name: formData.subcategory_name,
-      reportSubCategory: formData.reportSubCategory,
-      ReportSubCategoryId: formData.reportSubCategoryID.toString(),
-      DateTimeReportedDate: new Date().toISOString(),
-      HasAccount: formData.hasAccount.toString(),
-      status: formData.status,
-      is_spam: formData.is_spam,
-      color: formData.color,
-    
-    };
+    this.successMessage = `Blotter with number ${updatedBlotterNum} sent successfully!`;
 
-    console.log('Submitting report with data:', report);
-    this.submitReportForm(report);
-  }
+    const reportData = this.endorseForm.value;
 
-  submitReportForm(report: IReport): void {
-    this.caseQueueService.submitReport(report).subscribe(
-      (response: any) => {
-        this.isLoading = false;
-        this.successMessage = 'Report submitted successfully!';
-        this.errorMessage = null;
-        this.endorseForm.reset();
-        this.router.navigate(['/station-case-queue']);
+    this.caseQueueService.moveToEndorsedQueue(reportData.report_id).subscribe(
+      (response) => {
+        console.log('Report moved to endorsed queue:', response);
+        this.router.navigate(['/email', updatedBlotterNum]);
       },
       (error) => {
-        this.isLoading = false;
-        console.error('Error during report submission:', error);
-        this.errorMessage = 'Submission failed. Please try again.';
+        console.error('Error moving report to endorsed queue:', error);
+        this.errorMessage = 'Failed to move the report. Please try again.';
       }
     );
   }
@@ -894,119 +370,23 @@ export class ReportEndorseComponent implements OnInit {
   }
 
   onDismiss(): void {
-    // Get the report ID from the form
     const reportId = this.endorseForm.get('reportID')?.value;
-  
-    if (!reportId) {
-      this.errorMessage = 'Please select a report to dismiss.';
-      return;
-    }
-  
     console.log(`Dismissing report with ID: ${reportId}`);
-  
-    // Call the backend service to dismiss the report
-    this.caseQueueService.dismissReport(reportId).subscribe(
-      (response) => {
-        // Success: Remove the dismissed report from the local list
-        this.reports = this.reports.filter(report => report.report_id !== reportId);
-  
-        // Display success message
-        this.successMessage = 'Report dismissed successfully!';
-        this.errorMessage = null;
-  
-        // Optionally reset the form if needed
-        this.endorseForm.reset();
-      },
-      (error) => {
-        // Handle errors if the API call fails
-        console.error('Error dismissing report:', error);
-        this.errorMessage = 'Failed to dismiss the report. Please try again.';
-      }
-    );
-  }
-
-  // onDismiss(): void {
-  //   const reportId = this.endorseForm.get('reportID')?.value;
-  //   console.log(`Dismissing report with ID: ${reportId}`);
-  //   this.successMessage = 'Report dismissed successfully!';
-  // }
-
-  // onSendBlotter(): void {
-  //   const blotterNum = this.endorseForm.get('blotterNum')?.value;
-
-  //   // Ensure the blotter number is assigned if it hasn't been provided.
-  //   if (!blotterNum) {
-  //     this.endorseForm.patchValue({
-  //       blotterNum: this.generateBlotterNumber() // Method to generate a blotter number
-  //     });
-  //   }
-
-  //   const updatedBlotterNum = this.endorseForm.get('blotterNum')?.value;
-  //   console.log(`Sending blotter with number: ${updatedBlotterNum}`);
-
-  //   // Endorsing the report and moving it to another UI
-  //   this.successMessage = `Blotter with number ${updatedBlotterNum} sent successfully!`;
-
-  //   // Assuming we store this report in a new state, or update it in the database
-  //   const reportData = this.endorseForm.value;
-  //   this.caseQueueService.moveToEndorsedQueue(reportData).subscribe(
-  //     (response) => {
-  //       console.log('Report moved to endorsed queue:', response);
-  //       // Route to the email UI
-  //       this.router.navigate(['/email', updatedBlotterNum]); // Adjust this route as per your app structure
-  //     },
-  //     (error) => {
-  //       console.error('Error moving report to endorsed queue:', error);
-  //       this.errorMessage = 'Failed to move the report. Please try again.';
-  //     }
-  //   );
-  // }
-
-  onSendBlotter(): void {
-    const blotterNum = this.endorseForm.get('blotterNum')?.value;
-
-    // Ensure the blotter number is assigned if it hasn't been provided.
-    if (!blotterNum) {
-      this.endorseForm.patchValue({
-        blotterNum: this.generateBlotterNumber() // Method to generate a blotter number
-      });
-    }
-
-    const updatedBlotterNum = this.endorseForm.get('blotterNum')?.value;
-    console.log(`Sending blotter with number: ${updatedBlotterNum}`);
-
-    // Endorsing the report and moving it to another UI
-    this.successMessage = `Blotter with number ${updatedBlotterNum} sent successfully!`;
-
-    const reportData = this.endorseForm.value;
-
-    // Call the service method to move the report to the endorsed queue
-    this.caseQueueService.moveToEndorsedQueue(reportData.report_id).subscribe(
-      (response) => {
-        console.log('Report moved to endorsed queue:', response);
-        // Route to the email UI
-        this.router.navigate(['/email', updatedBlotterNum]); // Adjust this route as per your app structure
-      },
-      (error) => {
-        console.error('Error moving report to endorsed queue:', error);
-        this.errorMessage = 'Failed to move the report. Please try again.';
-      }
-    );
+    this.successMessage = 'Report dismissed successfully!';
   }
 
   generateBlotterNumber(): string {
-    // Logic for generating a blotter number
     const currentDate = new Date();
-    const blotterNum = `BLT-${currentDate.getFullYear()}-${Math.floor(Math.random() * 10000)}`;
+    const blotterNum = `BLT-${currentDate.getFullYear()}-${Math.floor(
+      Math.random() * 10000
+    )}`;
     return blotterNum;
   }
 
   openSignaturePad(): void {
-        console.log('Opening signature pad for electronic signing...');
-        // Logic for opening the signature pad can be implemented here.
-        // If using a signature library or modal, trigger its initialization here.
-        this.successMessage = 'Signature pad opened successfully!';
-      }
+    console.log('Opening signature pad for electronic signing...');
+    this.successMessage = 'Signature pad opened successfully!';
+  }
 
   goBack(): void {
     this.router.navigate(['/manage-police']);

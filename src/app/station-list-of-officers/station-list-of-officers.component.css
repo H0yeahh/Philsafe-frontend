@@ -460,11 +460,11 @@
 } */
 
 
-.main-content {
+/* .main-content {
   flex-grow: 1;
-  background-color: #eaf4fc; 
+  background-color: #eaf4fc;  */
   /* background-color: #B3E7E9;s */
-  padding: 30px;
+  /* padding: 30px;
   margin-top: 40px;
 }
 
@@ -562,4 +562,104 @@
   background-color: #5cb85c;
   color: white;
   border-radius: 3px;
+} */
+
+
+
+/* General container for table */
+.table-container {
+  background-color: #ECECEC; /* Light background for better contrast */
+  border-radius: 5px;
+  overflow-x: auto;
+  padding: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  margin: 5px auto;
+  max-width: 1200px; /* Properly sized container */
+}
+
+/* Table styling */
+.station-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures balanced column widths */
+  text-align: left;
+}
+
+.station-table th {
+  background-color: #1e40af; /* Header background color */
+  color: #fff; /* White text for contrast */
+  font-weight: bold;
+  padding: 16px 12px;
+  text-transform: uppercase;
+}
+
+.station-table td {
+  padding: 14px 12px;
+  color: #333;
+  word-wrap: break-word; /* Prevents overflow */
+}
+
+/* Alternating row colors for readability */
+.station-table tr:nth-child(odd) {
+  background-color: #f9f9f9; /* Light gray for odd rows */
+}
+
+.station-table tr:nth-child(even) {
+  background-color: #fff; /* White for even rows */
+}
+
+/* Hover effect for rows */
+.station-table tr:hover {
+  background-color: #B3E7E9; /* Light blue hover */
+}
+
+/* Action buttons */
+.edit-btn,
+.delete-btn {
+  display: inline-block;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition for hover */
+}
+
+/* Edit button styling */
+.edit-btn {
+  background-color: #1e40af;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background-color: #162d8f; /* Darker blue on hover */
+}
+
+/* Delete button styling */
+.delete-btn {
+  background-color: #e60000;
+  color: #fff;
+  margin-left: 8px; /* Spacing between buttons */
+}
+
+.delete-btn:hover {
+  background-color: #c20000; /* Darker red on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .table-container {
+      padding: 10px;
+  }
+
+  .station-table th, .station-table td {
+      padding: 10px;
+      font-size: 14px; /* Adjust font size for mobile */
+  }
+
+  .edit-btn, .delete-btn {
+      padding: 6px 12px; /* Adjust button size for smaller screens */
+      font-size: 12px;
+  }
 }

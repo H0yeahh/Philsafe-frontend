@@ -430,26 +430,26 @@ export class CaseManagementComponent implements OnInit {
       color: formData.color
     };
 
-    console.log('Submitting report with data:', report);
-    this.submitReportForm(report);
+    // console.log('Submitting report with data:', report);
+    // this.submitReportForm(report);
   }
 
-  submitReportForm(report: IReport): void {
-    this.caseQueueService.submitReport(report).subscribe(
-      (response: any) => {
-        this.isLoading = false;
-        this.successMessage = 'Report submitted successfully!';
-        this.errorMessage = null;
-        this.manageCasesForm.reset();
-        this.router.navigate(['/station-case-queue']);
-      },
-      (error) => {
-        this.isLoading = false;
-        console.error('Error during report submission:', error);
-        this.errorMessage = 'Submission failed. Please try again.';
-      }
-    );
-  }
+  // submitReportForm(report: IReport): void {
+  //   this.caseQueueService.submitReport(report).subscribe(
+  //     (response: any) => {
+  //       this.isLoading = false;
+  //       this.successMessage = 'Report submitted successfully!';
+  //       this.errorMessage = null;
+  //       this.manageCasesForm.reset();
+  //       this.router.navigate(['/station-case-queue']);
+  //     },
+  //     (error) => {
+  //       this.isLoading = false;
+  //       console.error('Error during report submission:', error);
+  //       this.errorMessage = 'Submission failed. Please try again.';
+  //     }
+  //   );
+  // }
 
   goBack(): void {
     this.router.navigate(['/manage-police']);

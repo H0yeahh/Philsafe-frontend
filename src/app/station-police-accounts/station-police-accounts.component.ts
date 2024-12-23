@@ -305,7 +305,7 @@ export class StationPoliceAccountsComponent implements OnInit {
                 password: accountData.password,
                 contactNum: accountData.contactNum,
                 ...ids,
-                // role: 'Police',
+                // role: 'Admin',
                 role: accountData.role,
                 unit: accountData.unit,
                 rankID: accountData.rank_id,          // Include rank_id

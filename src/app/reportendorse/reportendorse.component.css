@@ -26,16 +26,19 @@ body {
 .report-details h1 {
     font-size: 24px;
     margin-bottom: 20px;
+    color: black;
 }
 
 .report-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    color:black;
 }
 
 .report-left, .report-right {
     width: 48%;
+    color: black;
 }
 
 .form-group {

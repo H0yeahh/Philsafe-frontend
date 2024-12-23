@@ -40,6 +40,8 @@ import { ReportEndorseComponent } from './reportendorse/reportendorse.component'
 import { EmailComponent } from './email/email.component';
 import { StationPoliceAccountsComponent } from './station-police-accounts/station-police-accounts.component';
 import { CaseManagementComponent } from './case-management/case-management.component';
+import { PoliceReportsComponent } from './police-reports/police-reports.component';
+import { PoliceCasesComponent } from './police-cases/police-cases.component';
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] } 
 
@@ -87,6 +89,9 @@ const routes: Routes = [
   { path: 'email', component: EmailComponent},
   { path: 'manage-users', component: ManageStationComponent},
   { path: 'case-management', component: CaseManagementComponent},
+  { path: 'police-reports', component: PoliceReportsComponent},
+  { path: 'police-cases', component: PoliceCasesComponent},
+
  
 
   // { path: '', redirectTo: '/home-page', pathMatch: 'full' },

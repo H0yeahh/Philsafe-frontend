@@ -147,10 +147,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
+import { StringDecoder } from 'string_decoder';
 
 export interface IReport {
-  reportBody: string;
+  reportBody?: StringDecoder;
+  // reportBody: string | undefined;
   citizen_id: number;
   reportSubCategoryID: number;
   locationID?: number;
@@ -171,6 +173,7 @@ export interface IReport {
   DateTimeReportedDate: string;
   DateTimeIncidentDate?: string;
   HasAccount: string;
+  status: string;
 }
 
 @Injectable({
@@ -189,6 +192,8 @@ export class CaseQueueService {
     categorizedReports: (subcategoryId: number) => `${this.apiUrl}/api/report/retrieve/category/${subcategoryId}`,
     crimeReports: (crimeId: number) => `${this.apiUrl}/api/report/retrieve/case/${crimeId}`,
     moveToEndorsedQueue: (reportId: number) => `${this.apiUrl}/api/report/move-to-endorsed-queue/${reportId}`,  // New endpoint for moving report
+    getReport: `${this.apiUrl}/api/report/retrieve/citizen`,
+    getCitizens: `${this.apiUrl}/api/citizen/collect/citizens/all`
   };
 
   constructor(private http: HttpClient) {}
@@ -255,6 +260,12 @@ export class CaseQueueService {
       .pipe(catchError(this.handleError));
   }
 
+  getCitizens(): Observable<any> {
+    return this.http.get(this.endpoints.getCitizens)
+      .pipe(catchError(this.handleError));
+  }
+
+
   // Error handling function
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred!';
@@ -280,6 +291,23 @@ export class CaseQueueService {
       status: error.status,
       error: error.error,
     });
+  }
+
+  fetchReport(citizenID: number): Observable<{ data?: any; error?: string }> { 
+
+    return this.http.get(`${this.endpoints.getReport}/${citizenID}`).pipe(
+      map((response: any) => {
+        // On success, return the data
+        return { data: response }; // Wrap the response in an object
+      }),
+      catchError((error) => {  // Use catchError to handle the error
+
+        console.error(this.handleError(error));  // Call handleError with the error
+
+        return throwError(error);  // Return the error observable
+
+      })
+    );
   }
 
   dismissReport(reportId: number): Observable<any> {

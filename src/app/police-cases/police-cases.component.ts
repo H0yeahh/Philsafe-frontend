@@ -1,71 +1,3 @@
-// import { Component, OnInit } from '@angular/core';
-// import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-// import { IReport, StationReportsService } from '../station-reports.service';
-// import { Router } from '@angular/router';
-// import { ReportService } from '../report.service';
-
-// @Component({
-//   selector: 'app-station-reports',
-//   templateUrl: './station-reports.component.html',
-//   styleUrls: ['./station-reports.component.css']
-// })
-// export class StationReportsComponent implements OnInit {
-  // reportsForm!:FormGroup;
-  // isLoading = false;
-  // successMessage: string | null = null;
-  // errorMessage: string | null = null;
-  // reports: IReport[] = []; // Added for station data if you need it later
-  // previewUrl: string | ArrayBuffer | null = null;
-
-  // citizenID: string | null = null;
-  // reportID: string | null = null;
-  // // accountID: string | null = null;
- 
-  // constructor(
-  //   private fb: FormBuilder,
-  //   private reportsService: StationReportsService,
-  //   private ReportService: ReportService,
-  //   private router: Router,) {}
-
-  // ngOnInit(): void {
-  //   this.fetchReports();
-  //   this.reportsForm = this.fb.group({
-      // firstName: ['', Validators.required],
-      // middleName: ['', Validators.required],
-      // lastName: ['', Validators.required],
-      // dateOfBirth: ['', Validators.required], // New field
-      // sex: ['', Validators.required], // New field
-      // civilStatus: ['', Validators.required], // New field 
-  //   });
-  // } 
-  // Alternative fetch function for jurisdictions or stations (if needed)
-//   fetchReports(): void {
-//     this.reportsService.getReports().subscribe(
-//       (response: any) => {
-//         console.log('Raw response:', response);
-//         if (Array.isArray(response)) {
-//           this.reports = response;
-//           console.log('Fetched reports:', this.reports); // Debugging the fetched stations
-//         } else {
-//           console.error('Unexpected response format:', response);
-//         }
-//       },
-//       (error) => {
-//         console.error('Error fetching reports:', error);
-//         alert('Failed to load reports. Please try again.');
-//       }
-//     );
-//     }
-//     onSubmit() {
-//       console.log(this.reportsForm.value)
-      
-//     }
-// }
-
-
-
-
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
@@ -74,14 +6,17 @@ import { IReport } from '../case.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
 import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
 import { PersonService } from '../person.service';
+// import { CreateCaseService, ICase } from '../create-case.service';
+import { CreateCasesService, ICase } from '../create-cases.service';
+
 
 @Component({
-  selector: 'app-station-reports',
-  templateUrl: './station-reports.component.html',
-  styleUrls: ['./station-reports.component.css']
+  selector: 'app-police-cases',
+  templateUrl: './police-cases.component.html',
+  styleUrl: './police-cases.component.css'
 })
-export class StationReportsComponent implements OnInit {
-  casesForm!: FormGroup;  // Form group for report submission
+export class PoliceCasesComponent implements OnInit {
+  policecaseForm!: FormGroup;  // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -89,6 +24,7 @@ export class StationReportsComponent implements OnInit {
   stations: IStation[] = [];
   persons: IPerson[] = [];
   ranks: IRank[] = [];
+  case: ICase[] = [];
   
   stationID: string | null = null;
 
@@ -98,6 +34,8 @@ export class StationReportsComponent implements OnInit {
     private jurisdictionService: JurisdictionService,
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
+    // private createCaseService: CreateCaseService,
+    private createCasesService: CreateCasesService,
     private router: Router
   ) {}
 
@@ -109,33 +47,30 @@ export class StationReportsComponent implements OnInit {
     this.fetchStations();
     this.fetchPersons();
     this.fetchnationwideReports();
+    this.fetchnationwideCase();
+
   }
 
   // Define the form controls
   initializeForm(): void {
-    this.casesForm = this.fb.group({
-      reportID: ['', Validators.required],
-      type: ['', Validators.required],
-      complainant: ['', Validators.required],
-      dateReceived: ['', Validators.required],
-      reportBody: ['', Validators.required],
-      citizen_id: ['', Validators.required],
-      reportSubCategoryID: ['', Validators.required],
-      locationID: [''],  // Optional field
-      stationID: ['', Validators.required],
-      crimeID: [''],  // Optional field
-      reported_date: ['', Validators.required],
-      incidentDate: [''],  // Optional field
-      blotterNum: ['', Validators.required],
-      hasAccount: [true],
-      eSignature: ['', Validators.required],  // Assuming eSignature is a string or file
-      rankID: ['', Validators.required],  // Rank field added
-      personID: ['', Validators.required],  // Person field added
-      reportSubCategory: ['', Validators.required],
-      subcategory_name:['', Validators.required], 
+    this.policecaseForm = this.fb.group({
+      title: ['', Validators.required], 
+      offenseType: ['', Validators.required], 
+      citeNumber: ['', Validators.required], 
+      datetimeReported: ['', Validators.required], 
+      datetimeCommitted: ['', Validators.required], 
+      description: ['', Validators.required], 
       status: ['', Validators.required], 
-      is_spam: ['', Validators.required], 
-      color: ['', Validators.required], 
+      incidenttypeId: ['', Validators.required], 
+      datetimeCreated: ['', Validators.required], 
+      lastModified: ['', Validators.required], 
+      createdBy: ['', Validators.required], 
+      modifiedBy: ['', Validators.required], 
+      locationId: ['', Validators.required], 
+      stationId: ['', Validators.required], 
+      victim_id_list: ['', Validators.required], 
+      suspect_id_list: ['', Validators.required], 
+      police_id_list: ['', Validators.required], 
     });
   }
 
@@ -193,6 +128,26 @@ export class StationReportsComponent implements OnInit {
     );
   }
 
+  fetchnationwideCase(): void {
+    this.isLoading = true;  // Set loading state to true
+    this.createCasesService.getNationwideCase().subscribe(
+      (response) => {
+        if (Array.isArray(response)) {
+          this.case = response as ICase[];
+          console.log('Fetched case:', this.case);
+        } else {
+          this.errorMessage = 'Unexpected response from server.';
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error fetching case:', error);
+        this.errorMessage = 'Failed to load case. Please try again.';
+        this.isLoading = false;
+      }
+    );
+  }
+
 
   // Fetch stations
   fetchStations(): void {
@@ -235,42 +190,35 @@ export class StationReportsComponent implements OnInit {
 
   // Submit the form
   onSubmit(): void {
-    if (this.casesForm.invalid) {
+    if (this.policecaseForm.invalid) {
       alert('Please fill all required fields correctly.');
       return;
     }
 
     this.isLoading = true;
-    const formData = this.casesForm.value;
+    const formData = this.policecaseForm.value;
 
-    const report: IReport = {
-      reportBody: formData.reportBody,
-      citizen_id: formData.citizenID,
-      reportSubCategoryID: formData.reportSubCategoryID,
-      locationID: formData.locationID || null, // Handle optional fields
-      stationID: formData.stationID,
-      crimeID: formData.crimeID || null, // Handle optional fields
-      // reportedDate: formData.reportedDate,
-      incidentDate: formData.incidentDate || null, // Handle optional fields
-      blotterNum: formData.blotterNum,
-      hasAccount: formData.hasAccount,
-      eSignature: formData.eSignature,
-      report_id: 0,  // This will be set by the server
-      type: formData.type,
-      complainant: formData.complainant,
-      reported_date: formData.reported_date,
-      ReportBody: formData.reportBody, // Use reportBody from form
-      subcategory_name:formData.subcategory_name,
-      reportSubCategory: formData.reportSubCategory,
-      ReportSubCategoryId: formData.reportSubCategoryID.toString(),
-      DateTimeReportedDate: new Date().toISOString(),
-      HasAccount: formData.hasAccount.toString(),
-      status: formData.staus,
-      is_spam: formData.is_spam,
-      color: formData.color
+    const cases: ICase = {
+      title: formData.title,
+      offenseType: formData.offenseType,
+      citeNumber: formData.citeNumber,
+      datetimeReported: new Date().toISOString(),
+      datetimeCommitted: new Date().toISOString(),
+      description: formData.description,
+      status: formData.status,
+      incidenttypeId: formData.incidenttypeId.toSting(),
+      datetimeCreated: new Date().toISOString(),
+      lastModified: formData.lastModified,
+      createdBy: formData.createdBy,
+      modifiedBy: formData.modifiedBy,
+      locationId: formData.locationId || null,
+      stationId: formData.stationId,
+      victim_id_list: formData.victim_id_list,
+      suspect_id_list: formData.suspect_id_list,
+      police_id_list: formData.police_id_list,
     };
 
-    console.log('Submitting report with data:', report);
+    console.log('Submitting case with data:', cases);
 
     // this.submitReportForm(report);
   }

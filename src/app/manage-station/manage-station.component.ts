@@ -808,27 +808,33 @@ export class ManageStationComponent implements OnInit {
     window.scrollTo(0, 0); // Scroll to the top for form view
   }
 
-  // // Delete station
-  // deleteStation(stationId: number): void {
-  //   if (confirm('Are you sure you want to delete this station?')) {
-  //     this.managestationService.deleteStation(stationId).subscribe(
-  //       () => {
-  //         this.successMessage = 'Station deleted successfully.';
-  //         this.stations = this.stations.filter(station => station.station_id !== stationId);
-  //         this.filteredStations = this.filteredStations.filter(station => station.station_id !== stationId);
-  //       },
-  //       (error) => {
-  //         console.error('Error deleting station:', error);
-  //         this.errorMessage = 'Failed to delete station. Please try again.';
-  //       }
-  //     );
-  //   }
-  // }
 
   // Delete station
+// deleteStation(stationId: number): void {
+//   if (confirm('Are you sure you want to delete this station?')) {
+//     this.jurisdictionService.delete(stationId).subscribe(
+//       () => {
+//         this.successMessage = 'Station deleted successfully.';
+//         this.stations = this.stations.filter(station => station.station_id !== stationId);
+//         this.filteredStations = this.filteredStations.filter(station => station.station_id !== stationId);
+//       },
+//       (error) => {
+//         console.error('Error deleting station:', error);
+//         this.errorMessage = 'Failed to delete station. Please try again.';
+//       }
+//     );
+//   }
+// }
+
+
 deleteStation(stationId: number): void {
+  if (!stationId || isNaN(stationId)) {
+    this.errorMessage = 'Invalid Station ID. Unable to proceed with deletion.';
+    return;
+  }
+
   if (confirm('Are you sure you want to delete this station?')) {
-    this.jurisdictionService.delete(stationId).subscribe(
+    this.managestationService.deleteStation(stationId).subscribe(
       () => {
         this.successMessage = 'Station deleted successfully.';
         this.stations = this.stations.filter(station => station.station_id !== stationId);
@@ -836,11 +842,12 @@ deleteStation(stationId: number): void {
       },
       (error) => {
         console.error('Error deleting station:', error);
-        this.errorMessage = 'Failed to delete station. Please try again.';
+        this.errorMessage = error?.message || 'Failed to delete station. Please try again.';
       }
     );
   }
 }
+
 
   
   // Navigate back to the previous screen

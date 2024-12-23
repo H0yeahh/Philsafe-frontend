@@ -65,7 +65,7 @@ export class MapboxService {
   }
 
   // fetchCrimeDetails() {
-  //   this.http.get<crimeDetail[]>('https://localhost:7108/api/case/collect/crimedata').subscribe((data) => {
+  //   this.http.get<crimeDetail[]>('https://172.30.6.61:7108/api/case/collect/crimedata').subscribe((data) => {
   //     data.filter((x: crimeDetail) => x.incident_type.toUpperCase().includes('ROBBERY')).forEach((crime: crimeDetail) => {
   //       this.addMarkers({ longitude: crime['longitude.'], latitude: crime.latitude }, crime.incident_type)
   //     })

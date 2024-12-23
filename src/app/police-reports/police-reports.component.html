@@ -1,0 +1,93 @@
+<div class="container">
+    <div class="emergency-banner">
+        In case of emergencies, please dial your local emergency services number
+    </div>
+    <div class="flex h-screen">
+        <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
+            <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>
+            <div class="p-4 text-center">
+                <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
+                <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
+                <p class="text-sm text-zinc-600">CCPO Admin Personnel</p>
+            </div>
+            <nav class="mt-4">
+                <ul class="list-none p-0">
+                    <li>
+                        <a routerLink="/dashboard" class="nav-link">
+                            <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                            <span>DASHBOARD</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/manage-users" class="nav-link">
+                            <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
+                            <span>MANAGE USER</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/ticket-request" class="nav-link">
+                            <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
+                            <span>TICKET REQUESTS</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/manage-station" class="nav-link">
+                            <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
+                            <span>MANAGE STATION</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/station-crime-map" class="nav-link">
+                            <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                            <span>CRIME MAP</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button type="button" class="logout-button mt-auto" routerLink="/login">LOG OUT</button>
+        </aside>
+
+
+        <div class="main-content">
+            <div class="header">
+                <div class="header-title">
+                    <h1>NEW CASES</h1>
+                </div>
+                <div class="header-info">
+                    <p>Date: May 24, 2024</p>
+                    <p>Time: 0100</p>
+                    <div class="new-reports-container">
+                        <a href="/police-cases" class="new-reports-link">
+                            CASE REPORTS
+                            <span class="new-reports-badge"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <main class="main-content">
+                <header class="header"></header>
+        
+                <section class="new-reports">
+                    <form [formGroup]="policereportsForm" (ngSubmit)="onSubmit()">
+                        <table class="reports-table">
+                            <thead>
+                                <tr>
+                                    <th>Report ID</th>
+                                    <th>Incident Type</th>
+                                    <th>Complainant</th>
+                                    <th>Date Received</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let report of reports">
+                                    <td>{{ report.report_id }}</td>
+                                    <td>{{ report.subcategory_name }}</td>
+                                    <td>{{ report.citizen_id }}</td>
+                                    <td>{{ report.reported_date }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </section>
+            </main>
+        </div>

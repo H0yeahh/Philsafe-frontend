@@ -4,44 +4,35 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { response } from 'express';
 
-export interface IReport {
-  reportBody?: string;
-  citizen_id: number;
-  reportSubCategoryID: number;
-  locationID?: number;
-  stationID: number;
-  crimeID?: number;
-  // reportedDate: string;  
-  incidentDate?: string;
-  blotterNum: string;
-  hasAccount: boolean;
-  eSignature: number[] | Uint8Array | Blob;  
-  reportSubCategory: string;
-  subcategory_name: string;
-  report_id: number;
-  type?: string;
-  complainant: string;
-  reported_date: string;  
-
-  ReportBody: string; 
-  ReportSubCategoryId: string;
-  DateTimeReportedDate: string;
-  DateTimeIncidentDate?: string;
-  HasAccount: string;
-  color?: string;
+export interface ICase {
+  title: string;
+  offenseType: string;
+  citeNumber: string;
+  datetimeReported: string;
+  datetimeCommitted: string;
+  description: string;
   status: string;
-  is_spam?: string;
+  incidenttypeId: number;
+  datetimeCreated: string;
+  lastModified: string;
+  createdBy: string;
+  modifiedBy: string;
+  locationId: number;
+  stationId?: number;
+  victim_id_list?: number;
+  suspect_id_list?: number;
+  police_id_list?: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class CaseService {
-  private readonly baseUrl = 'https://localhost:7108/api/report'; // Base URL
+export class CreateCaseService {
+  private readonly baseUrl = 'https://localhost:7108/api/case'; // Base URL
   private readonly endpoints = {
     // getAll: `${this.baseUrl}/retrieve/citizen`,
     getAll: `${this.baseUrl}/retrieve/nationwide`,
-    submitReport: `${this.baseUrl}/submit`, // Add the endpoint for submitting reports
+    submitCase: `${this.baseUrl}`, // Add the endpoint for submitting reports
     
   };
 
@@ -61,19 +52,19 @@ export class CaseService {
   }
 
   // Fetch all citizen reports
-  getAll(): Observable<IReport[]> {  // Strongly typed response
+  getAll(): Observable<ICase[]> {  // Strongly typed response
     const headers = this.getHeaders();  // Add headers with session token
     
-    return this.http.get<IReport[]>(this.endpoints.getAll, { headers }).pipe(
+    return this.http.get<ICase[]>(this.endpoints.getAll, { headers }).pipe(
       catchError(this.handleError)
     );
   }
 
   // Submit a new report
-  submitReport(report: IReport): Observable<IReport> {  // Assuming the server returns the submitted report
+  submitReport(report: ICase): Observable<ICase> {  // Assuming the server returns the submitted report
     const headers = this.getHeaders();  // Add headers with session token
     
-    return this.http.post<IReport>(this.endpoints.submitReport, report, { headers }).pipe(
+    return this.http.post<ICase>(this.endpoints.submitCase, report, { headers }).pipe(
       catchError(this.handleError)
     );
   }

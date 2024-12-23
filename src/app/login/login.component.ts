@@ -90,7 +90,7 @@ async onSubmit() {
     //   this.router.navigate(['/station-case-queue'])
     // }
     if (loginReq.role === 'Admin') {
-      this.router.navigate(['/manage-station']);
+      this.router.navigate(['/dashboard']);
     } else if (loginReq.role === 'Chief') {
       this.router.navigate(['/station-case-queue']);
     } else if (loginReq.role === 'Police') {

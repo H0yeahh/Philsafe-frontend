@@ -1,0 +1,68 @@
+<div class="form-container">
+    <form [formGroup]="createcaseForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" formControlName="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="offenseType">Offense Type:</label>
+            <input type="text" id="offenseType" formControlName="offenseType" required>
+        </div>
+
+        <div class="form-group">
+            <label for="citeNumber">Cite Number:</label>
+            <input type="text" id="citeNumber" formControlName="citeNumber" required>
+        </div>
+
+        <div class="form-group">
+            <label for="datetimeReported">Date/Time Reported:</label>
+            <input type="datetime-local" id="datetimeReported" formControlName="datetimeReported" required>
+        </div>
+
+        <div class="form-group">
+            <label for="datetimeCommitted">Date/Time Committed:</label>
+            <input type="datetime-local" id="datetimeCommitted" formControlName="datetimeCommitted" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" formControlName="description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <input type="text" id="status" formControlName="status" required>
+        </div>
+
+        <div class="form-group">
+            <label for="incidenttypeId">Incident Type ID:</label>
+            <input type="number" id="incidenttypeId" formControlName="incidenttypeId" value="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="datetimeCreated">Date/Time Created:</label>
+            <input type="datetime-local" id="datetimeCreated" formControlName="datetimeCreated" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lastModified">Last Modified:</label>
+            <input type="datetime-local" id="lastModified" formControlName="lastModified" required>
+        </div>
+
+        <div class="form-group">
+            <label for="createdBy">Created By:</label>
+            <input type="text" id="createdBy" formControlName="createdBy" required>
+        </div>
+
+        <div class="form-group">
+            <label for="modifiedBy">Modified By:</label>
+            <input type="text" id="modifiedBy" formControlName="modifiedBy" required>
+        </div>
+
+        <div class="button-group">
+            <button type="button" class="back-button">Back</button>
+            <button type="submit" class="submit-button">Submit Report</button>
+        </div>
+    </form>
+</div>

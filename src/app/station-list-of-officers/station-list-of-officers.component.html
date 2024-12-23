@@ -51,20 +51,20 @@
         </nav>
       </aside>
 
-      <div class="table-container mt-8">
+      <!-- <div class="table-container mt-8">
         <div class="table-controls flex justify-between items-center mb-4">
           <form [formGroup]="officerForm" class="filter">
-            <input type="text" placeholder="Search user" formControlName="search" class="search-bar">
+            <input type="text" placeholder="Search user" formControlName="search" class="search-bar" />
+            <div class="pagination flex items-center">
+              <label for="entries">Display</label>
+              <select id="entries" formControlName="entries">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select> -->
+              <!-- <span>/{{ totalUsers }}</span> -->
+            <!-- </div>
           </form>
-          <div class="pagination flex items-center">
-            <label for="entries">Display</label>
-            <select id="entries" formControlName="entries">
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-            </select>
-            <!-- <span>/{{ totalUsers }}</span> -->
-          </div>
         </div>
         <table class="user-table w-full border-collapse">
           <thead>
@@ -78,21 +78,67 @@
           </thead>
           <tbody>
             <tr *ngFor="let officer of police">
-              <td class="border border-zinc-300 p-2">{{ officer.personID }}</td>
-              <td class="border border-zinc-300 p-2">{{ officer.rankID}}</td>
+              <td class="border border-zinc-300 p-2">{{ officer.firstname }}</td>
+              <td class="border border-zinc-300 p-2">{{ officer.rank_id }}</td>
               <td class="border border-zinc-300 p-2">{{ officer.unit }}</td>
-              <td class="border border-zinc-300 p-2">{{ officer.stationID}}</td>
+              <td class="border border-zinc-300 p-2">{{ officer.station_id }}</td>
               <td class="border border-zinc-300 p-2">
                 <button (click)="editPolice(officer)" class="action-btn edit">✏️</button>
-                <!-- <button (click)="deletePolice(officer.personID)" class="action-btn delete">🗑️</button> -->
-                <button *ngIf="officer.personID !== undefined" (click)="deletePolice(officer.personID)" class="action-btn delete">🗑️</button>
-                <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+                <button *ngIf="officer.police_id !== undefined" (click)="deletePolice(officer.police_id)" class="action-btn delete">🗑️</button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-</div>
+      </div> -->
+
+      <div class="table-container">
+        <form [formGroup]="officerForm" (ngSubmit)="onSubmit()"> 
+            <table class="station-table">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Rank</th>
+                        <th>Group</th>
+                        <th>Station</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let officer of police; let i = index">
+                        <td>{{ officer.firstname }}</td>
+                        <td>{{ officer.rank_abbr }}</td>
+                        <td>{{ officer.unit }}</td>
+                        <td>{{ officer.station_id }}</td>
+                        <td>
+                            <button type="button" class="edit-btn" (click)="editPolice(officer)">Edit</button>
+                            <button type="button" class="delete-btn" (click)="deletePolice(officer.police_id)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
 
 
 <!-- <div class="container">

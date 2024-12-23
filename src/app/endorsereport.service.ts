@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export interface IReport {
-  reportBody: string;
+  reportBody: string | undefined;
   citizen_id: number;
   reportSubCategoryID: number;
   locationID?: number;

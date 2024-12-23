@@ -99,7 +99,7 @@ export class StationCrimeMapComponent implements OnInit {
   }
 
   fetchCrimeDetails() {
-    this.http.get<crimeDetail[]>('https://172.29.11.255:7108/api/case/retrieve/nationwide').subscribe((data) => {
+    this.http.get<crimeDetail[]>('https://192.168.1.60:7108/api/case/retrieve/nationwide').subscribe((data) => {
       this.crimeDetails = data || [];
       this.filteredCrimes = data || [];
       console.log('Fetched Crimes:', this.crimeDetails)

@@ -1,286 +1,54 @@
- <!-- <div class="container">
-        <main class="main-content">
-            <section class="report-details">
-                <h1>REPORT ID: <span>ZYXKLMNOP</span></h1>
-                <div class="report-header">
-                    <div class="report-left">
-                        <div class="form-group">
-                            <label for="duty-officer">Duty Officer:</label>
-                            <select id="duty-officer">
-                                <option>PSSG Eric Noble</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="chief-police">Chief Police:</label>
-                            <select id="chief-police">
-                                <option>PSSG Eric Noble</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="report-right">
-                        <div class="form-group">
-                            <label for="police-id-1">Police ID:</label>
-                            <input type="text" id="police-id-1" placeholder="Enter badge number to save">
-                        </div>
-                        <div class="form-group">
-                            <label for="police-id-2">Police ID:</label>
-                            <input type="text" id="police-id-2" placeholder="Enter badge number to save">
-                        </div>
-                        <div class="form-group">
-                            <label>Signature:</label>
-                            <a href="#">Please Sign Here</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="endorse-btn">Endorse</button>
-                    <button class="dismiss-btn">Dismiss</button>
-                </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Reporter Data</th>
-                                <th>Suspect Data</th>
-                                <th>Victim Data</th>
-                                <th>Narrative</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Einjel Quio</td>
-                                <td>Margo Dela Rosa</td>
-                                <td>Karen Cruz</td>
-                                <td>Index Crime</td>
-                            </tr>
-                            <tr>
-                                <td>Male</td>
-                                <td>Male</td>
-                                <td>Female</td>
-                                <td>Rape | May 20, 2024</td>
-                            </tr>
-                            <tr>
-                                <td>Filipino</td>
-                                <td>Filipino</td>
-                                <td>Filipino</td>
-                                <td>THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG</td>
-                            </tr>
-                            <tr>
-                                <td>Region VII</td>
-                                <td>Region VII</td>
-                                <td>Region VII</td>
-                                <td><a href="#">View Evidence</a></td>
-                            </tr>
-                            <tr>
-                                <td>Cebu</td>
-                                <td>Cebu</td>
-                                <td>Cebu</td>
-                                <td><a href="#">View Witness</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="submit-blotter">
-                    <button class="send-blotter-btn">SEND TICKET BLOTTER</button>
-                </div>
-            </section>
-        </main>
-    </div> -->
-
-
-    <!-- <form [formGroup]="endorseForm">
+       <form [formGroup]="endorseForm">
         <div class="container">
           <main class="main-content">
             <section class="report-details">
-              <h1>REPORT ID: <span>ZYXKLMNOP</span></h1>
-              <div class="report-header">
-                <div class="report-left">
-                  <div class="form-group">
-                    <label for="duty-officer">Duty Officer:</label>
-                    <select id="duty-officer" formControlName="dutyOfficer">
-                      <option>PSSG Eric Noble</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="chief-police">Chief Police:</label>
-                    <select id="chief-police" formControlName="chiefPolice">
-                      <option>PSSG Eric Noble</option>
-                    </select>
-                  </div>
-                </div>
-      
-                <div class="report-right">
-                  <div class="form-group">
-                    <label for="police-id-1">Police ID:</label>
-                    <input type="text" id="police-id-1" placeholder="Enter badge number to save" formControlName="policeId1">
-                  </div>
-                  <div class="form-group">
-                    <label for="police-id-2">Police ID:</label>
-                    <input type="text" id="police-id-2" placeholder="Enter badge number to save" formControlName="policeId2">
-                  </div>
-                  <div class="form-group">
-                    <label>Signature:</label>
-                    <a href="#">Please Sign Here</a>
-                  </div>
-                </div>
-              </div>
-      
-              <div class="action-buttons">
-                <button type="button" class="endorse-btn" (click)="onEndorse()">Endorse</button>
-                <button type="button" class="dismiss-btn" (click)="onDismiss()">Dismiss</button>
-              </div>
-      
-              <div class="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Reporter Data</th>
-                      <th>Suspect Data</th>
-                      <th>Victim Data</th>
-                      <th>Narrative</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.name').value }}</td>
-                      <td>{{ endorseForm.get('suspectData.name').value }}</td>
-                      <td>{{ endorseForm.get('victimData.name').value }}</td>
-                      <td>{{ endorseForm.get('narrative.type').value }}</td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.gender').value }}</td>
-                      <td>{{ endorseForm.get('suspectData.gender').value }}</td>
-                      <td>{{ endorseForm.get('victimData.gender').value }}</td>
-                      <td>{{ endorseForm.get('narrative.details').value }}</td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.nationality').value }}</td>
-                      <td>{{ endorseForm.get('suspectData.nationality').value }}</td>
-                      <td>{{ endorseForm.get('victimData.nationality').value }}</td>
-                      <td>{{ endorseForm.get('narrative.description').value }}</td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.region').value }}</td>
-                      <td>{{ endorseForm.get('suspectData.region').value }}</td>
-                      <td>{{ endorseForm.get('victimData.region').value }}</td>
-                      <td><a href="#">View Evidence</a></td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.city').value }}</td>
-                      <td>{{ endorseForm.get('suspectData.city').value }}</td>
-                      <td>{{ endorseForm.get('victimData.city').value }}</td>
-                      <td><a href="#">View Witness</a></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-      
-              <div class="submit-blotter">
-                <button type="button" class="send-blotter-btn" (click)="onSendBlotter()">SEND TICKET BLOTTER</button>
-              </div>
-            </section>
-          </main>
-        </div>
-      </form> -->
-      
-      <form [formGroup]="endorseForm">
-        <div class="container">
-          <main class="main-content">
-            <section class="report-details">
-              <h1>REPORT ID: <span>{{ endorseForm.get('reportID')?.value || 'N/A' }}</span></h1>
-      
+              <h1>Complainant Name: <span>{{ getCitizenName(citizenId) }}</span> </h1>
+              
               <div class="report-header">
                 <div class="report-left">
                   <div class="form-group">
                     <label for="duty-officer">Duty Officer:</label>
                     <select id="duty-officer" formControlName="personID">
-                      <option *ngFor="let person of persons" [value]="person.person_id">{{ person.firstname }} {{ person.lastname }} </option>
+                      <option *ngFor="let person of persons" [value]="person.person_id">{{ person.firstname }} {{ person.lastname }}</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="chief-police">Chief Police:</label>
+                    <label for="chief-police">Rank:</label>
                     <select id="chief-police" formControlName="rankID">
                       <option *ngFor="let rank of ranks" [value]="rank.rank_id">{{ rank.rank_abbr }} {{ rank.rank_full }}</option>
                     </select>
                   </div>
                 </div>
-      
-                <div class="report-right">
-                  <div class="form-group">
-                    <label for="police-id-1">Police ID:</label>
-                    <input
-                      type="text"
-                      id="police-id-1"
-                      placeholder="Enter badge number to save"
-                      formControlName="policeId1"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="police-id-2">Police ID:</label>
-                    <input
-                      type="text"
-                      id="police-id-2"
-                      placeholder="Enter badge number to save"
-                      formControlName="policeId2"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label>Signature:</label>
-                    <a href="#" (click)="openSignaturePad()">Please Sign Here</a>
-                  </div>
-                </div>
+
               </div>
       
-              <div class="action-buttons">
+              <!-- <div class="action-buttons">
                 <button type="button" class="endorse-btn" (click)="onEndorse()">Endorse</button>
                 <button type="button" class="dismiss-btn" (click)="onDismiss()">Dismiss</button>
-              </div>
+              </div> -->
       
-              <div class="table-container">
-                <table>
+              <div class="table-container" >
+                <table >
                   <thead>
                     <tr>
-                      <th>Reporter Data</th>
-                      <th>Suspect Data</th>
-                      <th>Victim Data</th>
-                      <th>Narrative</th>
+                      <th>Report ID</th>
+                      <th>Incident Name</th>
+                      <th>Incident Date</th>
+                      <th>Reported Date</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.name')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('suspectData.name')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('victimData.name')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('narrative.type')?.value || 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.gender')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('suspectData.gender')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('victimData.gender')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('narrative.details')?.value || 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.nationality')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('suspectData.nationality')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('victimData.nationality')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('narrative.description')?.value || 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.region')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('suspectData.region')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('victimData.region')?.value || 'N/A' }}</td>
-                      <td><a href="#">View Evidence</a></td>
-                    </tr>
-                    <tr>
-                      <td>{{ endorseForm.get('reporterData.city')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('suspectData.city')?.value || 'N/A' }}</td>
-                      <td>{{ endorseForm.get('victimData.city')?.value || 'N/A' }}</td>
-                      <td><a href="#">View Witness</a></td>
-                    </tr>
+                    <tr *ngFor="let report of reports">  <!-- Loop through the data array -->
+                      <td>{{ report.report_id }}</td>  <!-- Display Report ID -->
+                      <td>{{ report.subcategory_name }}</td>  <!-- Display Incident Name -->
+                      <td>{{ report.incident_date | date }}</td>  <!-- Display Incident Date with date pipe -->
+                      <td>{{ report.reported_date | date }}</td>  <!-- Display Reported Date with date pipe -->
+                      <td> <button type="button" class="endorse-btn" (click)="onEndorse()">Endorse</button></td>
+                      <td> <button type="button" class="dismiss-btn" (click)="onDismiss()">Dismiss</button></td>
+
+                  </tr>
                   </tbody>
                 </table>
               </div>
@@ -292,4 +60,3 @@
           </main>
         </div>
       </form>
-      
