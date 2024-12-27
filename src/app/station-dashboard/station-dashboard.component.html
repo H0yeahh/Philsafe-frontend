@@ -98,17 +98,22 @@
 
 <div class="container">
   <div class="emergency-banner">
-    In case of emergencies, please dial your local emergency services number
+    <!-- In case of emergencies, please dial your local emergency services number -->
   </div>
   <div class="min-h-screen bg-zinc-100 flex">
     <aside class="w-64 bg-white shadow-md">
       <div class="p-4 text-center">
-        <img
-          src="assets/station10.png"
-          alt="CCPO Logo"
-          class="mx-auto mb-4 logo"
-        />
-        <h2 class="text-lg font-semibold">Punta Princesa Police Station 10</h2>
+        <div class="logo">
+          <img src="assets/station10.png" alt="CCPO Logo" />
+        </div>
+
+        <div *ngIf="stationDetails; else loadingTemplate">
+          <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div id="loading">Loading Station Details...</div>
+        </ng-template>
         <p class="text-sm text-zinc-600">Cebu City Police Office</p>
       </div>
       <nav class="mt-7">
@@ -124,13 +129,13 @@
             </a>
           </li>
           <li>
-            <a href="/station-dashboard" class="nav-link">
+            <a href="/station-cases" class="nav-link">
               <img
-                src="assets/inbox.svg"
+                src="assets/cases.svg"
                 alt="Inbox Icon"
                 class="w-6 h-6 mr-2"
               />
-              <span>INBOX</span>
+              <span>CASES</span>
             </a>
           </li>
           <li>
@@ -174,6 +179,11 @@
             </a>
           </li>
         </ul>
+        <div class="logout">
+          <button type="submit" class="button" (click)="logout()">
+            LOG OUT
+          </button>
+        </div>
       </nav>
     </aside>
 
@@ -215,8 +225,21 @@
 </div> -->
 
     <main class="content">
+      <div class="welcome">
+        <h3>Welcome back,</h3>
+        <div *ngIf="policeDetails; else loading">
+          <h1>
+            {{ policeDetails?.rank_abbr }} {{ policeDetails?.firstname }}
+            {{ policeDetails?.lastname }}
+          </h1>
+        </div>
+        <ng-template #loading>
+          <div id="loading">Loading User...</div>
+        </ng-template>
+      </div>
+      
       <div class="header">
-        <h1>DASHBOARD</h1>
+        <div></div>
         <form [formGroup]="dashboardForm">
           <div class="filter">
             <label for="timePeriodSelect">Select Time Period:</label>
@@ -234,15 +257,15 @@
       <section class="stats">
         <div class="stat-box solved-cases">
           <h3>Weekly Reports</h3>
-          <p>{{ dashboardForm.get("status")?.value }}</p>
+          <!-- <p>{{ dashboardForm.get("status")?.value }}</p> -->
         </div>
         <div class="stat-box reported-cases">
           <h3>Monthly Reports</h3>
-          <p>{{ dashboardForm.get("reportedCases")?.value }}</p>
+          <!-- <p>{{ dashboardForm.get("reportedCases")?.value }}</p> -->
         </div>
         <div class="stat-box under-investigation">
-          <h3>Annually Reports</h3>
-          <p>{{ dashboardForm.get("underInvestigation")?.value }}</p>
+          <h3>Annual Reports</h3>
+          <!-- <p>{{ dashboardForm.get("underInvestigation")?.value }}</p> -->
         </div>
       </section>
 

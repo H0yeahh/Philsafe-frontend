@@ -223,12 +223,13 @@ export class PoliceAccountsService {
     );
   }
 
-  getAllPoliceData(): Observable<IPolice[]> {
-    return this.http.get<IPolice[]>(this.apiUrl).pipe(
+  getAllPoliceData(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/collect/all`).pipe(
       tap(response => console.log('Get all police response:', response)),
       catchError(this.handleError)
     );
   }
+  
 
   deletePolice(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
@@ -237,12 +238,21 @@ export class PoliceAccountsService {
     );
   }
 
-  getPoliceById(id: number): Observable<IPolice> {
-    return this.http.get<IPolice>(`${this.apiUrl}/${id}`).pipe(
+  getPoliceByPersonId(id: number){
+    return this.http.get(`${this.apiUrl}/check/${id}`).pipe(
       tap(response => console.log(`Get police ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
+
+  getPoliceById(data: { id: number; badgeNumber: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/retrieval/${data.id}`, data, { headers: this.headers }).pipe(
+      tap(response => console.log(`Get police by ID response:`, response)),
+      catchError(this.handleError)
+    );
+  }
+  
+
 
   saveStationData(stationData: any): Observable<any> {
     return this.http.post(this.stationURL, stationData).pipe(

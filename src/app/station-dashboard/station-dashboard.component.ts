@@ -9,6 +9,8 @@ import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.servic
 import { PersonService } from '../person.service';
 import { Router } from '@angular/router';
 import { CaseService } from '../case.service';
+import { AuthService } from '../auth.service';
+import { CaseQueueService } from '../case-queue.service';
 
 @Component({
   selector: 'app-station-dashboard',
@@ -21,12 +23,12 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  reports: IReport[] = [];
+  reports: any;
   stations: IStation[] = [];
   persons: IPerson[] = [];
 
   ranks: IRank[] = [];
-
+  personId: any;
   stationID: string | null = null;
   dailyReports = 0;
   weeklyReports = 0;
@@ -34,6 +36,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   annualReports = 0;
   chart: any;
   reportSubscription: Subscription | undefined;
+  policePersonData: any
+  policeDetails: any;
+  stationDetails: any;
+  
 
   constructor(
     @Inject(StationDashboardService) private stationDashboardService: StationDashboardService,
@@ -42,16 +48,19 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
     private caseService: CaseService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private caseQueueService: CaseQueueService
   ) {}
 
   ngOnInit(): void {
-    this.initializeForm();
-    this.getOfficerStationId();
-    this.fetchRanks();
-    this.fetchStations();
-    this.fetchPersons();
-    this.fetchNationwideReports();
+    // this.initializeForm();
+    // this.getOfficerStationId();
+    // this.fetchRanks();
+    // this.fetchStations();
+    // this.fetchPersons();
+    // this.fetchNationwideReports();
+    this.loadUserProfile();
   }
 
   initializeForm(): void {
@@ -254,6 +263,119 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadUserProfile(){
+    const userData = localStorage.getItem('userData');
+    console.log('USER DATA SESSION', userData);
+    if(userData){
+      try{
+        const parsedData = JSON.parse(userData);
+        this.personId = parsedData.personId;
+        this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
+          (response) => {
+            this.policePersonData = response;
+            console.log("Fetched Police Person Data", this.policePersonData);
+            this.fetchPoliceData(this.policePersonData.police_id);
+            console.log("Police ID:", this.policePersonData.police_id)
+          },
+          (error) => {
+            console.error("Errod Police Person Data", error)
+          }
+        )
+        
+        console.log("Person ID", this.personId)
+      } catch {
+        console.error("Error fetching localStorage")
+      }
+    }
+  }
+
+
+  fetchPoliceData(policeId: number) {
+    this.policeAccountsService.getAllPoliceData().subscribe(
+      (allPoliceData) => {
+        // Find the matching police data by policeId
+        const policeData = allPoliceData.find(p => p.police_id === policeId);
+        this.policeDetails = policeData
+  
+        if (policeData) {
+          const badgeNumber = this.policeDetails.badge_number;
+          console.log('Found police data:', policeData);
+          console.log('Badge Number:', badgeNumber);
+          this.fetchStation(this.policeDetails.station_id);
+  
+          // Now call getPoliceById with policeId and badgeNumber
+          // this.policeAccountsService.getPoliceById({ id: policeId, badgeNumber }).subscribe(
+          //   (response) => {
+          //     this.policeDetails = response;
+          //     console.log('Police Details:', this.policeDetails);
+              
+          //   },
+          //   (error) => {
+          //     console.error('Error Fetching Police Data:', error);
+          //   }
+          // );
+        } else {
+          console.error('Police ID not found in all police data');
+        }
+      },
+      (error) => {
+        console.error('Error Fetching All Police Data:', error);
+      }
+    );
+  }
+  
+
+  fetchStation(stationId: number) {
+    this.jurisdictionService.getStation(stationId).subscribe(
+      (response) => {
+        this.stationDetails = response;
+        console.log("Station Data", this.stationDetails);
+        this.fetchReportStation(this.stationDetails.station_id)
+      },
+      (error) => {
+        console.error('Error Fetching Station Data', error)
+      }
+    )
+  }
+
+  fetchReportStation(stationId: number) {
+    this.caseQueueService.getReports(stationId).subscribe(
+      (response) => {
+        this.reports = response;
+        console.log("Fetched Reports", this.reports)
+      },
+      (error) => {
+        console.error('Error Fetching Reports in Station ', error)
+      }
+    )
+  }
+
+  
+
+  logout() {
+    this.authService.logout().subscribe(
+      (response) => {
+        console.log('Signed out successfully:', response);
+        this.clearSession();
+        localStorage.setItem('authenticated', '0');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        console.error('Error during sign out:', error);
+      }
+    );
+  }
+
+  clearSession() {
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('citizenId');
+    localStorage.removeItem('sessionData');
+    localStorage.clear();
+    sessionStorage.clear();
+
+  }
+
+ 
   ngOnDestroy(): void {
     if (this.reportSubscription) {
       this.reportSubscription.unsubscribe();

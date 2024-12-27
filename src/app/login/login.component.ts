@@ -38,14 +38,16 @@ export class LoginComponent {
 submitLogin(loginData: { email: string; password: string }): Promise<Account> {
   return new Promise((resolve, reject) => {
       this.authService.login({ ...loginData, SignInType: "Email" }).subscribe(
-          (data: Account) => {
+          (data) => {
               console.log(data);
 
               alert("Login successful")
               if (data && data.role) {
                 console.log('Role before storing:', data.role);  // Debug log
+                localStorage.setItem('userData', JSON.stringify(data))
                 localStorage.setItem('role', data.role);
                 console.log('Role stored in login', localStorage.getItem('role')); 
+                console.log('Data stored as userData', localStorage.getItem('userData')); 
               }
 
               resolve(data);

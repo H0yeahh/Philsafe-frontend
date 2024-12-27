@@ -101,7 +101,7 @@ import { StationCasesComponent } from './station-cases/station-cases.component';
     PoliceReportsComponent,
     PoliceCasesComponent,
     CasesComponent,
-    StationCasesComponent
+    StationCasesComponent,
   ],
   imports: [
     BrowserModule,

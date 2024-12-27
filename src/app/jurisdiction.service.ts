@@ -47,14 +47,14 @@ export interface IPerson {
 //   constructor(private http: HttpClient) { }
 
 //   create(data: ICreateParam): Observable<any> {
-//     const url = `${this.base}/api/jurisdiction`;
+//     const url = `${this.base}api/jurisdiction`;
 //     return this.http.post(url, data).pipe(
 //       catchError(this.handleError)
 //     );
 //   }
 
 //   getAll(): Observable<any> {
-//     const url = `${this.base}/api/jurisdiction/collect`;
+//     const url = `${this.base}api/jurisdiction/collect`;
 //     return this.http.get(url).pipe(
 //       catchError(this.handleError)
 //     );
@@ -80,22 +80,30 @@ export class JurisdictionService {
   constructor(private http: HttpClient) { }
 
   create(data: ICreateParam): Observable<any> {
-    const url = `${this.base}/api/jurisdiction`;
+    const url = `${this.base}api/jurisdiction`;
     return this.http.post(url, data).pipe(
       catchError(this.handleError)
     );
   }
 
   getAll(): Observable<any> {
-    const url = `${this.base}/api/jurisdiction/collect`;
+    const url = `${this.base}api/jurisdiction/collect`;
     return this.http.get(url).pipe(
       catchError(this.handleError)
     );
   }
 
+  getStation(stationId: number): Observable<any> {
+    const url = `${this.base}api/jurisdiction/retrieve/${stationId}`;
+    return this.http.get(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
   // Delete station method
   delete(stationId: number): Observable<any> {
-    const url = `${this.base}/api/jurisdiction/discard/{StationId}`;
+    const url = `${this.base}api/jurisdiction/discard/{StationId}`;
     return this.http.delete(url).pipe(
       catchError(this.handleError)
     );

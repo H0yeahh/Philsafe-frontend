@@ -287,10 +287,10 @@
     margin-bottom: 1rem;
   }
   
-  .logo {
+  /* .logo {
     margin-top: 1rem;
     margin-right: 1000%;
-  }
+  } */
 
   .button-reset {
     background: none;
@@ -407,4 +407,35 @@
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.logout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.button {
+  background-color: #00bfb4;
+  padding: 20px;
+  border: solid 0px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.welcome {
+  padding: 0 auto;
+}
+
+.welcome, h3 {
+  margin: 0%;
 }

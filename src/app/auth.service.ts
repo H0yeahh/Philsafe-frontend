@@ -27,11 +27,18 @@ export class AuthService {
     };
 
      private loginURL = `${environment.ipAddUrl}api/account/login`;
+     private logoutURL = `${environment.ipAddUrl}api/account/signout`;
      
 
   constructor(private http: HttpClient) { }
   login(data: ILogin): Observable<any> {
     return this.http.post(this.loginURL, data, this.options).pipe(
+    catchError(this.handleError)
+    );
+  }
+
+  logout(): Observable<any> {
+    return this.http.post(this.logoutURL, this.options).pipe(
     catchError(this.handleError)
     );
   }

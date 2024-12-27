@@ -38,13 +38,13 @@
 
 //   // API endpoints
 //   private endpoints = {
-//     reports: `${this.apiUrl}/api/report`,
-//     localReports: (stationId: number) => `${this.apiUrl}/api/report/retrieve/local/${stationId}`,
-//     nationwideReports: `${this.apiUrl}/api/report/retrieve/nationwide`,
-//     submitReport: `${this.apiUrl}/api/report/submit`,
-//     citizenReports: `${this.apiUrl}/api/report/retrieve/citizen`,
-//     categorizedReports: (subcategoryId: number) => `${this.apiUrl}/api/report/retrieve/category/${subcategoryId}`,
-//     crimeReports: (crimeId: number) => `${this.apiUrl}/api/report/retrieve/case/${crimeId}`,
+//     reports: `${this.apiUrl}api/report`,
+//     localReports: (stationId: number) => `${this.apiUrl}api/report/retrieve/local/${stationId}`,
+//     nationwideReports: `${this.apiUrl}api/report/retrieve/nationwide`,
+//     submitReport: `${this.apiUrl}api/report/submit`,
+//     citizenReports: `${this.apiUrl}api/report/retrieve/citizen`,
+//     categorizedReports: (subcategoryId: number) => `${this.apiUrl}api/report/retrieve/category/${subcategoryId}`,
+//     crimeReports: (crimeId: number) => `${this.apiUrl}api/report/retrieve/case/${crimeId}`,
 //   };
 
 //   constructor(private http: HttpClient) {}
@@ -185,17 +185,18 @@ export class CaseQueueService {
 
   // API endpoints
   private endpoints = {
-    reports: `${this.apiUrl}/api/report`,
-    localReports: (stationId: number) => `${this.apiUrl}/api/report/retrieve/local/${stationId}`,
-    nationwideReports: `${this.apiUrl}/api/report/retrieve/nationwide`,
-    submitReport: `${this.apiUrl}/api/report/submit`,
-    citizenReports: `${this.apiUrl}/api/report/retrieve/citizen`,
-    categorizedReports: (subcategoryId: number) => `${this.apiUrl}/api/report/retrieve/category/${subcategoryId}`,
-    crimeReports: (crimeId: number) => `${this.apiUrl}/api/report/retrieve/case/${crimeId}`,
-    moveToEndorsedQueue: (reportId: number) => `${this.apiUrl}/api/report/move-to-endorsed-queue/${reportId}`,  // New endpoint for moving report
-    getReport: `${this.apiUrl}/api/report/retrieve/citizen`,
-    getCitizens: `${this.apiUrl}/api/citizen/collect/citizens/all`,
-    getCases: `${this.apiUrl}/api/case/retrieve/local`
+    reports: `${this.apiUrl}api/report`,
+    localReports: (stationId: number) => `${this.apiUrl}api/report/retrieve/local/${stationId}`,
+    nationwideReports: `${this.apiUrl}api/report/retrieve/nationwide`,
+    submitReport: `${this.apiUrl}api/report/submit`,
+    citizenReports: `${this.apiUrl}api/report/retrieve/citizen`,
+    categorizedReports: (subcategoryId: number) => `${this.apiUrl}api/report/retrieve/category/${subcategoryId}`,
+    crimeReports: (crimeId: number) => `${this.apiUrl}api/report/retrieve/case/${crimeId}`,
+    moveToEndorsedQueue: (reportId: number) => `${this.apiUrl}api/report/move-to-endorsed-queue/${reportId}`,  // New endpoint for moving report
+    getReport: `${this.apiUrl}api/report/retrieve/citizen`,
+    getCitizens: `${this.apiUrl}api/citizen/collect/citizens/all`,
+    getCases: `${this.apiUrl}api/case/retrieve/local`,
+    getStationReport: `${this.apiUrl}api/report/retrieve/local`
   };
 
   constructor(private http: HttpClient) {}
@@ -214,9 +215,9 @@ export class CaseQueueService {
   }
 
   // Fetch reports for a specific station
-  getReports(stationId: number): Observable<IReport[]> {
-    const headers = this.getHeaders();
-    return this.http.get<IReport[]>(this.endpoints.localReports(stationId), { headers })
+  getReports(stationId: number) {
+    // const headers = this.getHeaders();
+    return this.http.get(`${this.endpoints.getStationReport}/${stationId}`)
       .pipe(catchError(this.handleError));
   }
 
@@ -319,7 +320,7 @@ export class CaseQueueService {
 
   dismissReport(reportId: number): Observable<any> {
     const headers = this.getHeaders(); // Retrieve headers with the session token
-    const url = `${this.apiUrl}/api/report/dismiss/${reportId}`; // Construct the dismiss endpoint
+    const url = `${this.apiUrl}api/report/dismiss/${reportId}`; // Construct the dismiss endpoint
     return this.http.post<any>(url, {}, { headers }) // POST request with an empty body
       .pipe(
         catchError(this.handleError) // Handle errors
