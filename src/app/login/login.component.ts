@@ -43,8 +43,9 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
 
               alert("Login successful")
               if (data && data.role) {
-                  // Store the role in localStorage
-                  localStorage.setItem('role', data.role);
+                console.log('Role before storing:', data.role);  // Debug log
+                localStorage.setItem('role', data.role);
+                console.log('Role stored in login', localStorage.getItem('role')); 
               }
 
               resolve(data);
