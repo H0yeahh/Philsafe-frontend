@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from './environment';
 
 
 
@@ -61,7 +62,7 @@ export class PoliceService {
   getPersons() {
     throw new Error('Method not implemented.');
   }
-  private base = 'https://localhost:7108';
+  private base = `${environment.ipAddUrl}`;
 
   constructor(private http: HttpClient) { }
 

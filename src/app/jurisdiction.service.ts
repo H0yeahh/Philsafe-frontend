@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from './environment';
 
 
 export interface ICreateParam {
@@ -74,7 +75,7 @@ export interface IPerson {
   providedIn: 'root'
 })
 export class JurisdictionService {
-  private base = 'https://localhost:7108';
+  private base = `${environment.ipAddUrl}`;
 
   constructor(private http: HttpClient) { }
 

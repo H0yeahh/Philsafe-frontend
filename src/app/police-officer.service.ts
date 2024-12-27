@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from './environment';
 
 export interface IPolice {
   police_id: number;
@@ -25,7 +26,7 @@ export interface IPolice {
   providedIn: 'root'
 })
 export class PoliceOfficerService {
-  private base = 'https://localhost:7108';
+  private base = `${environment.ipAddUrl}`;
 
   constructor(private http: HttpClient) { }
 

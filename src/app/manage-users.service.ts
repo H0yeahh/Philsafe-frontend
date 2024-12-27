@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from './environment';
 // import { ICitizen } from './police-accounts.service';
 
 
@@ -24,7 +25,7 @@ export interface ICitizen {
   providedIn: 'root'
 })
 export class ManageUsersService  {
-  private apiUrl = 'https://localhost:7108/';
+  private apiUrl = `${environment.ipAddUrl}`;
 
   // API endpoints
   private endpoints = {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from './environment';
 
 export interface IAccount {
   firstname: string;
@@ -58,16 +59,21 @@ export interface IPolice {
   providedIn: 'root'
 })
   export class AddPersonService {
-    private accountURL = 'https://localhost:7108/api/account/signup';
-    private personURL = 'https://localhost:7108/api/person';
-    private locationURL = 'https://localhost:7108/api/location/create/';
-    private base = 'https://localhost';
-    private policeURL = 'https://localhost:7108/api/police/upgrade';
+    // private accountURL = 'https://localhost:7108/api/account/signup';
+    // private personURL = 'https://localhost:7108/api/person';
+    // private locationURL = 'https://localhost:7108/api/location/create/';
+    // private base = 'https://localhost';
+    // private policeURL = 'https://localhost:7108/api/police/upgrade';
     private options = {
       headers: new HttpHeaders({
         'Content-Type': 'multipart/formdata'})
       };
 
+      private base = `${environment.ipAddUrl}`;
+       private accountURL = `${this.base}api/account/signup`;
+       private personURL = `${this.base}api/person`;
+       private locationURL = `${this.base}api/location/create`;
+       private policeURL = `${this.base}api/police/upgrade`;
     
 
     constructor(private http: HttpClient) {

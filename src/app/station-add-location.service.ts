@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from './environment';
 
 interface LocationResult {
   message: string;
@@ -28,9 +29,10 @@ export interface ILocation {
 })
 export class StationAddLocationService {
   // private accountURL = 'https://localhost:7108/api/account/signup';
-  private personURL = 'https://localhost:7108/api/person';
-  private locationURL = 'https://localhost:7108/api/location/create/';
-  private base = 'https://localhost:7108';
+  private base = `${environment.ipAddUrl}`;
+  private personURL = `${this.base}api/person`;
+  private locationURL = `${this.base}api/location/create/`;
+  
   private options = { headers: new HttpHeaders({ responseType: "json" }) }
   // private options = {
   //   headers: new HttpHeaders({

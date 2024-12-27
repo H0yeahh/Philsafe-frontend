@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { response } from 'express';
+import { environment } from './environment';
 
 export interface IReport {
   reportBody?: string;
@@ -37,7 +38,7 @@ export interface IReport {
   providedIn: 'root'
 })
 export class CaseService {
-  private readonly baseUrl = 'https://localhost:7108/api/report'; // Base URL
+  private readonly baseUrl = `${environment.ipAddUrl}api/report`; // Base URL
   private readonly endpoints = {
     // getAll: `${this.baseUrl}/retrieve/citizen`,
     getAll: `${this.baseUrl}/retrieve/nationwide`,

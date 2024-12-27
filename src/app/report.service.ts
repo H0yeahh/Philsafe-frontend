@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from './environment';
 
 export interface IReport {
   message: string;
@@ -17,7 +18,7 @@ export class ReportService {
   getReports() {
     throw new Error('Method not implemented.');
   }
-  private base = 'https://localhost';
+  private base = `${environment.ipAddUrl}`;
 
   constructor(private http: HttpClient) { }
 

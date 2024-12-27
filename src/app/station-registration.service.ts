@@ -3,15 +3,17 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { IStation } from './jurisdiction.service'
+import { environment } from './environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class StationRegistrationService {
-  private apiUrl = 'https://localhost:7108/api/jurisdiction';
-  private base =  'https://localhost';
-  private stationURL = 'https://localhost:7108/api/jurisdiction';
+
+  private base =  `${environment.ipAddUrl}`;
+  private apiUrl = `${this.base}api/jurisdiction`;
+  private stationURL = `${this.base}api/jurisdiction`;
 
 
   constructor(private http: HttpClient) {}

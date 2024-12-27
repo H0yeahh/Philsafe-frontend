@@ -491,6 +491,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from './environment';
 
 export interface IReport {
   report_id: number;
@@ -517,7 +518,7 @@ export interface IReport {
   providedIn: 'root',
 })
 export class StationDashboardService {
-  private apiUrl = 'https://localhost:7108';
+  private apiUrl = `${environment.ipAddUrl}`;
 
   private endpoints = {
     reports: `${this.apiUrl}/api/report`,

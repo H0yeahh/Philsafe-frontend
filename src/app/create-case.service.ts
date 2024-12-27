@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { response } from 'express';
+import { environment } from './environment';
 
 export interface ICase {
   title: string;
@@ -28,7 +29,7 @@ export interface ICase {
   providedIn: 'root'
 })
 export class CreateCaseService {
-  private readonly baseUrl = 'https://localhost:7108/api/case'; // Base URL
+  private readonly baseUrl = `${environment.ipAddUrl}api/case`; // Base URL
   private readonly endpoints = {
     // getAll: `${this.baseUrl}/retrieve/citizen`,
     getAll: `${this.baseUrl}/retrieve/nationwide`,

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from './environment';
 
 export interface IReport{
 message: string;
@@ -11,8 +12,8 @@ code: number;
   providedIn: 'root'
 })
 export class StationReportsService {
-  private apiUrl = 'https://localhost:7108';  // Backend API endpoint
-  private reportsApiUrl = 'https://localhost:7108/api/report/retrieve/citizen';  // Backend API endpoint
+  private apiUrl = `${environment.ipAddUrl}`;  // Backend API endpoint
+  private reportsApiUrl = `${this.apiUrl}api/report/retrieve/citizen`;  // Backend API endpoint
   
   constructor(private http: HttpClient) { }
 

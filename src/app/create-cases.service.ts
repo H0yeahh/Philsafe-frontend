@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from './environment';
 
 export interface ICase {
   title: string;
@@ -27,7 +28,7 @@ export interface ICase {
   providedIn: 'root'
 })
 export class CreateCasesService {
-  private apiUrl = 'https://localhost:7108'; // Base API URL
+  private apiUrl = `${environment.ipAddUrl}`; // Base API URL
 
   // API endpoints
   private endpoints = {

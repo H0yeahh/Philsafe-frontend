@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, catchError, map, throwError } from 'rxjs';
+import { environment } from './environment';
 
 export interface IPolice {
   unit: string;
@@ -49,7 +50,7 @@ export interface IPerson {
   providedIn: 'root',
 })
 export class PersonService {
-  private readonly apiUrl = 'https://localhost:7108/api';
+  private readonly apiUrl = `${environment.ipAddUrl}api`;
   private readonly accountUrl = `${this.apiUrl}/account/signup/upgrade`;
   private readonly personUrl = `${this.apiUrl}/person`;
   private readonly policeUrl = `${this.apiUrl}/police`;

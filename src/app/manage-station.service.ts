@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from './environment';
 
 export interface IStation {
   station_id: number;
@@ -23,7 +24,7 @@ export interface IStation {
   providedIn: 'root'
 })
 export class ManageStationService {
-  private apiUrl = 'https://localhost:7108/';
+  private apiUrl = `${environment.ipAddUrl}`;
 
   // API endpoints
   private endpoints = {

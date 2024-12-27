@@ -26,13 +26,35 @@ export class LoginComponent {
     });
   }
 
-  submitLogin(loginData: {email: string, password: string}) :Promise<Account> {
-    return new Promise((resolve, reject) => {
-        this.authService.login({...loginData, SignInType:"Email"}).subscribe(data => {
-            console.log(data)
-            resolve(data)
-        });
-    })
+//   submitLogin(loginData: {email: string, password: string}) :Promise<Account> {
+//     return new Promise((resolve, reject) => {
+//         this.authService.login({...loginData, SignInType:"Email"}).subscribe(data => {
+//             console.log(data)
+//             resolve(data)
+//         });
+//     })
+// }
+
+submitLogin(loginData: { email: string; password: string }): Promise<Account> {
+  return new Promise((resolve, reject) => {
+      this.authService.login({ ...loginData, SignInType: "Email" }).subscribe(
+          (data: Account) => {
+              console.log(data);
+
+              alert("Login successful")
+              if (data && data.role) {
+                  // Store the role in localStorage
+                  localStorage.setItem('role', data.role);
+              }
+
+              resolve(data);
+          },
+          (error) => {
+              console.error('Login failed:', error);
+              reject(error);
+          }
+      );
+  });
 }
 
 //adding this new function for reggex part of logging in

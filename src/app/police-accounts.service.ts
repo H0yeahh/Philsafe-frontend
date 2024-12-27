@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { environment } from './environment';
 
 export interface IAccount {
   firstname: string;
@@ -110,13 +111,15 @@ export interface IPolice {
   providedIn: 'root',
 })
 export class PoliceAccountsService {
-  private stationURL = 'https://localhost:7108/api/jurisdiction;'
-  private accountURL = 'https://localhost:7108/api/account/signup';
-  private personURL = 'https://localhost:7108/api/person';
-  private locationURL = 'https://localhost:7108/api/location/create/';
-  private ranksApiUrl = 'https://localhost:7108/api/police/load/ranks';
-  private apiUrl = 'https://localhost:7108/api/police';
-  private base = 'https://localhost';
+
+  private base = `${environment.ipAddUrl}`
+  private stationURL = `${this.base}api/jurisdiction`;
+  private accountURL = `${this.base}api/account/signup`;
+  private personURL = `${this.base}api/person`;
+  private locationURL = `${this.base}api/location/create/`;
+  private ranksApiUrl = `${this.base}api/police/load/ranks`;
+  private apiUrl = `${this.base}api/police`;
+  // private base = 'https://localhost';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   // private headers = new HttpHeaders({ 'Content-Type': 'multipart/form-data' });
 

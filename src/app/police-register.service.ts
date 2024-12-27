@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from './environment';
 
 export interface IRank {
   rank_id: number;
@@ -31,11 +32,12 @@ export interface IPictureUploadResponse {
   providedIn: 'root'
 })
 export class PoliceRegisterService {
-  private apiUrl = 'https://localhost:7108/api/police';
+  private base = `${environment.ipAddUrl}`
+  private apiUrl = `${environment.ipAddUrl}api/police`;
   // private apiUrl = 'https://localhost:7108/api/police/upgrade';  // API URL for registration
-  private ranksApiUrl = 'https://localhost:7108/api/police/load/ranks'; // API URL for fetching ranks
-  private pictureUploadUrl = 'https://localhost:7108/api/police/upload-picture'; // API URL for uploading picture
-  private stationURL = 'https://localhost:7108/api/jurisdiction';
+  private ranksApiUrl = `${environment.ipAddUrl}api/police/load/ranks`; // API URL for fetching ranks
+  private pictureUploadUrl = `${environment.ipAddUrl}api/police/upload-picture`; // API URL for uploading picture
+  private stationURL = `${environment.ipAddUrl}api/jurisdiction`;
 
   constructor(private http: HttpClient) {}
 

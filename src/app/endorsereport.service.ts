@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from './environment';
 
 export interface IReport {
   reportBody: string | undefined;
@@ -34,7 +35,7 @@ export interface IReport {
   providedIn: 'root'
 })
 export class EndorsereportService {
-  private apiUrl = 'https://localhost:7108';  // Base API URL
+  private apiUrl = `${environment.ipAddUrl}`;  // Base API URL
 
   // API endpoints
   private endpoints = {

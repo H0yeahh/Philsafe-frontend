@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from './environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PoliceLoginService {
-  private loginURL = 'https://localhost:7108/api/account/login'; // Replace with your actual API endpoint
+  private loginURL = `${environment.ipAddUrl}api/account/login`; // Replace with your actual API endpoint
   private readonly ADMIN_USERNAME = 'admin';
   private readonly ADMIN_PASSWORD = 'admin';
 

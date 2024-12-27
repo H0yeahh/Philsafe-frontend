@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from './environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StationLoginService {
-  private loginURL = 'https://localhost:7108/api/account/login'; // Replace with your actual API endpoint
+
+
+  private loginURL = `${environment.ipAddUrl}api/account/login`; // Replace with your actual API endpoint
 
   constructor(private http: HttpClient) {}
 
