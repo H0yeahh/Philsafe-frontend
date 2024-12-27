@@ -244,11 +244,12 @@
           <div class="filter">
             <label for="timePeriodSelect">Select Time Period:</label>
             <select id="timePeriodSelect" formControlName="timePeriod">
-              <option value="quarterly">Quarterly</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthy</option>
               <!-- Add more options as needed -->
             </select>
-            <button type="button" class="refresh-button" (click)="onRefresh()">
-              Refresh
+            <button type="button" class="refresh-button" (click)="onSelect()">
+              Select
             </button>
           </div>
         </form>
@@ -257,21 +258,22 @@
       <section class="stats">
         <div class="stat-box solved-cases">
           <h3>Weekly Reports</h3>
-          <!-- <p>{{ dashboardForm.get("status")?.value }}</p> -->
+          <p>{{ weeklyAvg }}</p>
         </div>
         <div class="stat-box reported-cases">
           <h3>Monthly Reports</h3>
-          <!-- <p>{{ dashboardForm.get("reportedCases")?.value }}</p> -->
+          <p>{{ monthlyAvg }}</p>
         </div>
         <div class="stat-box under-investigation">
           <h3>Annual Reports</h3>
-          <!-- <p>{{ dashboardForm.get("underInvestigation")?.value }}</p> -->
+          <p>{{ annualAvg}}</p>
         </div>
       </section>
 
       <section class="graph-section">
         <canvas id="casesGraph"></canvas>
       </section>
+      
     </main>
   </div>
 </div>
