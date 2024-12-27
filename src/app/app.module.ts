@@ -50,6 +50,8 @@ import { StationListOfOfficersComponent } from './station-list-of-officers/stati
 import { PoliceReportsComponent } from './police-reports/police-reports.component';
 import { PoliceCasesComponent } from './police-cases/police-cases.component';
 import { CasesComponent } from './cases/cases.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { StationCasesComponent } from './station-cases/station-cases.component';
 
 
 @NgModule({
@@ -98,14 +100,16 @@ import { CasesComponent } from './cases/cases.component';
     StationListOfOfficersComponent,
     PoliceReportsComponent,
     PoliceCasesComponent,
-    CasesComponent
+    CasesComponent,
+    StationCasesComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule, // Add this line
     HttpClientModule,
-    FormsModule, // Add this line if you are making HTTP requests
+    FormsModule,
+    NgxPaginationModule,
   ],
   providers: [
     MapboxService,

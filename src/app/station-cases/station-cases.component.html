@@ -136,7 +136,12 @@
                           </tr>
                       </thead>
                       <tbody>
-                          <tr *ngFor="let case of cases ">
+                          <tr *ngFor="let case of cases  | paginate: { 
+                            id: 'cases',
+                            itemsPerPage: pageSize,
+                            currentPage: currentPage,
+                            totalItems: totalCases 
+                        }">
                               <td><a >{{ case.crime_id }}</a></td>
                               <td>{{ case.cite_number }}</td>
                               <td>{{ case.incident_type }}</td>
@@ -145,8 +150,9 @@
                       </tbody>
                   </table>
 
-                  <pagination-controls
-                    (pageChange)="currentPage = $event">
+                  <pagination-controls 
+                  id="cases"
+                  (pageChange)="currentPage = $event">
                 </pagination-controls>
               </form>
           </section>

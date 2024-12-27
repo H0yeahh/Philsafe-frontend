@@ -119,7 +119,7 @@ export class StationCaseQueueComponent implements OnInit {
     this.caseQueueService.getNationwideReports().subscribe(
       (response) => {
         if (Array.isArray(response)) {
-        this.reports = response as IReport[];
+        this.reports = response;
       
           console.log('Fetched reports:', response);
           this.reports.forEach((report: { citizen_id: any; }) => {

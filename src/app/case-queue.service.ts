@@ -193,7 +193,8 @@ export class CaseQueueService {
     crimeReports: (crimeId: number) => `${this.apiUrl}/api/report/retrieve/case/${crimeId}`,
     moveToEndorsedQueue: (reportId: number) => `${this.apiUrl}/api/report/move-to-endorsed-queue/${reportId}`,  // New endpoint for moving report
     getReport: `${this.apiUrl}/api/report/retrieve/citizen`,
-    getCitizens: `${this.apiUrl}/api/citizen/collect/citizens/all`
+    getCitizens: `${this.apiUrl}/api/citizen/collect/citizens/all`,
+    getCases: `${this.apiUrl}/api/case/retrieve/local`
   };
 
   constructor(private http: HttpClient) {}
@@ -262,6 +263,11 @@ export class CaseQueueService {
 
   getCitizens(): Observable<any> {
     return this.http.get(this.endpoints.getCitizens)
+      .pipe(catchError(this.handleError));
+  }
+
+  fetchCases(stationId: number): Observable<any> {
+    return this.http.get(`${this.endpoints.getCases}/${stationId}`)
       .pipe(catchError(this.handleError));
   }
 

@@ -268,7 +268,7 @@ export class ReportEndorseComponent implements OnInit {
     this.caseQueueService.getNationwideReports().subscribe(
       (response) => {
         if (Array.isArray(response)) {
-          this.reports = response as IReport[]; // Use type assertion cautiously
+          this.reports = response; // Use type assertion cautiously
           console.log('Fetched reports:', this.reports);
         } else {
           this.errorMessage = 'Unexpected response from server.';

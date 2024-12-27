@@ -19,7 +19,7 @@ export class PoliceReportsComponent implements OnInit {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  reports: IReport[] = [];  // Array to hold fetched reports`3
+  reports: any;  // Array to hold fetched reports`3
   
   stations: IStation[] = [];
   persons: IPerson[] = [];
@@ -97,7 +97,7 @@ export class PoliceReportsComponent implements OnInit {
     this.caseQueueService.getReports(Number(stationId)).subscribe(
       (response) => {
         if (Array.isArray(response)) {
-          this.reports = response as IReport[];
+          this.reports = response;
           console.log('Fetched reports:', this.reports);
         } else {
           this.errorMessage = 'Unexpected response from server.';
@@ -117,7 +117,7 @@ export class PoliceReportsComponent implements OnInit {
     this.caseQueueService.getNationwideReports().subscribe(
       (response) => {
         if (Array.isArray(response)) {
-          this.reports = response as IReport[];
+          this.reports = response;
           console.log('Fetched reports:', this.reports);
 
           if (this.reports.length > 0) {
