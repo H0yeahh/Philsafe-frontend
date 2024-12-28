@@ -243,14 +243,14 @@
         <form [formGroup]="dashboardForm">
           <div class="filter">
             <label for="timePeriodSelect">Select Time Period:</label>
-            <select id="timePeriodSelect" formControlName="timePeriod">
+            <select 
+              id="timePeriodSelect" 
+              [formControl]="timePeriodControl"
+              (change)="onSelect()">
               <option value="weekly">Weekly</option>
-              <option value="monthly">Monthy</option>
-              <!-- Add more options as needed -->
+              <option value="monthly">Monthly</option>
             </select>
-            <button type="button" class="refresh-button" (click)="onSelect()">
-              Select
-            </button>
+            <!-- Removed the separate button since we're handling change event -->
           </div>
         </form>
       </div>

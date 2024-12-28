@@ -1,18 +1,36 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { StationDashboardService } from '../station-dashboard.service';
 import { Subscription } from 'rxjs';
-import { BarController, BarElement, CategoryScale, Chart, ChartConfiguration, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import {
+  BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  ChartConfiguration,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from 'chart.js';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormControl,
+} from '@angular/forms';
 import { IReport } from '../station-dashboard.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
-import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
+import {
+  IPerson,
+  IRank,
+  PoliceAccountsService,
+} from '../police-accounts.service';
 import { PersonService } from '../person.service';
 import { Router } from '@angular/router';
 import { CaseService } from '../case.service';
 import { AuthService } from '../auth.service';
 import { CaseQueueService } from '../case-queue.service';
-import { format } from 'date-fns';
-
+import { endOfWeek, format, startOfWeek } from 'date-fns';
 
 @Component({
   selector: 'app-station-dashboard',
@@ -38,17 +56,18 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   annualReports = 0;
   chart: any;
   reportSubscription: Subscription | undefined;
-  policePersonData: any
+  policePersonData: any;
   policeDetails: any;
   stationDetails: any;
   weeklyAvg: any;
   monthlyAvg: any;
-  annualAvg: any
-  stationId: any
+  annualAvg: any;
+  stationId: any;
   timePeriodControl: FormControl;
 
   constructor(
-    @Inject(StationDashboardService) private stationDashboardService: StationDashboardService,
+    @Inject(StationDashboardService)
+    private stationDashboardService: StationDashboardService,
     private fb: FormBuilder,
     private jurisdictionService: JurisdictionService,
     private policeAccountsService: PoliceAccountsService,
@@ -58,16 +77,19 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private caseQueueService: CaseQueueService
   ) {
-
     Chart.register(
-      CategoryScale, 
-      LinearScale, 
-      BarElement, 
-      Title, 
-      Tooltip, 
+      CategoryScale,
+      LinearScale,
+      BarElement,
+      Title,
+      Tooltip,
       Legend,
       BarController
     );
+    this.timePeriodControl = new FormControl('weekly');
+    this.dashboardForm = this.fb.group({
+      timePeriod: this.timePeriodControl,
+    });
     this.timePeriodControl = new FormControl('weekly');
   }
 
@@ -82,11 +104,17 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.fetchReportStation(this.stationId);
     this.calculateReportsAverage();
     this.calculateReportsCount();
-    this.onSelect();
 
-    this.timePeriodControl.valueChanges.subscribe(() => {
+    this.timePeriodControl = new FormControl('weekly');
+
+    this.timePeriodControl.valueChanges.subscribe((value) => {
+      console.log('Time period changed:', value);
       this.onSelect();
     });
+
+    this.onSelect();
+    console.log('Initial form value:', this.timePeriodControl.value);
+    console.log('Form valid:', this.dashboardForm.valid);
   }
 
   // initializeForm(): void {
@@ -102,7 +130,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   //     stationID: ['', Validators.required],
   //     crimeID: [''],
   //     reported_date: ['', Validators.required],
-  //     incidentDate: [''],
+  //     reportedDate: [''],
   //     blotterNum: ['', Validators.required],
   //     hasAccount: [true],
   //     eSignature: ['', Validators.required],
@@ -290,62 +318,65 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   // }
 
   onSelect() {
-    const timePeriod = this.timePeriodControl.value;
-  
+    console.log(
+      'onSelect called, current value:',
+      this.timePeriodControl.value
+    );
+
+    // Destroy existing chart if it exists
     if (this.chart) {
-      this.chart.destroy(); // Destroy previous chart instance
+      this.chart.destroy();
+      this.chart = null;
     }
-  
+
+    const timePeriod = this.timePeriodControl.value;
+    console.log('Selected time period:', timePeriod);
+
     if (timePeriod === 'weekly') {
       this.createWeeklyChart();
     } else if (timePeriod === 'monthly') {
       this.createMonthlyChart();
-    } else {
-      console.warn('Unknown time period selected.');
     }
   }
-  
 
-  loadUserProfile(){
+  loadUserProfile() {
     const userData = localStorage.getItem('userData');
     console.log('USER DATA SESSION', userData);
-    if(userData){
-      try{
+    if (userData) {
+      try {
         const parsedData = JSON.parse(userData);
         this.personId = parsedData.personId;
         this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
           (response) => {
             this.policePersonData = response;
-            console.log("Fetched Police Person Data", this.policePersonData);
+            console.log('Fetched Police Person Data', this.policePersonData);
             this.fetchPoliceData(this.policePersonData.police_id);
-            console.log("Police ID:", this.policePersonData.police_id)
+            console.log('Police ID:', this.policePersonData.police_id);
           },
           (error) => {
-            console.error("Errod Police Person Data", error)
+            console.error('Errod Police Person Data', error);
           }
-        )
-        
-        console.log("Person ID", this.personId)
+        );
+
+        console.log('Person ID', this.personId);
       } catch {
-        console.error("Error fetching localStorage")
+        console.error('Error fetching localStorage');
       }
     }
   }
-
 
   fetchPoliceData(policeId: number) {
     this.policeAccountsService.getAllPoliceData().subscribe(
       (allPoliceData) => {
         // Find the matching police data by policeId
-        const policeData = allPoliceData.find(p => p.police_id === policeId);
-        this.policeDetails = policeData
-  
+        const policeData = allPoliceData.find((p) => p.police_id === policeId);
+        this.policeDetails = policeData;
+
         if (policeData) {
           const badgeNumber = this.policeDetails.badge_number;
           console.log('Found police data:', policeData);
           console.log('Badge Number:', badgeNumber);
           this.fetchStation(this.policeDetails.station_id);
-  
         } else {
           console.error('Police ID not found in all police data');
         }
@@ -355,299 +386,249 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       }
     );
   }
-  
 
   fetchStation(stationId: number) {
     this.jurisdictionService.getStation(stationId).subscribe(
       (response) => {
         this.stationDetails = response;
-        console.log("Station Data", this.stationDetails);
-        this.fetchReportStation(this.stationDetails.station_id)
+        console.log('Station Data', this.stationDetails);
+        this.fetchReportStation(this.stationDetails.station_id);
       },
       (error) => {
-        console.error('Error Fetching Station Data', error)
+        console.error('Error Fetching Station Data', error);
       }
-    )
+    );
   }
 
   fetchReportStation(stationId: number) {
     this.caseQueueService.getReports(stationId).subscribe(
       (response) => {
         this.reports = response;
-        console.log("Fetched Reports", this.reports)
+        console.log('Fetched Reports', this.reports);
         if (this.reports && this.reports.length) {
           this.calculateReportsAverage();
           this.calculateReportsCount();
+          this.onSelect();
           // this.createChart();
-       
-      } else {
-          console.warn("No reports available.");
-      }
+        } else {
+          console.warn('No reports available.');
+        }
       },
       (error) => {
-        console.error('Error Fetching Reports in Station ', error)
+        console.error('Error Fetching Reports in Station ', error);
       }
-    )
+    );
   }
 
   calculateReportsCount() {
     if (!this.reports || !this.reports.length) {
-        console.warn('No reports to calculate counts.');
-        return { weeklyCounts: {}, monthlyCounts: {} };  // Explicit return of empty objects
+      console.warn('No reports to calculate counts.');
+      return { weeklyCounts: {}, monthlyCounts: {} };
     }
 
-    const weeklyCounts: { [week: string]: number } = {};
+    // Create an array to store week data for sorting
+    const weekData: {
+      startDate: Date;
+      label: string;
+      count: number;
+    }[] = [];
+
     const monthlyCounts: { [month: string]: number } = {};
 
     this.reports.forEach((report) => {
-        const incidentDate = new Date(report.incident_date);
-        const weekKey = `Week${Math.ceil(incidentDate.getDate() / 7)}-${incidentDate.getMonth() + 1}-${incidentDate.getFullYear()}`;
-        const monthKey = `${incidentDate.toLocaleString('default', { month: 'short' })}-${incidentDate.getFullYear()}`;
+      const reportedDate = new Date(report.reported_date);
 
-        weeklyCounts[weekKey] = (weeklyCounts[weekKey] || 0) + 1;
-        monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
+      // Calculate the start and end of the week
+      const start = startOfWeek(reportedDate, { weekStartsOn: 0 });
+      const end = endOfWeek(reportedDate, { weekStartsOn: 0 });
+      const weekLabel = `${format(start, 'MMM d')}-${format(end, 'd, yyyy')}`;
+
+      // Find existing week entry or create new one
+      let weekEntry = weekData.find((w) => w.label === weekLabel);
+      if (!weekEntry) {
+        weekEntry = {
+          startDate: start,
+          label: weekLabel,
+          count: 0,
+        };
+        weekData.push(weekEntry);
+      }
+      weekEntry.count++;
+
+      // Handle monthly counts as before
+      const monthKey = `${reportedDate.toLocaleString('default', {
+        month: 'short',
+      })}-${reportedDate.getFullYear()}`;
+      monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
     });
+
+    // Sort weeks by start date
+    weekData.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
+    // Convert sorted array back to object
+    const weeklyCounts = weekData.reduce((acc, week) => {
+      acc[week.label] = week.count;
+      return acc;
+    }, {} as { [week: string]: number });
 
     console.log('Weekly Report Counts:', weeklyCounts);
     console.log('Monthly Report Counts:', monthlyCounts);
 
     return { weeklyCounts, monthlyCounts };
-}
+  }
 
-calculateReportsAverage() {
-  // if (!this.reports || !this.reports.length) {
-  //     console.warn('No reports to calculate averages.');
-  //     return;
-  // }
+  calculateReportsAverage() {
+    // if (!this.reports || !this.reports.length) {
+    //     console.warn('No reports to calculate averages.');
+    //     return;
+    // }
 
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
 
-  // Group reports by week, month, and year
-  const weeklyReports: { [week: string]: number } = {};
-  const monthlyReports: { [month: string]: number } = {};
-  const annualReports: { [year: string]: number } = {};
+    // Group reports by week, month, and year
+    const weeklyReports: { [week: string]: number } = {};
+    const monthlyReports: { [month: string]: number } = {};
+    const annualReports: { [year: string]: number } = {};
 
-  this.reports.forEach((report) => {
+    this.reports.forEach((report) => {
       const reportedDate = new Date(report.reported_date);
-      const weekKey = `Week${Math.ceil(reportedDate.getDate() / 7)}-${reportedDate.getMonth() + 1}-${reportedDate.getFullYear()}`;
-      const monthKey = `${reportedDate.toLocaleString('default', { month: 'short' })}-${reportedDate.getFullYear()}`;
+      const weekKey = `Week${Math.ceil(reportedDate.getDate() / 7)}-${
+        reportedDate.getMonth() + 1
+      }-${reportedDate.getFullYear()}`;
+      const monthKey = `${reportedDate.toLocaleString('default', {
+        month: 'short',
+      })}-${reportedDate.getFullYear()}`;
       const yearKey = `${reportedDate.getFullYear()}`;
 
       weeklyReports[weekKey] = (weeklyReports[weekKey] || 0) + 1;
       monthlyReports[monthKey] = (monthlyReports[monthKey] || 0) + 1;
       annualReports[yearKey] = (annualReports[yearKey] || 0) + 1;
-  });
+    });
 
-  // Calculate weekly and monthly averages
-  const totalWeeks = Object.keys(weeklyReports).length;
-  const totalMonths = Object.keys(monthlyReports).length;
-  const totalAnnualReports = Object.keys(annualReports).length;
+    // Calculate weekly and monthly averages
+    const totalWeeks = Object.keys(weeklyReports).length;
+    const totalMonths = Object.keys(monthlyReports).length;
+    const totalAnnualReports = Object.keys(annualReports).length;
 
-  const weeklyAverage = totalWeeks ? Math.round(this.reports.length / totalWeeks) : 0;
-  const monthlyAverage = totalMonths ? Math.round(this.reports.length / totalMonths) : 0;
-  const annualAverage = totalAnnualReports ? Math.round(Object.values(annualReports).reduce((a, b) => a + b, 0) / totalAnnualReports) : 0;
+    const weeklyAverage = totalWeeks
+      ? Math.round(this.reports.length / totalWeeks)
+      : 0;
+    const monthlyAverage = totalMonths
+      ? Math.round(this.reports.length / totalMonths)
+      : 0;
+    const annualAverage = totalAnnualReports
+      ? Math.round(
+          Object.values(annualReports).reduce((a, b) => a + b, 0) /
+            totalAnnualReports
+        )
+      : 0;
 
-  this.weeklyAvg = weeklyAverage;
-  this.monthlyAvg = monthlyAverage;
-  this.annualAvg = annualAverage;
+    this.weeklyAvg = weeklyAverage;
+    this.monthlyAvg = monthlyAverage;
+    this.annualAvg = annualAverage;
 
-  console.log('Weekly Average:', this.weeklyAvg);
-  console.log('Monthly Average:', this.monthlyAvg);
-  console.log('Annual Average:', this.annualAvg);
-}
-
-
-createWeeklyChart() {
-  const counts = this.calculateReportsCount();
-  if (!counts || !counts.weeklyCounts) return;
-
-  const weeklyData = Object.values(counts.weeklyCounts) as number[];
-  const weeklyLabels = Object.keys(counts.weeklyCounts);
-
-  const chartConfig: ChartConfiguration<'bar', number[], string> = {
-    type: 'bar',
-    data: {
-      labels: weeklyLabels,
-      datasets: [
-        {
-          label: 'Weekly Reports',
-          data: weeklyData,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          beginAtZero: true,
-        },
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  };
-
-  this.renderChart(chartConfig);
-  console.log("Weekly Chart Generated")
-}
-
-createMonthlyChart() {
-  const counts = this.calculateReportsCount();
-  if (!counts || !counts.monthlyCounts) return;
-
-  const monthlyData = Object.values(counts.monthlyCounts) as number[];
-  const monthlyLabels = Object.keys(counts.monthlyCounts);
-
-  const chartConfig: ChartConfiguration<'bar', number[], string> = {
-    type: 'bar',
-    data: {
-      labels: monthlyLabels,
-      datasets: [
-        {
-          label: 'Monthly Reports',
-          data: monthlyData,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          beginAtZero: true,
-        },
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  };
-
-  this.renderChart(chartConfig);
-  console.log("Monthly Chart Generated")
-}
-
-renderChart(chartConfig: ChartConfiguration) {
-  const ctx = (document.getElementById('casesGraph') as HTMLCanvasElement).getContext('2d');
-  if (ctx) {
-    this.chart = new Chart(ctx, chartConfig);
-  } else {
-    console.error('Canvas element not found or context is not accessible.');
+    console.log('Weekly Average:', this.weeklyAvg);
+    console.log('Monthly Average:', this.monthlyAvg);
+    console.log('Annual Average:', this.annualAvg);
   }
-}
 
-// createChart() {
-//   const counts = this.calculateReportsCount();
+  createWeeklyChart() {
+    const counts = this.calculateReportsCount();
+    if (!counts || !counts.weeklyCounts) return;
 
-//   if (!counts) {
-//     console.warn('No data available for chart creation.');
-//     return;
-//   }
+    const weeklyData = Object.values(counts.weeklyCounts) as number[];
+    const weeklyLabels = Object.keys(counts.weeklyCounts);
 
-//   // Generate custom date range labels for weekly and monthly data
-//   const weeklyLabels = this.generateDateRangeLabels(counts.weeklyCounts);
-//   const monthlyLabels = this.generateDateRangeLabels(counts.monthlyCounts);
+    const chartConfig: ChartConfiguration<'bar', number[], string> = {
+      type: 'bar',
+      data: {
+        labels: weeklyLabels,
+        datasets: [
+          {
+            label: 'Weekly Reports',
+            data: weeklyData,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            beginAtZero: true,
+          },
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    };
 
-//   const weeklyData = Object.values(counts.weeklyCounts) as number[];
-//   const monthlyData = Object.values(counts.monthlyCounts) as number[];
+    this.renderChart(chartConfig);
+    console.log('Weekly Chart Generated');
+  }
 
-//   // Create Weekly Chart
-//   this.createBarChart('weeklyChart', 'Weekly Reports', weeklyLabels, weeklyData);
+  createMonthlyChart() {
+    const counts = this.calculateReportsCount();
+    if (!counts || !counts.monthlyCounts) {
+      console.warn('No monthly data available');
+      return;
+    }
 
-//   // Create Monthly Chart
-//   this.createBarChart('monthlyChart', 'Monthly Reports', monthlyLabels, monthlyData);
-// }
+    console.log('Monthly data:', counts.monthlyCounts);
 
+    const monthlyData = Object.values(counts.monthlyCounts);
+    const monthlyLabels = Object.keys(counts.monthlyCounts);
 
-// generateDateRangeLabels(data: any): string[] {
-//   const labels: string[] = [];
+    const chartConfig: ChartConfiguration<'bar', number[], string> = {
+      type: 'bar',
+      data: {
+        labels: monthlyLabels,
+        datasets: [
+          {
+            label: 'Monthly Reports',
+            data: monthlyData,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            beginAtZero: true,
+          },
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    };
 
-//   const keys = Object.keys(data); // The keys could be week ranges or months
+    this.renderChart(chartConfig);
+  }
 
-//   keys.forEach((key) => {
-//     console.log(`Processing key: ${key}`);
+  renderChart(chartConfig: ChartConfiguration) {
+    const canvas = document.getElementById('casesGraph') as HTMLCanvasElement;
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
+    }
 
-//     // Extract week number, month, and year from the format 'Week1-10-2024'
-//     const match = key.match(/Week(\d+)-(\d+)-(\d{4})/);
-//     if (!match) {
-//       console.error(`Invalid week format: ${key}`);
-//       return;
-//     }
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.error('Canvas context not available');
+      return;
+    }
 
-//     const weekNumber = parseInt(match[1], 10); // Extract week number
-//     const month = parseInt(match[2], 10); // Extract month
-//     const year = parseInt(match[3], 10); // Extract year
-
-//     // Calculate the start date of the week (using the first day of the month)
-//     const startDate = new Date(year, month - 1, 1); // Month is zero-indexed
-//     const daysOffset = (weekNumber - 1) * 7; // Calculate the days offset from the first day of the month
-//     startDate.setDate(startDate.getDate() + daysOffset);
-
-//     // Ensure we have a valid date
-//     if (isNaN(startDate.getTime())) {
-//       console.error(`Invalid date for week: ${key}`);
-//       return;
-//     }
-
-//     // Add 6 days to get the end date of the week
-//     const endDate = new Date(startDate);
-//     endDate.setDate(startDate.getDate() + 6);
-
-//     // Format the label as "Oct 1-7" or similar
-//     const label = `${format(startDate, 'MMM d')} - ${format(endDate, 'd')}`;
-//     labels.push(label);
-//   });
-
-//   return labels;
-// }
-
-
-// // Function to create a bar chart
-// createBarChart(chartId: string, label: string, labels: string[], data: number[]) {
-//   const chartConfig: ChartConfiguration<'bar', number[], string> = {
-//     type: 'bar',
-//     data: {
-//       labels: labels,
-//       datasets: [
-//         {
-//           label: label,
-//           data: data,
-//           backgroundColor: 'rgba(75, 192, 192, 0.2)',
-//           borderColor: 'rgba(75, 192, 192, 1)',
-//           borderWidth: 1,
-//         },
-//       ],
-//     },
-//     options: {
-//       responsive: true,
-//       scales: {
-//         x: {
-//           type: 'category',
-//         },
-//         y: {
-//           type: 'linear',
-//           min: 0,
-//         },
-//       },
-//     },
-//   };
-
-//   const ctx = (document.getElementById(chartId) as HTMLCanvasElement).getContext('2d');
-//   if (ctx) {
-//     new Chart(ctx, chartConfig);
-//   } else {
-//     console.error('Canvas element not found or context is not accessible.');
-//   }
-// }
-
-  
+    console.log('Rendering chart with config:', chartConfig);
+    this.chart = new Chart(ctx, chartConfig);
+  }
 
   logout() {
     this.authService.logout().subscribe(
@@ -669,10 +650,8 @@ renderChart(chartConfig: ChartConfiguration) {
     localStorage.removeItem('sessionData');
     localStorage.clear();
     sessionStorage.clear();
-
   }
 
- 
   ngOnDestroy(): void {
     if (this.reportSubscription) {
       this.reportSubscription.unsubscribe();
