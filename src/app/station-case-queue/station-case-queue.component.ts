@@ -34,6 +34,9 @@ export class StationCaseQueueComponent implements OnInit {
   totalReports: number = 0; 
   filteredReports: any[] = [];
   searchQuery = '';
+  policeDetails: any = {};
+  stationDetails: any = {};
+
 
   constructor(
     private fb: FormBuilder,
@@ -52,10 +55,34 @@ export class StationCaseQueueComponent implements OnInit {
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
-    this.fetchnationwideReports();
+    // this.fetchnationwideReports();
     //this.fetchReport();
     this.fetchCitizens();
+
+    const policeData = localStorage.getItem('policeDetails');
+    const stationData = localStorage.getItem('stationDetails');
+    const reportsData = localStorage.getItem('reports');
+
+    // Parse and assign the data if it exists
+    if (policeData) {
+      this.policeDetails = JSON.parse(policeData);
+    }
+
+    if (stationData) {
+      this.stationDetails = JSON.parse(stationData);
+    }
+
+    if (reportsData) {
+      this.reports = JSON.parse(reportsData);
+    }
+
+    console.log('Retrieved Police Details:', this.policeDetails);
+    console.log('Retrieved Station Details:', this.stationDetails);
+    console.log('Retrieved Reports:', this.reports);
+
     this.filteredReports = this.reports;
+
+    
   }
 
   // Define the form controls
@@ -164,32 +191,32 @@ export class StationCaseQueueComponent implements OnInit {
     );
   }
   
-  fetchnationwideReports(): void {
-    this.isLoading = true;  // Set loading state to true
-    this.caseQueueService.getNationwideReports().subscribe(
-      (response) => {
-        if (Array.isArray(response)) {
-        this.reports = response;
+  // fetchnationwideReports(): void {
+  //   this.isLoading = true;  // Set loading state to true
+  //   this.caseQueueService.getNationwideReports().subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //       this.reports = response;
       
-          console.log('Fetched reports:', response);
-          this.reports.forEach((report: { citizen_id: any; }) => {
-            // console.log(report.citizen_id);
-            this.citizenId = report.citizen_id
-          });
+  //         console.log('Fetched reports:', response);
+  //         this.reports.forEach((report: { citizen_id: any; }) => {
+  //           // console.log(report.citizen_id);
+  //           this.citizenId = report.citizen_id
+  //         });
 
          
-        } else {
-          this.errorMessage = 'Unexpected response from server.';
-        }
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching reports:', error);
-        this.errorMessage = 'Failed to load reports. Please try again.';
-        this.isLoading = false;
-      }
-    );
-  }
+  //       } else {
+  //         this.errorMessage = 'Unexpected response from server.';
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching reports:', error);
+  //       this.errorMessage = 'Failed to load reports. Please try again.';
+  //       this.isLoading = false;
+  //     }
+  //   );
+  // }
 
 
   // Fetch stations
@@ -298,13 +325,13 @@ export class StationCaseQueueComponent implements OnInit {
 // }
 
 
-navigateToReportEndorse(citizenId: number): void {
-  if (citizenId) {
-    console.log('Navigating with Citizen ID:', citizenId);
-    this.router.navigate(['/report-endorse'], { queryParams: { citizenID: citizenId } });
+navigateToReportEndorse(reportId: number): void {
+  if (reportId) {
+    console.log('Navigating with Report ID:', reportId);
+    this.router.navigate(['/report-endorse'], { queryParams: { reportID: reportId } });
   } else {
-    console.error('Citizen ID not found for the selected report.');
-    alert('Invalid citizen ID. Please select a valid report.');
+    console.error('report ID not found for the selected report.');
+    alert('Invalid report id. Please select a valid report.');
   }
 }
 

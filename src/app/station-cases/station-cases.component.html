@@ -1,6 +1,6 @@
 <div class="container">
     <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
+      <!-- In case of emergencies, please dial your local emergency services number -->
     </div>
     <div class="min-h-screen bg-zinc-100 flex">
       <aside class="w-64 bg-white shadow-md">
@@ -17,39 +17,39 @@
         <nav class="mt-7"> 
            <ul class="list-none p-0">
             <li>
-              <a href="/station-dashboard" class="nav-link">
+              <a [routerLink]="['/station-dashboard']" routerLinkActive="active" class="nav-link">
                 <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
                 <span>DASHBOARD</span>
               </a>
             </li>
             <li>
-              <a href="/station-case-queue" class="nav-link">
-                <img
-                  src="assets/reports.svg"
-                  alt="reports Icon"
-                  class="w-6 h-6 mr-2"
-                />
-                <span>REPORTS</span>
-              </a>
-            </li>
-            <li>
-              <a href="/station-dashboard" class="nav-link">
+              <a [routerLink]="['/station-cases']" routerLinkActive="active" class="nav-link">
                 <img
                   src="assets/cases.svg"
-                  alt="Inbox Icon"
+                  alt="reports Icon"
                   class="w-6 h-6 mr-2"
                 />
                 <span>CASES</span>
               </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-case-queue']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/reports.svg"
+                  alt="Inbox Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>REPORTS</span>
+              </a>
             </li>   
             <li>
-              <a href="/station-crime-map" class="nav-link">
+              <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
                 <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
                 <span>CRIME MAP</span>
               </a>
             </li>
             <li>
-              <a href="station-list-of-officers" class="nav-link">
+              <a [routerLink]="['/station-list-officers']" routerLinkActive="active" class="nav-link">
                 <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
                 <span>STATION</span>
               </a>

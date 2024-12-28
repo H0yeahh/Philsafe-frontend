@@ -264,7 +264,7 @@ export class CaseQueueService {
   }
 
   getCitizens(): Observable<any> {
-    return this.http.get(this.endpoints.getCitizens)
+    return this.http.get<any>(this.endpoints.getCitizens)
       .pipe(catchError(this.handleError));
   }
 

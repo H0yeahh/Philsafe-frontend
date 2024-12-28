@@ -11,6 +11,8 @@ import {
 } from '../police-accounts.service';
 import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
+import { AccountService } from '../account.service';
+import { forkJoin, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-reportendorse',
@@ -24,12 +26,26 @@ export class ReportEndorseComponent implements OnInit {
   errorMessage: string | null = null;
   reports: any[] = [];
   stations: IStation[] = [];
-  persons: IPerson[] = [];
+  persons: any = [];
   ranks: IRank[] = [];
   stationID: string | null = null;
   citizenId: number = 0;
   fetch_Report: any;
   citizens: any;
+  policeDetails: any = {};
+  stationDetails: any = {};
+  reportId: any;
+  reportDetails: any = [];
+  selectedReport: any = []; 
+  isSignatureVisible: boolean = false;
+  currentSignature: string | null = null;
+  locations: any = [];
+  accounts: any = [];
+  personData: any;
+  accountData: any;
+  locationData: any;
+  citizenData: any;
+
 
   constructor(
     private fb: FormBuilder,
@@ -39,7 +55,9 @@ export class ReportEndorseComponent implements OnInit {
     private personService: PersonService,
     private router: Router,
     private http: HttpClient,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private accountService: AccountService
+
   ) {}
 
   ngOnInit() {
@@ -49,26 +67,78 @@ export class ReportEndorseComponent implements OnInit {
     //   console.log('Citizen ID:', citizenId);
     // });
 
-    console.log('ReportEndorseComponent initialized!');
-    this.route.queryParams.subscribe((params) => {
-      const citizenId = params['citizenID'];
-      console.log('Citizen ID:', citizenId);
-
-      if (citizenId) {
-        this.citizenId = Number(citizenId); // Store citizen ID
-        this.fetchReport(this.citizenId); // Fetch the report
-      } else {
-        console.error('Citizen ID is missing in query parameters.');
-        this.errorMessage = 'Citizen ID is required to fetch the report.';
-      }
-    });
-
     this.initializeForm();
     //this.getOfficerStationId();
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
-    this.fetchCitizens();
+   
+
+    const policeData = localStorage.getItem('policeDetails');
+    const stationData = localStorage.getItem('stationDetails');
+    const reportsData = localStorage.getItem('reports');
+
+    // Parse and assign the data if it exists
+    if (policeData) {
+      this.policeDetails = JSON.parse(policeData);
+    }
+
+    if (stationData) {
+      this.stationDetails = JSON.parse(stationData);
+    }
+
+    if (reportsData) {
+      this.reports = JSON.parse(reportsData);
+    }
+
+    console.log('Retrieved Police Details:', this.policeDetails);
+    console.log('Retrieved Station Details:', this.stationDetails);
+    console.log('Retrieved Reports:', this.reports);
+
+    this.route.queryParams.subscribe((params) => {
+      const reportId = params['reportID'];
+      console.log('Report ID:', reportId);
+
+      if (reportId) {
+          this.reportId = Number(reportId);
+
+          // Check if the report ID exists in the reports data
+          const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
+
+          if (matchingReport && matchingReport.citizen_id ) {
+              console.log('Matching Report:', matchingReport);
+              this.selectedReport = matchingReport;
+
+              this.citizenId = this.selectedReport.citizen_id;
+              console.log("Citizen ID: ", this.citizenId)
+              
+              this.fetchCitizens(() => {
+                forkJoin({
+                  accounts: this.fetchAccounts(),
+                  locations: this.fetchLocations()
+                }).subscribe({
+                  next: (responses) => {
+                    // console.log('All data fetched successfully:', responses);
+                    this.getComplainantInfo(this.citizenId);
+                  },
+                  error: (error) => {
+                    console.error('Error fetching data:', error);
+                    this.errorMessage = 'Failed to load data. Please try again.';
+                  }
+                });
+              });
+          } else {
+              console.error('Report ID not found in the retrieved reports.');
+              this.errorMessage = 'Report not found.';
+          }
+      } else {
+          console.error('Report ID is missing in query parameters.');
+          this.errorMessage = 'Report ID is required to fetch the report.';
+      }
+  });
+
+
+   
     //this.fetchReport(this.citizenId);
 
     // const navigation = this.router.getCurrentNavigation();
@@ -176,6 +246,9 @@ export class ReportEndorseComponent implements OnInit {
   //   );
   // }
 
+
+
+
   fetchReport(citizenId: number): void {
  
     this.caseQueueService.fetchReport(citizenId).subscribe(
@@ -191,7 +264,7 @@ export class ReportEndorseComponent implements OnInit {
             } else {
                 this.reports.push(response); // Push the response directly if it's a single report object
             }
-            console.log("REPORT DATAAAAAAAAAA!!!!!!!!!", this.reports);
+            // console.log("REPORT DATAAAAAAAAAA!!!!!!!!!", this.reports);
             this.isLoading = false;
         
       },
@@ -204,11 +277,13 @@ export class ReportEndorseComponent implements OnInit {
     
   }
 
-  fetchCitizens(): void {
+  fetchCitizens(callback: Function): void {
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         this.citizens = response;
-        console.log('Fetched citizens:', response);
+        localStorage.setItem('citizens', this.citizens)
+        // console.log('Fetched citizens:', this.citizens);
+        callback();
       },
       (error) => {
         console.error('Error fetching citizens:', error);
@@ -216,6 +291,8 @@ export class ReportEndorseComponent implements OnInit {
       }
     );
   }
+
+
 
   getCitizenName(citizenId: number): string {
     const citizen = this.citizens.find((c: any) => c.citizen_id === citizenId);
@@ -309,14 +386,35 @@ export class ReportEndorseComponent implements OnInit {
   }
 
   fetchPersons(): void {
-    this.personService.getAll().subscribe(
-      (response: IPerson[]) => {
+    this.personService.getPersons().subscribe(
+      (response) => {
         this.persons = response;
+        localStorage.setItem('persons', this.persons)
+        // console.log('Fetched persons:', this.persons);
       },
       (error) => {
         console.error('Error fetching persons:', error);
         this.errorMessage = 'Failed to load persons. Please try again.';
       }
+    );
+  }
+
+  fetchAccounts(): Observable<any> {
+    return this.accountService.getAccount().pipe(
+      tap((response) => {
+        this.accounts = response;
+        // Store as JSON string
+        localStorage.setItem('accounts', JSON.stringify(response));
+      })
+    );
+  }
+  fetchLocations(): Observable<any> {
+    return this.personService.getLocations().pipe(
+      tap((response) => {
+        this.locations = response;
+        // Store as JSON string
+        localStorage.setItem('locations', JSON.stringify(response));
+      })
     );
   }
 
@@ -363,6 +461,93 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
+
+  
+  getComplainantInfo(citizenId: number) {
+    // 1. Check Citizens Data
+    if (!this.citizens || this.citizens.length === 0) {
+      console.error("Citizens data is empty or undefined");
+      return;
+    }
+    console.log("Citizens Data:", this.citizens);
+  
+    // 2. Find Citizen
+    const citizen = this.citizens.find((citizen: any) => citizen.citizen_id === citizenId);
+    if (!citizen) {
+      console.error("Citizen with ID", citizenId, "not found.");
+      return;
+    }
+    console.log("Citizen found:", citizen);
+    this.citizenData = citizen;
+    
+    // 3. Get Person ID
+    const personId = citizen.person_id;
+    console.log("Looking for accounts with person_id:", personId);
+  
+    // 4. Check Accounts Data
+    if (!this.accounts || this.accounts.length === 0) {
+      console.error("Accounts data is empty or undefined");
+      // Try to load from localStorage
+      const storedAccounts = localStorage.getItem('accounts');
+      if (storedAccounts) {
+        this.accounts = JSON.parse(storedAccounts);
+        console.log("Loaded accounts from localStorage:", this.accounts);
+      } else {
+        return;
+      }
+    }
+    
+    // Debug: Log all accounts to see what we're working with
+    // console.log("All available accounts:", this.accounts);
+  
+    // 5. Find Account
+    const account = this.accounts.find((acc: any) => {
+      //  console.log("Checking account:", acc, "against personId:", personId);
+      return acc.personId === personId;
+    });
+  
+    if (!account) {
+      console.error("No account found for person_id:", personId);
+      return;
+    }
+  
+    this.accountData = account;
+    console.log("Account Data found:", this.accountData);
+  
+    // 6. Check Locations Data
+    if (!this.locations || this.locations.length === 0) {
+      console.error("Locations data is empty or undefined");
+      // Try to load from localStorage
+      const storedLocations = localStorage.getItem('locations');
+      if (storedLocations) {
+        this.locations = JSON.parse(storedLocations);
+        console.log("Loaded locations from localStorage:", this.locations);
+      } else {
+        return;
+      }
+    }
+  
+    // Debug: Log all locations
+    // console.log("All available locations:", this.locations);
+  
+    // 7. Find Location
+    if (!this.accountData.home_address_id) {
+      console.error("homeAddressId is undefined in account data:", this.accountData);
+      return;
+    }
+  
+    const location = this.locations.find((loc: any) => loc.location_id === this.accountData.home_address_id);
+    
+    if (!location) {
+      console.error("No location found for homeAddressId:", this.accountData.homeAddressId);
+      return;
+    }
+  
+    this.locationData = location;
+    console.log("Location Data found:", this.locationData);
+  }
+ 
+
   onEndorse(): void {
     const reportId = this.endorseForm.get('reportID')?.value;
     console.log(`Endorsing report with ID: ${reportId}`);
@@ -390,5 +575,20 @@ export class ReportEndorseComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/manage-police']);
+  }
+
+
+  viewSignature(signatureData: string) {
+    if (signatureData) {
+      this.currentSignature = signatureData; // Set the current signature dynamically
+      this.isSignatureVisible = true; // Open the modal
+    } else {
+      console.error('No signature data available.');
+    }
+  }
+
+  closeSignature() {
+    this.isSignatureVisible = false; // Close the modal
+    this.currentSignature = null; // Clear the signature to free up memory
   }
 }

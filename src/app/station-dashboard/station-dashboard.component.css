@@ -200,31 +200,6 @@
     margin-bottom: 1rem;
   }
   
-  .nav-link {
-    display: flex;
-    align-items: center;
-    color: #374151;
-    text-decoration: none;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    text-transform: uppercase;
-    font-weight: bold; /* Make the text bold */
-    justify-content: flex-start; /* Align items to the start */
-  }
-  
-  .nav-link:hover {
-    background-color: #edf2f7;
-  }
-  
-  .nav-link.active {
-    background-color: #edf2f7;
-    color: #1a202c;
-  }
-  
-  .nav-icon {
-    margin-right: 0.5rem; /* Adjusted margin to make the container smaller */
-  }
-  
   /* Sidebar styles copied from station-crime-map.component.css */
   .w-64 {
     width: 16rem;
@@ -313,7 +288,7 @@
 
 
 .content {
-  margin-left: 10px;
+  
   /* display: flex; */
   padding: 40px;
   width: 100%;
@@ -407,6 +382,7 @@
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: 20rem;
 }
 
 
@@ -438,4 +414,49 @@
 
 .welcome, h3 {
   margin: 0%;
+}
+
+
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  color: #374151;
+  text-decoration: none;
+  padding: 0.5rem;
+  /* border-radius: 0.5rem; */
+  text-transform: uppercase;
+  font-weight: bold; /* Make the text bold */
+  justify-content: flex-start; /* Align items to the start */
+}
+
+.nav-link:hover {
+  background-color: #edf2f7;
+}
+
+.nav-link.active {
+  background-color: #9BE8E8;
+  color: #1a202c;
+}
+
+.nav-icon {
+  margin-right: 0.5rem; /* Adjusted margin to make the container smaller */
+}
+
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  color: #555; /* Default color */
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: #000000; /* Highlight color */
+  font-weight: bold;
+}
+
+.nav-link.active img {
+  filter: brightness(0.8); /* Optional: Adjust icon brightness when active */
 }

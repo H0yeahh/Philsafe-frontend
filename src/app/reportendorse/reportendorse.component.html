@@ -1,62 +1,140 @@
+<form [formGroup]="endorseForm">
+  <div class="univ-person-data">
+    <div class="parent-person-data">
+      <h3>Complainant Name:</h3>
+      <h3>Contact Number:</h3>
+      <h3>Email:</h3>
+      <h3>Address:</h3>
+    </div>
+    <div class="person-data">
+      <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+      <span>{{ accountData.contact_num }}</span>
+      <span>{{ accountData.email }}</span>
+      <span>
+        {{ locationData.block || "" }} 
+        {{ locationData.street || ""}}
+        {{ locationData.barangay || "" }}
+        {{ locationData.municipality || "" }}
+        {{ locationData.province || "" }}
+        {{ locationData.Region || "" }}
+      </span>
+    </div>
+  </div>
 
-       <form [formGroup]="endorseForm">
-        <div class="container">
-          <main class="main-content">
-            <section class="report-details">
-              <h1>Complainant Name: <span>{{ getCitizenName(citizenId) }}</span> </h1>
-              
-              <div class="report-header">
-                <div class="report-left">
-                  <div class="form-group">
-                    <label for="duty-officer">Duty Officer:</label>
-                    <select id="duty-officer" formControlName="personID">
-                      <option *ngFor="let person of persons" [value]="person.person_id">{{ person.firstname }} {{ person.lastname }}</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="chief-police">Rank:</label>
-                    <select id="chief-police" formControlName="rankID">
-                      <option *ngFor="let rank of ranks" [value]="rank.rank_id">{{ rank.rank_abbr }} {{ rank.rank_full }}</option>
-                    </select>
-                  </div>
-                </div>
+  <div class="container">
+    <main class="main-content">
+      <h1 style="padding-bottom: 30px;"><span>Report Id: {{ selectedReport. report_id}}</span></h1>
+      <section class="report-details">
+        <div class="report-header">
+          <div class="report-left">
+            <div class="form-group">
+              <label for="duty-officer">Duty Officer:</label>
+              <select id="duty-officer" formControlName="personID">
+                <option
+                  *ngFor="let person of persons"
+                  [value]="person.person_id"
+                >
+                  {{ person.firstname }} {{ person.lastname }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="chief-police">Rank:</label>
+              <select id="chief-police" formControlName="rankID">
+                <option *ngFor="let rank of ranks" [value]="rank.rank_id">
+                  {{ rank.rank_abbr }} {{ rank.rank_full }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <tr>
+            <td>
+              <button type="button" class="endorse-btn" (click)="onEndorse()">
+                Endorse
+              </button>
+            </td>
+            <td>
+              <button type="button" class="dismiss-btn" (click)="onDismiss()">
+                Dismiss
+              </button>
+            </td>
+          </tr>
+        </div>
 
-              </div>
-      
-              <!-- <div class="action-buttons">
+        <!-- <div class="action-buttons">
                 <button type="button" class="endorse-btn" (click)="onEndorse()">Endorse</button>
                 <button type="button" class="dismiss-btn" (click)="onDismiss()">Dismiss</button>
-              </div> -->
-      
-              <div class="table-container" >
-                <table >
-                  <thead>
-                    <tr>
-                      <th>Report ID</th>
-                      <th>Incident Name</th>
-                      <th>Incident Date</th>
-                      <th>Reported Date</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let report of reports">  <!-- Loop through the data array -->
-                      <td>{{ report.report_id }}</td>  <!-- Display Report ID -->
-                      <td>{{ report.subcategory_name }}</td>  <!-- Display Incident Name -->
-                      <td>{{ report.incident_date | date }}</td>  <!-- Display Incident Date with date pipe -->
-                      <td>{{ report.reported_date | date }}</td>  <!-- Display Reported Date with date pipe -->
-                      <td> <button type="button" class="endorse-btn" (click)="onEndorse()">Endorse</button></td>
-                      <td> <button type="button" class="dismiss-btn" (click)="onDismiss()">Dismiss</button></td>
-
-                  </tr>
-                  </tbody>
-                </table>
               </div>
-      
-              <div class="submit-blotter">
-                <button type="button" class="send-blotter-btn" (click)="onSendBlotter()">SEND TICKET BLOTTER</button>
+               -->
+        <div class="table-container">
+          <table>
+            <!-- <thead>
+              <tr>
+                <th>Report ID</th>
+                <th>Incident Name</th>
+                <th>Incident Date</th>
+                <th>Reported Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr >
+                
+                <td>{{ selectedReport.report_id }}</td>
+               
+                <td>{{ selectedReport.subcategory_name }}</td>
+              
+                <td>{{ selectedReport.incident_date | date }}</td>
+              
+                <td>{{ selectedReport.reported_date | date }}</td>
+              
+              </tr>
+            </tbody> -->
+            <tr>
+              <td style=" padding-bottom:2rem;"><h3>Report ID</h3></td>
+              <td style="text-align: end; padding-bottom:2rem;"><span>{{selectedReport.report_id}}</span></td>
+            </tr>
+            <tr>
+              <td style=" padding-bottom:2rem;"><h3>Incident Name</h3></td>
+              <td style="text-align: end; padding-bottom:2rem;"><span>{{selectedReport.subcategory_name}}</span></td>
+            </tr>
+            <tr>
+              <td style=" padding-bottom:2rem;"><h3>Category Name</h3></td>
+              <td style="text-align: end; padding-bottom:2rem;"><span>{{selectedReport.category_name}}</span></td>
+            </tr>
+            <tr>
+              <td style=" padding-bottom:2rem;"><h3>Incident Date</h3></td>
+              <td style="text-align: end; padding-bottom:2rem;"><span>{{selectedReport.incident_date}}</span></td>
+            </tr>
+            <tr>
+              <td style=" padding-bottom:2rem;"><h3>Narrative</h3></td>
+              <td style="text-align: end; padding-bottom:2rem;"><span>{{selectedReport.report_body}}</span></td>
+            </tr>
+            <tr>
+              <td style=" padding-bottom:2rem;"><h3>Signature</h3></td>
+              <td style="text-align: end; padding-bottom:2rem;">
+                <a style="color: blue; text-decoration: underline"  (click)="viewSignature(selectedReport.e_signature)">View Signature</a>
+              </td>
+            </tr>
+            <div *ngIf="isSignatureVisible" class="modal">
+              <div class="modal-content">
+                <span class="close" (click)="closeSignature()">&times;</span>
+                <img [src]="currentSignature" alt="E-Signature" />
               </div>
-            </section>
-          </main>
+            </div>
+          </table>
         </div>
-      </form>
+
+        <div class="submit-blotter">
+          <button
+            type="button"
+            class="send-blotter-btn"
+            (click)="onSendBlotter()"
+          >
+            SEND TICKET BLOTTER
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+</form>

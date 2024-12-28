@@ -54,7 +54,7 @@ export class PersonService {
   private readonly accountUrl = `${this.apiUrl}/account/signup/upgrade`;
   private readonly personUrl = `${this.apiUrl}/person`;
   private readonly policeUrl = `${this.apiUrl}/police`;
-  private readonly locationUrl = `${this.apiUrl}/location`;
+  private readonly locationUrl = `${this.apiUrl}/location/retrieve/all`;
 
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
@@ -66,11 +66,19 @@ export class PersonService {
       .pipe(catchError(this.handleError));
   }
 
-  getPersons(): Observable<IPerson[]> {
+  getPersons(): Observable<any> {
     return this.http
-      .get<IPerson[]>(`${this.personUrl}/retrieve/all`)
+      .get<any>(`${this.personUrl}/retrieve/all`)
       .pipe(catchError(this.handleError));
   }
+
+
+  getLocations(): Observable<any> {
+    return this.http
+      .get<any>(this.locationUrl)
+      .pipe(catchError(this.handleError));
+  }
+
 
   postAccount(data: IAccount): Observable<any> {
     return this.http
@@ -117,9 +125,9 @@ export class PersonService {
       .pipe(catchError(this.handleError));
   }
 
-  getAll(): Observable<IPerson[]> {
+  getAll() {
     return this.http
-      .get<IPerson[]>(`${this.personUrl}/retrieve/all`)
+      .get(`${this.personUrl}/retrieve/all`)
       .pipe(catchError(this.handleError));
   }
 

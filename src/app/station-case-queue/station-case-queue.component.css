@@ -277,27 +277,6 @@
     margin-bottom: 1rem;
   }
   
-  .nav-link {
-    display: flex;
-    align-items: center;
-    color: #374151;
-    text-decoration: none;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    text-transform: uppercase;
-    font-weight: bold; /* Make the text bold */
-    justify-content: flex-start; /* Align items to the start */
-  }
-  
-  .nav-link:hover {
-    background-color: #edf2f7;
-  }
-  
-  .nav-link.active {
-    background-color: #edf2f7;
-    color: #1a202c;
-  }
-  
   .nav-icon {
     margin-right: 0.5rem; /* Adjusted margin to make the container smaller */
   }
@@ -633,5 +612,50 @@ table th {
   text-align: center;
   font-style: italic;
   color: gray;
+}
+
+
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  color: #374151;
+  text-decoration: none;
+  padding: 0.5rem;
+  /* border-radius: 0.5rem; */
+  text-transform: uppercase;
+  font-weight: bold; /* Make the text bold */
+  justify-content: flex-start; /* Align items to the start */
+}
+
+.nav-link:hover {
+  background-color: #edf2f7;
+}
+
+.nav-link.active {
+  background-color: #9BE8E8;
+  color: #1a202c;
+}
+
+.nav-icon {
+  margin-right: 0.5rem; /* Adjusted margin to make the container smaller */
+}
+
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  color: #555; /* Default color */
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: #000000; /* Highlight color */
+  font-weight: bold;
+}
+
+.nav-link.active img {
+  filter: brightness(0.8); /* Optional: Adjust icon brightness when active */
 }
 

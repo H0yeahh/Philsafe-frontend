@@ -12,32 +12,32 @@
         <nav class="mt-7"> 
            <ul class="list-none p-0">
             <li>
-              <a href="/station-dashboard" class="nav-link">
+              <a [routerLink]="['/station-dashboard']" routerLinkActive="active" class="nav-link">
                 <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
                 <span>DASHBOARD</span>
               </a>
             </li>
             
             <li>
-              <a href="/station-case-queue" class="nav-link">
-                <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                <span>REPORTS</span>
-              </a>
-            </li>
-            <li>
-              <a href="/station-cases" class="nav-link">
-                <img src="assets/cases.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
+              <a [routerLink]="['/station-cases']" routerLinkActive="active" class="nav-link">
+                <img src="assets/cases.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
                 <span>CASES</span>
               </a>
             </li>
             <li>
-              <a href="/station-crime-map" class="nav-link">
+              <a [routerLink]="['/station-case-queue']" routerLinkActive="active" class="nav-link">
+                <img src="assets/reports.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
+                <span>REPORTS</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
                 <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
                 <span>CRIME MAP</span>
               </a>
             </li>
             <li>
-              <a href="station-list-of-officers" class="nav-link">
+              <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
                 <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
                 <span>STATION</span>
               </a>
@@ -145,7 +145,7 @@
                               [id]="'report-' + report.report_id"
                             >
                               <td>
-                                <a (click)="navigateToReportEndorse(report.citizen_id)">
+                                <a (click)="navigateToReportEndorse(report.report_id)">
                                   <span
                                     [class.highlight]="isFieldMatched(report.report_id, searchQuery)"
                                     [innerHTML]="highlight(report.report_id)"
@@ -194,7 +194,7 @@
                             }"
                           >
                             <td>
-                              <a (click)="navigateToReportEndorse(report.citizen_id)">
+                              <a (click)="navigateToReportEndorse(report.report_id)">
                                 {{ report.report_id }}
                               </a>
                             </td>

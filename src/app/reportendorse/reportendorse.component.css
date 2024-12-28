@@ -16,7 +16,7 @@ body {
 }
 
 .main-content {
-    background-color: #f9fafb;
+    background-color: #9BE8E8;
     width: 80%;
     padding: 20px;
     border-radius: 8px;
@@ -133,3 +133,68 @@ tbody td a {
     font-weight: bold;
     cursor: pointer;
 }
+
+.parent-person-data {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.person-data {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    
+}
+
+.univ-person-data {
+    
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 15rem;
+    padding-left: 13rem;
+    padding-top: 5%
+}
+
+.modal {
+    display: block; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    text-align: center;
+  }
+  
+  .modal-content img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+

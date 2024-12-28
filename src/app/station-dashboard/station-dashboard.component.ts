@@ -43,7 +43,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  reports: any;
+  reports: any = [];
   stations: IStation[] = [];
   persons: IPerson[] = [];
 
@@ -371,7 +371,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
         // Find the matching police data by policeId
         const policeData = allPoliceData.find((p) => p.police_id === policeId);
         this.policeDetails = policeData;
-
+        localStorage.setItem('policeDetails', JSON.stringify(policeData));
         if (policeData) {
           const badgeNumber = this.policeDetails.badge_number;
           console.log('Found police data:', policeData);
@@ -391,6 +391,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.jurisdictionService.getStation(stationId).subscribe(
       (response) => {
         this.stationDetails = response;
+        localStorage.setItem('stationDetails', JSON.stringify(this.stationDetails));
         console.log('Station Data', this.stationDetails);
         this.fetchReportStation(this.stationDetails.station_id);
       },
@@ -404,6 +405,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.caseQueueService.getReports(stationId).subscribe(
       (response) => {
         this.reports = response;
+        localStorage.setItem('reports', JSON.stringify(this.reports));
         console.log('Fetched Reports', this.reports);
         if (this.reports && this.reports.length) {
           this.calculateReportsAverage();
@@ -556,6 +558,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             beginAtZero: true,
@@ -599,6 +602,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             beginAtZero: true,

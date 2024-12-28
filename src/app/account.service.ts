@@ -91,6 +91,11 @@ export class AccountService {
     );
   }
   
+  getAccount(): Observable<any> {
+    return this.http.get<any>(`${this.base}api/account`).pipe(
+      catchError(this.handleError)
+    );
+  }
 
 
   postAccount(data: IAccount): Observable<any> {
