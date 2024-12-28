@@ -613,3 +613,25 @@ table th {
   padding: 4px 8px;
   border-radius: 50%;
 } */
+
+.search-container {
+  margin-bottom: 1rem;
+ 
+}
+
+.search-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.highlight {
+  background-color: yellow;
+}
+
+.no-results{
+  text-align: center;
+  font-style: italic;
+  color: gray;
+}
+

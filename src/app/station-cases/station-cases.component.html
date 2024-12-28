@@ -26,7 +26,7 @@
               <a href="/station-case-queue" class="nav-link">
                 <img
                   src="assets/reports.svg"
-                  alt="Reports Icon"
+                  alt="reports Icon"
                   class="w-6 h-6 mr-2"
                 />
                 <span>REPORTS</span>
@@ -67,7 +67,7 @@
        <!-- <div class="main-content">
         <div class="header">
             <div class="header-title">
-                <h1>NEW REPORTS</h1>
+                <h1>NEW crimeS</h1>
             </div>
             <div class="header-info">
                 <p>Date: May 24, 2024</p>
@@ -77,24 +77,24 @@
       <main class="main-content">
         <header class="header"></header>
     
-        <section class="new-reports">
-            <form [formGroup]="reportsForm" (ngSubmit)="onSubmit()"> 
-                <table class="reports-table">
+        <section class="new-crimes">
+            <form [formGroup]="crimesForm" (ngSubmit)="onSubmit()"> 
+                <table class="crimes-table">
                     <thead>
                         <tr>
-                            <th>Report ID</th>
+                            <th>crime ID</th>
                             <th>Incident Type</th>
                             <th>Complainant</th>
                             <th>Date Received</th>
                         </tr>
                     </thead>
                      <tbody>
-                        <tr *ngFor="let report of reports"> 
+                        <tr *ngFor="let crime of crimes"> 
                           
-                             <td><a href="/report-endorse">{{ report.report_id}}</a></td>
-                            <td>{{ report.subcategory_name }}</td>
-                            <td>{{ report.citizen_id }}</td>
-                            <td>{{ report.reported_date }}</td>
+                             <td><a href="/crime-endorse">{{ crime.crime_id}}</a></td>
+                            <td>{{ crime.subcategory_name }}</td>
+                            <td>{{ crime.citizen_id }}</td>
+                            <td>{{ crime.crimeed_date }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -123,19 +123,27 @@
       </div>
       <main class="main-content">
           <header class="header"></header>
-  
+          <div class="search-container">
+            <input
+            type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterCases()"
+              placeholder="Search"
+              class="search-input"
+            />
+
+          </div>
           <section class="new-reports">
               <form>
                   <table class="reports-table">
                       <thead>
                           <tr>
                               <th>Crime ID</th>
+                              <th>Date Committed</th>
                               <th>Cite Number</th>
                               <th>Incident Name</th>
                               <th>Status</th>
                           </tr>
                       </thead>
-                      <tbody>
+                      <!-- <tbody>
                           <tr *ngFor="let case of cases  | paginate: { 
                             id: 'cases',
                             itemsPerPage: pageSize,
@@ -143,10 +151,91 @@
                             totalItems: totalCases 
                         }">
                               <td><a >{{ case.crime_id }}</a></td>
+                              <td>{{ case.date_committed }}</td>
                               <td>{{ case.cite_number }}</td>
                               <td>{{ case.incident_type }}</td>
                               <td>{{ case.status }}</td>
                           </tr>
+                      </tbody> -->
+                      <tbody>
+                      
+                        <ng-container *ngIf="searchQuery; else allcrimes">
+                          <ng-container *ngIf="filteredCases.length > 0; else noResults">
+                            <tr
+                              *ngFor="let crime of (searchQuery ? filteredCases : cases) | paginate: { 
+                                id: 'cases', 
+                                itemsPerPage: searchQuery ? filteredCases.length : pageSize, 
+                                currentPage: currentPage, 
+                                totalItems: searchQuery ? filteredCases.length : totalCases 
+                              }"
+                              [id]="'crime-' + crime.crime_id"
+                            >
+                              <td>
+                                <a>
+                                  <span
+                                    [class.highlight]="isFieldMatched(crime.crime_id, searchQuery)"
+                                    [innerHTML]="highlight(crime.crime_id)"
+                                  ></span>
+                                </a>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(crime.date_committed, searchQuery)"
+                                  [innerHTML]="highlight(crime.date_committed)"
+                                ></span>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(crime.cite_number, searchQuery)"
+                                  [innerHTML]="highlight(crime.cite_number)"
+                                ></span>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(crime.incident_type, searchQuery)"
+                                  [innerHTML]="highlight(crime.incident_type)"
+                                ></span>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(crime.incident_date, searchQuery)"
+                                  [innerHTML]="highlight(crime.crimeed_date | date)"
+                                ></span>
+                              </td>
+                            </tr>
+                          </ng-container>
+                      
+                      
+                          <ng-template #noResults>
+                            <tr>
+                              <td colspan="4" class="no-results">
+                                No results found for "{{ searchQuery }}"
+                              </td>
+                            </tr>
+                          </ng-template>
+                        </ng-container>
+                      
+                      
+                        <ng-template #allcrimes>
+                          <tr
+                            *ngFor="let crime of cases | paginate: { 
+                              id: 'cases', 
+                              itemsPerPage: pageSize, 
+                              currentPage: currentPage, 
+                              totalItems: totalCases 
+                            }"
+                          >
+                            <td>
+                              <a>
+                                {{ crime.crime_id }}
+                              </a>
+                            </td>
+                            <td>{{ crime.date_committed | date }}</td>
+                            <td>{{ crime.cite_number }}</td>
+                            <td>{{ crime.incident_type }}</td>
+                            <td>{{ crime.status}}</td>
+                          </tr>
+                        </ng-template>
                       </tbody>
                   </table>
 

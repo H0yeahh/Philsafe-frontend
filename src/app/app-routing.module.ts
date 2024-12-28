@@ -42,6 +42,7 @@ import { StationPoliceAccountsComponent } from './station-police-accounts/statio
 import { CaseManagementComponent } from './case-management/case-management.component';
 import { PoliceReportsComponent } from './police-reports/police-reports.component';
 import { PoliceCasesComponent } from './police-cases/police-cases.component';
+import { StationCasesComponent } from './station-cases/station-cases.component';
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] } 
 
@@ -125,6 +126,8 @@ const routes: Routes = [
   { path: 'police-reports', component: PoliceReportsComponent, 
     canActivate: [roleGuard], data: { roles: ['Police'] } },
   { path: 'police-cases', component: PoliceCasesComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-cases', component: StationCasesComponent, 
     canActivate: [roleGuard], data: { roles: ['Police'] } },
 
  

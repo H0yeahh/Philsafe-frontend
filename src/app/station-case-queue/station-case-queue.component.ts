@@ -29,6 +29,11 @@ export class StationCaseQueueComponent implements OnInit {
   citizenId: number = 0;
   fetch_Report: any;
   citizens: any;
+  currentPage: number = 1; 
+  pageSize: number = 10; 
+  totalReports: number = 0; 
+  filteredReports: any[] = [];
+  searchQuery = '';
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +55,7 @@ export class StationCaseQueueComponent implements OnInit {
     this.fetchnationwideReports();
     //this.fetchReport();
     this.fetchCitizens();
+    this.filteredReports = this.reports;
   }
 
   // Define the form controls
@@ -114,6 +120,50 @@ export class StationCaseQueueComponent implements OnInit {
   //   );
   // }
 
+
+  filterReports() {
+    if (!this.searchQuery) {
+      this.filteredReports = this.reports;
+      return;
+    }
+  
+    const query = this.searchQuery.toLowerCase();
+  
+    this.filteredReports = this.reports.filter((report) => {
+      const reportIdMatch = report.report_id.toString().toLowerCase().includes(query);
+      const citizenIdMatch = report.citizen_id.toString().toLowerCase().includes(query);
+      const nameMatch = this.getCitizenName(report.citizen_id)
+        .toLowerCase()
+        .includes(query);
+  
+      return reportIdMatch || citizenIdMatch || nameMatch;
+    });
+  }
+  
+  
+
+  isFieldMatched(fieldValue: any, query: string): boolean {
+    if (!query) return false;
+    const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
+    return fieldStr.includes(query.toLowerCase());
+  }
+  
+  highlight(fieldValue: any): string {
+    if (!this.searchQuery) return fieldValue;
+    const fieldStr = fieldValue ? fieldValue.toString() : '';
+    const regex = new RegExp(`(${this.searchQuery})`, 'gi');
+    return fieldStr.replace(regex, '<mark>$1</mark>');
+  }
+  
+
+  isRowMatched(report: any): boolean {
+    if (!this.searchQuery) return false;
+    const query = this.searchQuery.toLowerCase().trim();
+    return Object.values(report).some((value) => 
+      value?.toString().toLowerCase().includes(query)
+    );
+  }
+  
   fetchnationwideReports(): void {
     this.isLoading = true;  // Set loading state to true
     this.caseQueueService.getNationwideReports().subscribe(

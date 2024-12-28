@@ -1,6 +1,6 @@
 <div class="container">
     <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
+      <!-- In case of emergencies, please dial your local emergency services number -->
     </div>
     <div class="min-h-screen bg-zinc-100 flex">
       <aside class="w-64 bg-white shadow-md">
@@ -17,16 +17,17 @@
                 <span>DASHBOARD</span>
               </a>
             </li>
-            <li>
-              <a href="/station-dashboard" class="nav-link">
-                <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                <span>INBOX</span>
-              </a>
-            </li>
+            
             <li>
               <a href="/station-case-queue" class="nav-link">
                 <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
                 <span>REPORTS</span>
+              </a>
+            </li>
+            <li>
+              <a href="/station-cases" class="nav-link">
+                <img src="assets/cases.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
+                <span>CASES</span>
               </a>
             </li>
             <li>
@@ -95,7 +96,7 @@
      <div class="main-content">
       <div class="header">
           <div class="header-title">
-              <h1>NEW REPORTS</h1>
+              <h1>LIST OF REPORTS</h1>
           </div>
           <div class="header-info">
               <p>Date: May 24, 2024</p>
@@ -110,7 +111,14 @@
       </div>
       <main class="main-content">
           <header class="header"></header>
-  
+          <div class="search-container">
+            <input
+            type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterReports()"
+              placeholder="Search"
+              class="search-input"
+            />
+
+          </div>
           <section class="new-reports">
               <form [formGroup]="reportsForm" (ngSubmit)="onSubmit()">
                   <table class="reports-table">
@@ -123,14 +131,86 @@
                           </tr>
                       </thead>
                       <tbody>
-                          <tr *ngFor="let report of reports">
-                              <td><a (click)="navigateToReportEndorse(report.citizen_id)">{{ report.report_id }}</a></td>
-                              <td>{{ report.citizen_id }}</td>
-                              <td>{{ getCitizenName(report.citizen_id) }}</td>
-                              <td>{{ report.reported_date | date }}</td>
+                        <!-- If there is a search query -->
+                        <ng-container *ngIf="searchQuery; else allReports">
+                          <!-- Show filtered reports if results are found -->
+                          <ng-container *ngIf="filteredReports.length > 0; else noResults">
+                            <tr
+                              *ngFor="let report of filteredReports | paginate: { 
+                                id: 'cases', 
+                                itemsPerPage: pageSize, 
+                                currentPage: currentPage, 
+                                totalItems: totalReports 
+                              }"
+                              [id]="'report-' + report.report_id"
+                            >
+                              <td>
+                                <a (click)="navigateToReportEndorse(report.citizen_id)">
+                                  <span
+                                    [class.highlight]="isFieldMatched(report.report_id, searchQuery)"
+                                    [innerHTML]="highlight(report.report_id)"
+                                  ></span>
+                                </a>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(report.citizen_id, searchQuery)"
+                                  [innerHTML]="highlight(report.citizen_id)"
+                                ></span>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(getCitizenName(report.citizen_id), searchQuery)"
+                                  [innerHTML]="highlight(getCitizenName(report.citizen_id))"
+                                ></span>
+                              </td>
+                              <td>
+                                <span
+                                  [class.highlight]="isFieldMatched(report.reported_date, searchQuery)"
+                                  [innerHTML]="highlight(report.reported_date | date)"
+                                ></span>
+                              </td>
+                            </tr>
+                          </ng-container>
+                      
+                          <!-- No results found -->
+                          <ng-template #noResults>
+                            <tr>
+                              <td colspan="4" class="no-results">
+                                No results found for "{{ searchQuery }}"
+                              </td>
+                            </tr>
+                          </ng-template>
+                        </ng-container>
+                      
+                        <!-- Fallback to show all reports if no search query -->
+                        <ng-template #allReports>
+                          <tr
+                            *ngFor="let report of reports | paginate: { 
+                              id: 'cases', 
+                              itemsPerPage: pageSize, 
+                              currentPage: currentPage, 
+                              totalItems: totalReports 
+                            }"
+                          >
+                            <td>
+                              <a (click)="navigateToReportEndorse(report.citizen_id)">
+                                {{ report.report_id }}
+                              </a>
+                            </td>
+                            <td>{{ report.citizen_id }}</td>
+                            <td>{{ getCitizenName(report.citizen_id) }}</td>
+                            <td>{{ report.reported_date | date }}</td>
                           </tr>
+                        </ng-template>
                       </tbody>
+                      
+                      
                   </table>
+                  <pagination-controls 
+                  id="cases"
+                  (pageChange)="currentPage = $event">
+                </pagination-controls>
               </form>
           </section>
       </main>

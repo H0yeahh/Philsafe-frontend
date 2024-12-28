@@ -43,6 +43,8 @@ export class StationCasesComponent {
     currentPage: number = 1; 
     pageSize: number = 10; 
     totalCases: number = 0; 
+    filteredCases: any[] = [];
+    searchQuery = '';
   
     constructor(
       private fb: FormBuilder,
@@ -74,6 +76,72 @@ export class StationCasesComponent {
       } else {
         console.warn('No stationDetails found in localStorage.');
       }
+    }
+
+
+    // filterCases() {
+    //   if (!this.searchQuery) {
+    //     this.filteredCases = this.cases;
+    //     return;
+    //   }
+    
+    //   const query = this.searchQuery.toLowerCase();
+    
+    //   this.filteredCases = this.cases.filter((crime) => {
+    //     const crimeIdMatch = crime.crime_id.toString().toLowerCase().includes(query);
+    //     const citeNumMatch = crime.cite_number.toString().toLowerCase().includes(query);
+    //     const statusMatch = crime.status.toLowerCase().includes(query);
+    //     const incidentNameMatch = crime.incident_type 
+    //     ? crime.incident_type.toString().toLowerCase().includes(query) 
+    //     : false;
+
+        
+    
+    //     return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
+    //   });
+    // }
+    
+    filterCases() {
+      if (!this.searchQuery) {
+        this.filteredCases = this.cases;
+        return;
+      }
+    
+      const query = this.searchQuery.toLowerCase();
+    
+      this.filteredCases = this.cases.filter((crime) => {
+        const crimeIdMatch = crime.crime_id?.toString().toLowerCase().includes(query);
+        const citeNumMatch = crime.cite_number?.toString().toLowerCase().includes(query);
+        const incidentNameMatch = crime.incident_type 
+          ? crime.incident_type.toString().toLowerCase().includes(query) 
+          : false;
+        const statusMatch = crime.status?.toLowerCase().includes(query);
+    
+        return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
+      });
+    }
+    
+  
+    isFieldMatched(fieldValue: any, query: string): boolean {
+      if (!query) return false;
+      const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
+      return fieldStr.includes(query.toLowerCase());
+    }
+    
+    highlight(fieldValue: any): string {
+      if (!this.searchQuery) return fieldValue || '';
+      const fieldStr = fieldValue ? fieldValue.toString() : '';
+      const regex = new RegExp(`(${this.searchQuery})`, 'gi');
+      return fieldStr.replace(regex, '<mark>$1</mark>');
+    }
+    
+  
+    isRowMatched(report: any): boolean {
+      if (!this.searchQuery) return false;
+      const query = this.searchQuery.toLowerCase().trim();
+      return Object.values(report).some((value) => 
+        value?.toString().toLowerCase().includes(query)
+      );
     }
 
 
