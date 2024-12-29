@@ -24,23 +24,35 @@ export class ReportEndorseComponent implements OnInit {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
+
   reports: any[] = [];
   stations: IStation[] = [];
   persons: any = [];
   ranks: IRank[] = [];
+  locations: any = [];
+  accounts: any = [];
+  polices: any = [];
+  citizens: any;
+  evidences: any = []
+
   stationID: string | null = null;
   citizenId: number = 0;
   fetch_Report: any;
-  citizens: any;
+  
+
+
   policeDetails: any = {};
   stationDetails: any = {};
-  reportId: any;
   reportDetails: any = [];
+  reportId: any;
+  
   selectedReport: any = []; 
   isSignatureVisible: boolean = false;
+  isEvidenceVisible: boolean = false;
   currentSignature: string | null = null;
-  locations: any = [];
-  accounts: any = [];
+  isModalOpen = false;
+  selectedEvidence: any = null;
+  
   personData: any;
   accountData: any;
   locationData: any;
@@ -85,6 +97,7 @@ export class ReportEndorseComponent implements OnInit {
 
     if (stationData) {
       this.stationDetails = JSON.parse(stationData);
+      this.fetchPoliceByStation(this.stationDetails.station_id)
     }
 
     if (reportsData) {
@@ -104,6 +117,7 @@ export class ReportEndorseComponent implements OnInit {
 
           // Check if the report ID exists in the reports data
           const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
+          this.fetchEvidences(matchingReport.report_id)
 
           if (matchingReport && matchingReport.citizen_id ) {
               console.log('Matching Report:', matchingReport);
@@ -385,6 +399,20 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
+  fetchPoliceByStation(stationId: number): void {
+    this.policeAccountsService.getPoliceByStation(stationId).subscribe(
+      (response) => {
+        this.polices = response;
+        console.log("Fetched Police in Station", this.polices)
+        localStorage.setItem('policeByStation', JSON.stringify(this.polices))
+      },
+      (error) => {
+        console.error('Error fetching ranks:', error);
+        this.errorMessage = 'Failed to load ranks. Please try again.';
+      }
+    );
+  }
+
   fetchPersons(): void {
     this.personService.getPersons().subscribe(
       (response) => {
@@ -408,6 +436,22 @@ export class ReportEndorseComponent implements OnInit {
       })
     );
   }
+
+
+  fetchEvidences(reportId: number): void {
+    this.personService.getEvidences(reportId).subscribe(
+      (response) => {
+        this.evidences = response;
+        console.log('Fetched Evidences', this.evidences)
+        // console.log('Fetched persons:', this.persons);
+      },
+      (error) => {
+        console.error('Error fetching evidences:', error);
+        this.errorMessage = 'Failed to load evidences. Please try again.';
+      }
+    );
+  }
+
   fetchLocations(): Observable<any> {
     return this.personService.getLocations().pipe(
       tap((response) => {
@@ -587,8 +631,66 @@ export class ReportEndorseComponent implements OnInit {
     }
   }
 
+
+  viewEvidence(signatureData: string) {
+    if (signatureData) {
+      this.currentSignature = signatureData; // Set the current signature dynamically
+      this.isSignatureVisible = true; // Open the modal
+    } else {
+      console.error('No signature data available.');
+    }
+  }
+
   closeSignature() {
     this.isSignatureVisible = false; // Close the modal
     this.currentSignature = null; // Clear the signature to free up memory
   }
+
+  decodeBase64(base64String: string): string {
+    try {
+      const decodedString = atob(base64String);  // atob decodes a base64-encoded string
+      return decodedString;
+    } catch (e) {
+      console.error('Error decoding base64 string', e);
+      return '';  // Return an empty string if there's an error
+    }
+  }
+
+  debugEvidence(evidence: any): string {
+    // console.log('Content Type:', evidence.content_type);  // Logs the content type
+    // console.log('File Contents (Base64):', evidence.file_contents);  // Logs the base64 file contents
+    return `Content Type: ${evidence.content_type}\nFile Length: ${evidence.file_contents?.length} characters`;
+  }
+
+
+  cleanBase64(base64String: string): string {
+    return base64String.replace(/(\r\n|\n|\r| )/gm, '');  // Remove unwanted characters
+  }
+  
+  convertBase64ToBlobUrl(base64: string, contentType: string): string {
+    const byteCharacters = atob(base64); // Decode base64 string
+    const byteArrays = [];
+    
+    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+      const byteArray = new Array(byteCharacters.length);
+      for (let i = offset, j = 0; i < offset + 1024 && i < byteCharacters.length; i++, j++) {
+        byteArray[j] = byteCharacters.charCodeAt(i);
+      }
+      byteArrays.push(new Uint8Array(byteArray));
+    }
+  
+    const blob = new Blob(byteArrays, { type: contentType });
+    return URL.createObjectURL(blob); // Create Blob URL
+  }
+
+  openModal(evidence: any) {
+    this.selectedEvidence = evidence;
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.selectedEvidence = null;
+  }
+  
 }

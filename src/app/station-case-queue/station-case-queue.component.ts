@@ -7,6 +7,7 @@ import { IStation, JurisdictionService } from '../jurisdiction.service';
 import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
 import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-station-case-queue',
@@ -45,7 +46,8 @@ export class StationCaseQueueComponent implements OnInit {
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService,
   ) {}
 
   // Initialize the form and fetch reports, stations, and ranks
@@ -338,5 +340,28 @@ navigateToReportEndorse(reportId: number): void {
 
   goBack(): void {
     this.router.navigate(['/manage-police']);
+  }
+
+
+  clearSession() {
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('citizenId');
+    localStorage.removeItem('sessionData');
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
+  logout() {
+    this.authService.logout().subscribe(
+      (response) => {
+        console.log('Signed out successfully:', response);
+        this.clearSession();
+        localStorage.setItem('authenticated', '0');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        console.error('Error during sign out:', error);
+      }
+    );
   }
 }

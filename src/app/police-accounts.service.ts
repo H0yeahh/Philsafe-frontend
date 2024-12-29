@@ -133,6 +133,10 @@ export class PoliceAccountsService {
     return this.http.get(`${this.base}/api/person/retrieve/all`).pipe(catchError(this.handleError));
   }
 
+  getPoliceByStation(stationId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/collect/some/${stationId}`).pipe(catchError(this.handleError));
+  }
+
   postAccount(data: IAccount): Observable<any> {
     return this.http.post(this.accountURL, data).pipe(catchError(this.handleError));
   }

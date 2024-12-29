@@ -58,6 +58,12 @@ export class PersonService {
 
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
+  private mediaHeaders = new HttpHeaders({
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    // Add any other headers as needed
+  });
+
   constructor(private http: HttpClient) {}
 
   create(policeData: IPolice): Observable<any> {
@@ -69,6 +75,15 @@ export class PersonService {
   getPersons(): Observable<any> {
     return this.http
       .get<any>(`${this.personUrl}/retrieve/all`)
+      .pipe(catchError(this.handleError));
+  }
+
+
+  getEvidences(reportId: number): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/media/collect/items/${reportId}`,
+       { headers: this.mediaHeaders }  
+      )
       .pipe(catchError(this.handleError));
   }
 

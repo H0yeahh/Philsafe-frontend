@@ -15,7 +15,7 @@
   }
   
   .bg-zinc-100 {
-    background-color: #9BE8E8;
+    background-color: #bfdbfe;
   }
   
   .w-1-4 {
@@ -471,7 +471,7 @@ table th {
 /* .main-content {
   flex-grow: 1;
   padding: 10px;
-  background-color: #9BE8E8;
+  background-color: #bfdbfe;
 }
 
 
@@ -510,7 +510,7 @@ table th {
 .main-content {
   flex-grow: 1;
   padding: 10px;
-  background-color: #9BE8E8;
+  background-color: #bfdbfe;
 }
 
 
@@ -628,7 +628,7 @@ table th {
 }
 
 .nav-link.active {
-  background-color: #9BE8E8;
+  background-color: #bfdbfe;
   color: #1a202c;
 }
 
@@ -652,4 +652,19 @@ table th {
 
 .nav-link.active img {
   filter: brightness(0.8); /* Optional: Adjust icon brightness when active */
+}
+
+.logout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.button {
+  background-color: hsl(214.5deg 100% 89.93%);;
+  padding: 20px;
+  border: solid 0px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }

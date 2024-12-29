@@ -16,7 +16,7 @@ body {
 }
 
 .main-content {
-    background-color: #9BE8E8;
+    background-color: #bfdbfe;
     width: 80%;
     padding: 20px;
     border-radius: 8px;
@@ -108,6 +108,7 @@ thead th {
 tbody td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
+    text-align: end;
 }
 
 tbody tr:last-child td {
@@ -138,13 +139,14 @@ tbody td a {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    padding-left: 1rem;
 }
 
 .person-data {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    
+    text-align: end;
 }
 
 .univ-person-data {
@@ -154,7 +156,8 @@ tbody td a {
     justify-content: space-between;
     padding-right: 15rem;
     padding-left: 13rem;
-    padding-top: 5%
+    padding-top: 5%;
+    padding-bottom: 20px
 }
 
 .modal {
@@ -198,3 +201,97 @@ tbody td a {
     cursor: pointer;
   }
 
+  .evidence-container {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    justify-content: flex-start;
+  }
+  
+  .evidence-item {
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    width: 350px; 
+    height: 300px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent overflow issues */
+    text-align: center; /* Center-align text and content */
+    box-sizing: border-box; /* Include padding and border in width/height */
+  }
+  
+  .evidence-item img {
+    max-width: 80%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .evidence-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #007bff; /* Change border color on hover */
+  }
+  
+
+  @media (max-width: 768px) {
+    .evidence-item {
+      width: 100%; /* Full width on small screens */
+    }
+  }
+  
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .evidence-item {
+      width: calc(50% - 20px); /* Two items per row */
+    }
+  }
+  
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow: auto;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+  
+  .modal-content:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #007bff;
+    transition: color 0.2s ease;
+  }
+  
+  .modal-close:hover {
+    color: #ff4d4d; /* Change close button color on hover */
+  }
