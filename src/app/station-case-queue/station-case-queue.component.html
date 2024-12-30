@@ -1,63 +1,111 @@
 <div class="container">
-    <div class="emergency-banner">
-      <!-- In case of emergencies, please dial your local emergency services number -->
-    </div>
-    <div class="min-h-screen bg-zinc-100 flex">
-      <aside class="w-64 bg-white shadow-md">
-        <div class="p-4 text-center">
-          <img src="assets/station10.png" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
-           <h2 class="text-lg font-semibold">Punta Princesa Police Station 10</h2>
-          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
-        </div>
-        <nav class="mt-7"> 
-           <ul class="list-none p-0">
-            <li>
-              <a [routerLink]="['/station-dashboard']" routerLinkActive="active" class="nav-link">
-                <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                <span>DASHBOARD</span>
-              </a>
-            </li>
-            
-            <li>
-              <a [routerLink]="['/station-cases']" routerLinkActive="active" class="nav-link">
-                <img src="assets/cases.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                <span>CASES</span>
-              </a>
-            </li>
-            <li>
-              <a [routerLink]="['/station-case-queue']" routerLinkActive="active" class="nav-link">
-                <img src="assets/reports.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                <span>REPORTS</span>
-              </a>
-            </li>
-            <li>
-              <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
-                <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                <span>CRIME MAP</span>
-              </a>
-            </li>
-            <li>
-              <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
-                <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
-                <span>STATION</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
-                <span>CONTACT SUPPORT</span>
-              </a>
-            </li>
-          </ul>
-          <div class="logout">
-            <button type="submit" class="button" (click)="logout()">
-              LOG OUT
-            </button>
-          </div>
-        </nav>
-      </aside>
+  <div class="emergency-banner">
+    <!-- In case of emergencies, please dial your local emergency services number -->
+  </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-4 text-center">
+        <img
+          src="assets/station10.png"
+          alt="CCPO Logo"
+          class="mx-auto mb-4 logo"
+        />
+        <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+      </div>
+      <nav class="mt-7">
+        <ul class="list-none p-0">
+          <li>
+            <a
+              [routerLink]="['/station-dashboard']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
 
-       <!-- <div class="main-content">
+          <li>
+            <a
+              [routerLink]="['/station-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CASES</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-case-queue']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>REPORTS</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-crime-map']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/crime-map.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CRIME MAP</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-list-of-officers']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/station.svg"
+                alt="Station Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>STATION</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">
+              <img
+                src="assets/support.svg"
+                alt="Contact Support Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CONTACT SUPPORT</span>
+            </a>
+          </li>
+        </ul>
+        <div class="logout">
+          <button type="submit" class="button" (click)="logout()">
+            LOG OUT
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- <div class="main-content">
         <div class="header">
             <div class="header-title">
                 <h1>NEW REPORTS</h1>
@@ -98,126 +146,152 @@
      
      -->
 
-     <div class="main-content">
+    <div class="main-content">
       <div class="header">
-          <div class="header-title">
-              <h1>LIST OF REPORTS</h1>
-          </div>
-          <div class="header-info">
-              <p>Date: May 24, 2024</p>
-              <p>Time: 0100</p>
-              <div class="new-reports-container">
-                  <a href="/station-reports" class="new-reports-link">
+        <div class="header-title">
+          <h1>LIST OF REPORTS</h1>
+        </div>
+        <div class="header-info">
+          <p>Date: May 24, 2024</p>
+          <p>Time: 0100</p>
+          <div class="new-reports-container">
+            <!-- <a href="/station-reports" class="new-reports-link">
                       CASE REPORTS
                       <span class="new-reports-badge"></span>
-                  </a>
-              </div>
+                  </a> -->
           </div>
+        </div>
       </div>
       <main class="main-content">
-          <header class="header"></header>
-          <div class="search-container">
-            <input
-            type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterReports()"
-              placeholder="Search"
-              class="search-input"
-            />
+        <header class="header"></header>
+        <div class="search-container">
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="filterReports()"
+            placeholder="Search"
+            class="search-input"
+          />
+        </div>
+        <section class="new-reports">
+          <form [formGroup]="reportsForm" (ngSubmit)="onSubmit()">
+            <table class="reports-table">
+              <thead>
+                <tr>
+                  <th>Complainant</th>
+                  <th>Report ID</th>
+                  <th>Incident Name</th>
+                  <th>Date Received</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- If there is a search query -->
+                <ng-container *ngIf="searchQuery; else allReports">
+                  <!-- Show filtered reports if results are found -->
+                  <ng-container
+                    *ngIf="filteredReports.length > 0; else noResults"
+                  >
+                    <tr
+                      *ngFor="
+                        let report of filteredReports
+                          | paginate
+                            : {
+                                id: 'cases',
+                                itemsPerPage: pageSize,
+                                currentPage: currentPage,
+                                totalItems: totalReports
+                              }
+                      "
+                      [id]="'report-' + report.report_id"
+                      (click)="navigateToReportEndorse(report.report_id)"
+                    >
+                      <td>
+                        <span
+                          [class.highlight]="
+                            isFieldMatched(
+                              getCitizenName(report.citizen_id),
+                              searchQuery
+                            )
+                          "
+                          [innerHTML]="
+                            highlight(getCitizenName(report.citizen_id))
+                          "
+                        ></span>
+                      </td>
+                      <td>
+                        <span
+                          [class.highlight]="
+                            isFieldMatched(report.report_id, searchQuery)
+                          "
+                          [innerHTML]="highlight(report.report_id)"
+                        ></span>
+                      </td>
+                      <td>
+                        <span
+                          [class.highlight]="
+                            isFieldMatched(report.subcategory_name, searchQuery)
+                          "
+                          [innerHTML]="highlight(report.subcategory_name)"
+                        ></span>
+                      </td>
 
-          </div>
-          <section class="new-reports">
-              <form [formGroup]="reportsForm" (ngSubmit)="onSubmit()">
-                  <table class="reports-table">
-                      <thead>
-                          <tr>
-                              <th>Report ID</th>
-                              <th>Complainant ID</th>
-                              <th>Complainant Name</th>
-                              <th>Date Received</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                        <!-- If there is a search query -->
-                        <ng-container *ngIf="searchQuery; else allReports">
-                          <!-- Show filtered reports if results are found -->
-                          <ng-container *ngIf="filteredReports.length > 0; else noResults">
-                            <tr
-                              *ngFor="let report of filteredReports | paginate: { 
-                                id: 'cases', 
-                                itemsPerPage: pageSize, 
-                                currentPage: currentPage, 
-                                totalItems: totalReports 
-                              }"
-                              [id]="'report-' + report.report_id"
-                            >
-                              <td>
-                                <a (click)="navigateToReportEndorse(report.report_id)">
-                                  <span
-                                    [class.highlight]="isFieldMatched(report.report_id, searchQuery)"
-                                    [innerHTML]="highlight(report.report_id)"
-                                  ></span>
-                                </a>
-                              </td>
-                              <td>
-                                <span
-                                  [class.highlight]="isFieldMatched(report.citizen_id, searchQuery)"
-                                  [innerHTML]="highlight(report.citizen_id)"
-                                ></span>
-                              </td>
-                              <td>
-                                <span
-                                  [class.highlight]="isFieldMatched(getCitizenName(report.citizen_id), searchQuery)"
-                                  [innerHTML]="highlight(getCitizenName(report.citizen_id))"
-                                ></span>
-                              </td>
-                              <td>
-                                <span
-                                  [class.highlight]="isFieldMatched(report.reported_date, searchQuery)"
-                                  [innerHTML]="highlight(report.reported_date | date)"
-                                ></span>
-                              </td>
-                            </tr>
-                          </ng-container>
-                      
-                          <!-- No results found -->
-                          <ng-template #noResults>
-                            <tr>
-                              <td colspan="4" class="no-results">
-                                No results found for "{{ searchQuery }}"
-                              </td>
-                            </tr>
-                          </ng-template>
-                        </ng-container>
-                      
-                        <!-- Fallback to show all reports if no search query -->
-                        <ng-template #allReports>
-                          <tr
-                            *ngFor="let report of reports | paginate: { 
-                              id: 'cases', 
-                              itemsPerPage: pageSize, 
-                              currentPage: currentPage, 
-                              totalItems: totalReports 
-                            }"
-                          >
-                            <td>
-                              <a (click)="navigateToReportEndorse(report.report_id)">
-                                {{ report.report_id }}
-                              </a>
-                            </td>
-                            <td>{{ report.citizen_id }}</td>
-                            <td>{{ getCitizenName(report.citizen_id) }}</td>
-                            <td>{{ report.reported_date | date }}</td>
-                          </tr>
-                        </ng-template>
-                      </tbody>
-                      
-                      
-                  </table>
-                  <pagination-controls 
-                  id="cases"
-                  (pageChange)="currentPage = $event">
-                </pagination-controls>
-              </form>
-          </section>
+                      <td>
+                        <span
+                          [class.highlight]="
+                            isFieldMatched(report.reported_date, searchQuery)
+                          "
+                          [innerHTML]="highlight(report.reported_date | date)"
+                        ></span>
+                      </td>
+                    </tr>
+                  </ng-container>
+
+                  <!-- No results found -->
+                  <ng-template #noResults>
+                    <tr>
+                      <td colspan="4" class="no-results">
+                        No results found for "{{ searchQuery }}"
+                      </td>
+                    </tr>
+                  </ng-template>
+                </ng-container>
+
+                <!-- Fallback to show all reports if no search query -->
+                <ng-template #allReports>
+                  <tr
+                    *ngFor="
+                      let report of reports
+                        | paginate
+                          : {
+                              id: 'cases',
+                              itemsPerPage: pageSize,
+                              currentPage: currentPage,
+                              totalItems: totalReports
+                            }
+                    "
+                    (click)="navigateToReportEndorse(report.report_id)"
+                  >
+
+                  
+                    <td>
+                      {{ getCitizenName(report.citizen_id) }}
+                           
+                    </td>
+                    <td>
+                      {{ report.report_id }}
+                    </td>
+                    <td>{{ report.subcategory_name }}</td>
+
+                    <td>{{ report.reported_date | date }}</td>
+                  </tr>
+                </ng-template>
+              </tbody>
+            </table>
+            <pagination-controls id="cases" (pageChange)="currentPage = $event">
+            </pagination-controls>
+          </form>
+        </section>
       </main>
+    </div>
   </div>
-  
+</div>

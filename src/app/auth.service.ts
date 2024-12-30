@@ -56,15 +56,29 @@ export class AuthService {
     localStorage.setItem('access-roles', window.btoa(accessRole))
   }
 
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Unknown error!';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    return throwError(errorMessage);
+  private presentAlert(message: string): void {
+    alert(message);
   }
+  
+  private handleError = (error: HttpErrorResponse): Observable<never> => {
+    let errorMessage = 'An unknown error occurred!';
+  
+    if (error.status === 401) {
+      if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      } else {
+        errorMessage = 'Unauthorized, You must be a citizen';
+      }
+    } else if (error.status === 0) {
+      errorMessage = 'Server not found';
+    } else if (error.status === 500) {
+      errorMessage = 'Internal Server Error';
+    }
+    this.presentAlert(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  };
+
+  
   getUserRoles(): Observable<string[]> {
     const roles = localStorage.getItem('access-roles') || null;
     return of(roles ? window.atob(roles).split(',') : [])

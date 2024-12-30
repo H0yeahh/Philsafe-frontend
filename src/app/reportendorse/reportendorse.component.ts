@@ -13,6 +13,9 @@ import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../account.service';
 import { forkJoin, Observable, tap } from 'rxjs';
+import { AuthService } from '../auth.service';
+import { SuspectServiceService } from '../suspect-service.service';
+import { VictimDataService } from '../victim-data.service';
 
 @Component({
   selector: 'app-reportendorse',
@@ -32,8 +35,10 @@ export class ReportEndorseComponent implements OnInit {
   locations: any = [];
   accounts: any = [];
   polices: any = [];
-  citizens: any;
+  citizens: any = []
   evidences: any = []
+  suspects: any = [];
+  victims: any = [];
 
   stationID: string | null = null;
   citizenId: number = 0;
@@ -52,6 +57,11 @@ export class ReportEndorseComponent implements OnInit {
   currentSignature: string | null = null;
   isModalOpen = false;
   selectedEvidence: any = null;
+  avatarUrl: string = 'assets/user-default.jpg';
+  isIDvisible: boolean = false;
+  currentID: string | null = null;
+
+
   
   personData: any;
   accountData: any;
@@ -68,7 +78,10 @@ export class ReportEndorseComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private authService: AuthService,
+    private suspectService: SuspectServiceService,
+    private victimService: VictimDataService
 
   ) {}
 
@@ -84,11 +97,14 @@ export class ReportEndorseComponent implements OnInit {
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
+    this.fetchSuspects();
+    this.fetchVictims();
    
 
     const policeData = localStorage.getItem('policeDetails');
     const stationData = localStorage.getItem('stationDetails');
     const reportsData = localStorage.getItem('reports');
+    const accountsData = localStorage.getItem('accounts');
 
     // Parse and assign the data if it exists
     if (policeData) {
@@ -102,6 +118,9 @@ export class ReportEndorseComponent implements OnInit {
 
     if (reportsData) {
       this.reports = JSON.parse(reportsData);
+    } 
+    if (accountsData) {
+      this.accounts = JSON.parse(accountsData);
     }
 
     console.log('Retrieved Police Details:', this.policeDetails);
@@ -128,7 +147,7 @@ export class ReportEndorseComponent implements OnInit {
               
               this.fetchCitizens(() => {
                 forkJoin({
-                  accounts: this.fetchAccounts(),
+                  accounts: this.accounts,
                   locations: this.fetchLocations()
                 }).subscribe({
                   next: (responses) => {
@@ -427,15 +446,15 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
-  fetchAccounts(): Observable<any> {
-    return this.accountService.getAccount().pipe(
-      tap((response) => {
-        this.accounts = response;
-        // Store as JSON string
-        localStorage.setItem('accounts', JSON.stringify(response));
-      })
-    );
-  }
+  // fetchAccounts(): Observable<any> {
+  //   return this.accountService.getAccount().pipe(
+  //     tap((response) => {
+  //       this.accounts = response;
+  //       // Store as JSON string
+  //       localStorage.setItem('accounts', JSON.stringify(response));
+  //     })
+  //   );
+  // }
 
 
   fetchEvidences(reportId: number): void {
@@ -459,6 +478,36 @@ export class ReportEndorseComponent implements OnInit {
         // Store as JSON string
         localStorage.setItem('locations', JSON.stringify(response));
       })
+    );
+  }
+
+  fetchSuspects() {
+    this.suspectService.retrieveAllWanteds().subscribe(
+      (response) => {
+        this.suspects = response;
+        console.log('Fetched suspects', this.suspects)
+        localStorage.setItem('suspects', JSON.stringify(this.suspects))
+
+      },
+      (error) => {
+        console.error('Error fetching suspects:', error);
+        this.errorMessage = 'Failed to load suspects. Please try again.';
+      }
+    );
+  }
+
+  fetchVictims() {
+    this.victimService.getAllVictims().subscribe(
+      (response) => {
+        this.victims = response;
+        console.log('Fetched victims', this.victims)
+        localStorage.setItem('victims', JSON.stringify(this.victims))
+
+      },
+      (error) => {
+        console.error('Error fetching victims:', error);
+        this.errorMessage = 'Failed to load victims. Please try again.';
+      }
     );
   }
 
@@ -557,6 +606,23 @@ export class ReportEndorseComponent implements OnInit {
   
     this.accountData = account;
     console.log("Account Data found:", this.accountData);
+
+    this.accountService.getProfPic(this.accountData.acc_id).subscribe(
+      (profilePicBlob: Blob) => {
+          if (profilePicBlob) {
+              // Create a URL for the Blob
+              this.avatarUrl = URL.createObjectURL(profilePicBlob);
+              console.log('PROFILE PIC URL', this.avatarUrl);
+          } else {
+              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              this.avatarUrl = 'assets/user-default.jpg';
+          }
+      },
+      (error) => {
+          console.error('Error fetching profile picture:', error);
+          this.avatarUrl = 'assets/user-default.jpg'; 
+      }
+  );
   
     // 6. Check Locations Data
     if (!this.locations || this.locations.length === 0) {
@@ -624,21 +690,26 @@ export class ReportEndorseComponent implements OnInit {
 
   viewSignature(signatureData: string) {
     if (signatureData) {
-      this.currentSignature = signatureData; // Set the current signature dynamically
-      this.isSignatureVisible = true; // Open the modal
+      this.currentSignature = signatureData; 
+      this.isSignatureVisible = true; 
     } else {
       console.error('No signature data available.');
     }
   }
 
 
-  viewEvidence(signatureData: string) {
-    if (signatureData) {
-      this.currentSignature = signatureData; // Set the current signature dynamically
-      this.isSignatureVisible = true; // Open the modal
+  viewID(idData: string) {
+    if (idData) {
+      this.currentID = idData; 
+      this.isIDvisible = true; 
     } else {
-      console.error('No signature data available.');
+      console.error('No id data available.');
     }
+  }
+
+  closeID() {
+    this.isIDvisible = false; 
+    this.currentID = null;
   }
 
   closeSignature() {
@@ -692,5 +763,31 @@ export class ReportEndorseComponent implements OnInit {
     this.isModalOpen = false;
     this.selectedEvidence = null;
   }
+
+  isReportsActive(): boolean {
+    const activeRoutes = ['/report-endorse', '/station-case-queue'];
+    return activeRoutes.some(route => this.router.url.includes(route));
+  }
   
+  clearSession() {
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('citizenId');
+    localStorage.removeItem('sessionData');
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
+  logout() {
+    this.authService.logout().subscribe(
+      (response) => {
+        console.log('Signed out successfully:', response);
+        this.clearSession();
+        localStorage.setItem('authenticated', '0');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        console.error('Error during sign out:', error);
+      }
+    );
+  }
 }

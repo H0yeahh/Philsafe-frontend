@@ -1,77 +1,300 @@
-<form [formGroup]="endorseForm">
-  <div class="univ-person-data">
-    <div class="parent-person-data">
-      <h3>Complainant Name:</h3>
-      <h3>Contact Number:</h3>
-      <h3>Email:</h3>
-      <h3>Address:</h3>
+<!-- <div class="container">
+    <div class="emergency-banner">
+      In case of emergencies, please dial your local emergency services number
     </div>
-    <div class="person-data">
-      <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
-      <span>{{ accountData.contact_num }}</span>
-      <span>{{ accountData.email }}</span>
-      <span>
-        {{ locationData.block || "" }}
-        {{ locationData.street || "" }}
-        {{ locationData.barangay || "" }}
-        {{ locationData.municipality || "" }}
-        {{ locationData.province || "" }}
-        {{ locationData.Region || "" }}
-      </span>
-    </div>
-  </div>
-
-  <div class="container">
-    <main class="main-content">
-      <h1 style="padding-bottom: 30px">
-        <span>Report Id: {{ selectedReport.report_id }}</span>
-      </h1>
-      <section class="report-details">
-        <div class="report-header">
-          <div class="report-left">
-            <div class="form-group">
-              <label for="duty-officer">Duty Officer:</label>
-              <select id="duty-officer" formControlName="personID">
-                <option
-                  *ngFor="let police of polices"
-                  [value]="police.police_id"
-                >
-                  {{ police.rank_abbr }}. {{ police.firstname }}
-                  {{ police.lastname }}
-                </option>
+    <div class="min-h-screen bg-zinc-100 flex">
+      <aside class="w-64 bg-white shadow-md">
+        <div class="p-4 text-center">
+          <img src="assets/police.svg" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
+          <h2 class="text-lg font-semibold">Abellana Police Station 2</h2>
+          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+        </div>
+        <nav class="mt-7"> 
+          <ul class="list-none p-0">
+            <li>
+              <a  href="#" class="nav-link">
+                <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                <span>DASHBOARD</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
+                <span>INBOX</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
+                <span>REPORTS</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                <span>CRIME MAP</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
+                <span>STATION</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
+                <span>CONTACT SUPPORT</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+        
+        <div class="main-content bg-background p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">DASHBOARD</h1>
+            <div class="flex items-center space-x-4">
+              <select class="border border-zinc-300 rounded p-2">
+                <option>Quarterly</option>
+                <option>Monthly</option>
+                <option>Yearly</option>
               </select>
+              <button class="button-reset flex items-center space-x-2 text-primary">
+                <img src="assets/refresh.svg" alt="Refresh Icon" class="icon-small">
+                <span>Refresh</span>
+              </button>
+              <button class="button-reset flex items-center space-x-2 text-primary">
+              <img src="assets/notification.svg" alt="Notification Icon">
+              </button>
             </div>
-            <div class="form-group">
-              <!-- <label for="chief-police">Rank:</label>
+          </div>
+      
+          <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-100 p-4 rounded-lg text-center">
+              <h2 class="text-lg font-bold">Daily Reports</h2>
+              <p class="text-4xl font-bold">498</p>
+            </div>
+            <div class="bg-green-100 p-4 rounded-lg text-center">
+              <h2 class="text-lg font-bold">Weekly Reports</h2>
+              <p class="text-4xl font-bold">1,598</p>
+            </div>
+            <div class="bg-yellow-100 p-4 rounded-lg text-center">
+              <h2 class="text-lg font-bold">Monthly Reports</h2>
+              <p class="text-4xl font-bold">578</p>
+            </div>
+          </div>
+          <div class="bg-yellow-100 p-4 rounded-lg text-center">
+            <h2 class="text-lg font-bold">Annual Reports</h2>
+            <p class="text-4xl font-bold">578</p>
+          </div>
+        </div>
+      
+          <div class="bg-white p-4 rounded-lg">
+            <img src="assets/chart.jpg" alt="Chart Placeholder">
+          </div>
+        </div>
+      </div> -->
+
+<div class="container">
+  <div class="emergency-banner">
+    <!-- In case of emergencies, please dial your local emergency services number -->
+  </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-4 text-center">
+        <div class="logo">
+          <img src="assets/station10.png" alt="CCPO Logo" />
+        </div>
+
+        <div *ngIf="stationDetails; else loadingTemplate">
+          <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div id="loading">Loading Station Details...</div>
+        </ng-template>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+      </div>
+      <nav class="mt-7">
+        <ul class="list-none p-0">
+          <li>
+            <a
+              [routerLink]="['/station-dashboard']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/add-case']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CASES</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-case-queue']"
+              [ngClass]="{ active: isReportsActive() }"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>REPORTS</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-crime-map']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/crime-map.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CRIME MAP</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-list-of-officers']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/station.svg"
+                alt="Station Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>STATION</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">
+              <img
+                src="assets/support.svg"
+                alt="Contact Support Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CONTACT SUPPORT</span>
+            </a>
+          </li>
+        </ul>
+        <div class="logout">
+          <button type="submit" class="button" (click)="logout()">
+            LOG OUT
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <form [formGroup]="endorseForm">
+       
+        <div class="univ-person-data">
+          <div class="parent-person-data">
+            <!-- <h3>Complainant Name:</h3>
+            <h3>Contact Number:</h3>
+            <h3>Email Address:</h3>
+            <h3>Address:</h3> -->
+            <div class="prof-pic">
+              <img [src]="avatarUrl" alt="Profile Picture">
+            </div>
+            
+          </div>
+          <div *ngIf="citizenData" class="person-data">
+            <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
+            <span>{{ accountData.contact_num }}</span>
+            <span>{{ accountData.email }}</span>
+            <span>
+              {{ locationData.block || "" }}
+              {{ locationData.street || "" }}
+              {{ locationData.barangay || "" }}
+              {{ locationData.municipality || "" }}
+              {{ locationData.province || "" }}
+              {{ locationData.Region || "" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="container">
+          <main class="main-content">
+            <h2 style="padding-bottom: 30px">
+              <span>{{ selectedReport.subcategory_name }}</span>
+            </h2>
+            <section class="report-details">
+              <div class="report-header">
+                <div class="report-left">
+                  <div class="form-group">
+                    <label for="duty-officer">Duty Officer:</label>
+                    <select id="duty-officer" formControlName="personID">
+                      <option
+                        *ngFor="let police of polices"
+                        [value]="police.police_id"
+                      >
+                        {{ police.rank_abbr }}. {{ police.firstname }}
+                        {{ police.lastname }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <!-- <label for="chief-police">Rank:</label>
               <select id="chief-police" formControlName="rankID">
                 <option *ngFor="let rank of ranks" [value]="rank.rank_id">
                   {{ rank.rank_abbr }} {{ rank.rank_full }}
                 </option>
               </select> -->
-            </div>
-          </div>
-          <tr>
-            <td>
-              <button type="button" class="endorse-btn" (click)="onEndorse()">
-                Endorse
-              </button>
-            </td>
-            <td>
-              <button type="button" class="dismiss-btn" (click)="onDismiss()">
-                Dismiss
-              </button>
-            </td>
-          </tr>
-        </div>
+                  </div>
+                </div>
+                <tr>
+                  <td>
+                    <button
+                      type="button"
+                      class="endorse-btn"
+                      [routerLink]="['/add-case']"
+                    >
+                      Endorse
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="dismiss-btn"
+                      (click)="onDismiss()"
+                    >
+                      Mark as Spam
+                    </button>
+                  </td>
+                </tr>
+              </div>
 
-        <!-- <div class="action-buttons">
+              <!-- <div class="action-buttons">
                 <button type="button" class="endorse-btn" (click)="onEndorse()">Endorse</button>
                 <button type="button" class="dismiss-btn" (click)="onDismiss()">Dismiss</button>
               </div>
                -->
-        <div class="table-container">
-          <table>
-            <!-- <thead>
+              <div class="table-container">
+                <table>
+                  <!-- <thead>
               <tr>
                 <th>Report ID</th>
                 <th>Incident Name</th>
@@ -93,236 +316,330 @@
               
               </tr>
             </tbody> -->
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
-              <td style="text-align: end; padding-bottom: 2rem">
-                <span>{{ selectedReport.report_id }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Incident Name</h3></td>
-              <td style="text-align: end; padding-bottom: 2rem">
-                <span>{{ selectedReport.subcategory_name }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Category Name</h3></td>
-              <td style="text-align: end; padding-bottom: 2rem">
-                <span>{{ selectedReport.category_name }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Incident Date</h3></td>
-              <td style="text-align: end; padding-bottom: 2rem">
-                <span>{{ selectedReport.incident_date }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Narrative</h3></td>
-              <td style="text-align: end; padding-bottom: 2rem">
-                <span>{{ selectedReport.report_body }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Signature</h3></td>
-              <td style="text-align: end; padding-bottom: 2rem">
-                <a
-                  style="color: blue; text-decoration: underline"
-                  (click)="viewSignature(selectedReport.e_signature)"
-                  >View Signature</a
-                >
-              </td>
-            </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ selectedReport.report_id }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Reported Date</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ selectedReport.reported_date | date }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Incident Name</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ selectedReport.subcategory_name }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Category Name</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ selectedReport.category_name }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Incident Date</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ selectedReport.incident_date | date }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Narrative</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span style="display: inline-block;
+                      max-width: 500px;      
+                      word-wrap: break-word;  
+                      overflow: hidden;
+                      text-align: justify
+                      ">{{ selectedReport.report_body }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Signature</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <a
+                        style="color: blue; text-decoration: underline"
+                        (click)="viewSignature(selectedReport.e_signature)"
+                        >View Signature</a
+                      >
+                    </td>
+                  </tr>
 
-            <tr>
-              <td style="padding-bottom: 2rem"><h3>Evidences:</h3></td>
-            </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <a
+                        style="color: blue; text-decoration: underline"
+                        (click)="viewID(citizenData.citizen_proof)"
+                        >View Complainant ID</a
+                      >
+                    </td>
+                  </tr>
 
-            <div *ngIf="isLoading">Loading evidences...</div>
-            <div *ngIf="errorMessage">{{ errorMessage }}</div>
-            <div *ngIf="!isLoading && evidences.length > 0" class="evidence-container" >
-              <div *ngFor="let evidence of evidences" class="evidence-item" (click)="openModal(evidence)">
-                <!-- <div>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Evidences:</h3></td>
+                  </tr>
+
+                  <div *ngIf="isLoading">Loading evidences...</div>
+                  <div *ngIf="errorMessage">{{ errorMessage }}</div>
+                  <div
+                    *ngIf="!isLoading && evidences.length > 0"
+                    class="evidence-container"
+                  >
+                    <div
+                      *ngFor="let evidence of evidences"
+                      class="evidence-item"
+                      (click)="openModal(evidence)"
+                    >
+                      <!-- <div>
                   <strong>Debugging:</strong>
                   <pre>{{ debugEvidence(evidence) }}</pre>
                 </div> -->
 
-                <!-- <div style="padding-bottom: 20px">
+                      <!-- <div style="padding-bottom: 20px">
                   <strong>Content Type:</strong> {{ evidence.content_type }}
                 </div> -->
 
-                <!-- Handling Image files -->
-                <div *ngIf="evidence.content_type.startsWith('image/')">
-                  <img
-                    [src]="
-                      'data:' +
-                      evidence.content_type +
-                      ';base64,' +
-                      cleanBase64(evidence.file_contents)
-                    "
-                    alt="Evidence Image"
-                  />
-                </div>
+                      <!-- Handling Image files -->
+                      <div *ngIf="evidence.content_type.startsWith('image/')">
+                        <img
+                          [src]="
+                            'data:' +
+                            evidence.content_type +
+                            ';base64,' +
+                            cleanBase64(evidence.file_contents)
+                          "
+                          alt="Evidence Image"
+                        />
+                      </div>
 
-                <div *ngIf="evidence.content_type === 'application/pdf'">
-                  <embed
-                    [src]="
-                      'data:' +
-                      evidence.content_type +
-                      ';base64,' +
-                      evidence.file_contents
-                    "
-                    width="100%"
-                    height="600px"
-                    type="application/pdf"
-                  />
-                </div>
-                <div *ngIf="evidence.content_type === 'text/plain'">
-                  <pre>{{ decodeBase64(evidence.file_contents) }}</pre>
-                </div>
-                <div
-                  *ngIf="
-                    evidence.content_type === 'application/msword' ||
-                    evidence.content_type ===
-                      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                  "
-                >
-                  <span
-                    >Document (.docx) cannot be viewed directly in
-                    browser.</span
+                      <div *ngIf="evidence.content_type === 'application/pdf'">
+                        <embed
+                          [src]="
+                            'data:' +
+                            evidence.content_type +
+                            ';base64,' +
+                            evidence.file_contents
+                          "
+                          width="100%"
+                          height="600px"
+                          type="application/pdf"
+                        />
+                      </div>
+                      <div *ngIf="evidence.content_type === 'text/plain'">
+                        <pre>{{ decodeBase64(evidence.file_contents) }}</pre>
+                      </div>
+                      <div
+                        *ngIf="
+                          evidence.content_type === 'application/msword' ||
+                          evidence.content_type ===
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                        "
+                      >
+                        <span
+                          >Document (.docx) cannot be viewed directly in
+                          browser.</span
+                        >
+                        <!-- You could integrate a viewer for DOCX files, like using Google Docs Viewer or a custom viewer -->
+                      </div>
+                      <div
+                        *ngIf="
+                          evidence.content_type ===
+                            'application/vnd.ms-excel' ||
+                          evidence.content_type ===
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                        "
+                      >
+                        <span
+                          >Spreadsheet (.xlsx) cannot be viewed directly in
+                          browser.</span
+                        >
+                      </div>
+
+                      <!-- Handling Audio files -->
+                      <div *ngIf="evidence.content_type.startsWith('audio/')">
+                        <audio controls>
+                          <source
+                            [src]="
+                              'data:' +
+                              evidence.content_type +
+                              ';base64,' +
+                              evidence.file_contents
+                            "
+                            type="{{ evidence.content_type }}"
+                          />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+
+                      <!-- Handling Video files -->
+                      <div *ngIf="evidence.content_type.startsWith('video/')">
+                        <video width="100%" controls>
+                          <source
+                            [src]="
+                              'data:' +
+                              evidence.content_type +
+                              ';base64,' +
+                              evidence.file_contents
+                            "
+                            type="{{ evidence.content_type }}"
+                          />
+                          Your browser does not support the video element.
+                        </video>
+                      </div>
+
+                      <!-- If file type doesn't match any specific one above -->
+                      <div
+                        *ngIf="
+                          !evidence.content_type.startsWith('image/') &&
+                          !evidence.content_type.startsWith('audio/') &&
+                          !evidence.content_type.startsWith('video/')
+                        "
+                      >
+                        <strong>File:</strong>
+                        <span>{{ evidence.content_type }}</span>
+                        <a
+                          [href]="
+                            'data:' +
+                            evidence.content_type +
+                            ';base64,' +
+                            evidence.file_contents
+                          "
+                          download
+                        >
+                          Download File
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="!isLoading && evidences.length === 0">
+                    No evidences found.
+                  </div>
+
+                  <div
+                    *ngIf="isModalOpen"
+                    class="modal-overlay"
+                    (click)="closeModal()"
                   >
-                  <!-- You could integrate a viewer for DOCX files, like using Google Docs Viewer or a custom viewer -->
-                </div>
-                <div
-                  *ngIf="
-                    evidence.content_type === 'application/vnd.ms-excel' ||
-                    evidence.content_type ===
-                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                  "
+                    <div
+                      class="modal-content"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <button class="modal-close" (click)="closeModal()">
+                        X
+                      </button>
+                      <div *ngIf="selectedEvidence">
+                        <div
+                          *ngIf="
+                            selectedEvidence.content_type.startsWith('image/')
+                          "
+                        >
+                          <img
+                            [src]="
+                              'data:' +
+                              selectedEvidence.content_type +
+                              ';base64,' +
+                              cleanBase64(selectedEvidence.file_contents)
+                            "
+                            alt="Evidence Image"
+                          />
+                        </div>
+                        <div
+                          *ngIf="
+                            selectedEvidence.content_type === 'application/pdf'
+                          "
+                        >
+                          <embed
+                            [src]="
+                              'data:' +
+                              selectedEvidence.content_type +
+                              ';base64,' +
+                              selectedEvidence.file_contents
+                            "
+                            width="100%"
+                            height="600px"
+                            type="application/pdf"
+                          />
+                        </div>
+                        <div
+                          *ngIf="
+                            selectedEvidence.content_type.startsWith('audio/')
+                          "
+                        >
+                          <audio controls>
+                            <source
+                              [src]="
+                                'data:' +
+                                selectedEvidence.content_type +
+                                ';base64,' +
+                                selectedEvidence.file_contents
+                              "
+                              type="{{ selectedEvidence.content_type }}"
+                            />
+                          </audio>
+                        </div>
+                        <div
+                          *ngIf="
+                            selectedEvidence.content_type.startsWith('video/')
+                          "
+                        >
+                          <video width="100%" controls>
+                            <source
+                              [src]="
+                                'data:' +
+                                selectedEvidence.content_type +
+                                ';base64,' +
+                                selectedEvidence.file_contents
+                              "
+                              type="{{ selectedEvidence.content_type }}"
+                            />
+                          </video>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="isSignatureVisible" class="modal">
+                    <div class="modal-content">
+                      <span class="close" (click)="closeSignature()"
+                        >&times;</span
+                      >
+                      <img [src]="currentSignature" alt="E-Signature" />
+                    </div>
+                  </div>
+
+                  <div *ngIf="isIDvisible" class="modal">
+                    <div class="modal-content">
+                      <span class="close" (click)="closeID()"
+                        >&times;</span
+                      >
+                      <img [src]="currentID" alt="ID" />
+                    </div>
+                    </div>
+
+                </table>
+              </div>
+
+              
+
+              
+
+              <div class="submit-blotter">
+                <button
+                  type="button"
+                  class="send-blotter-btn"
+                  (click)="onSendBlotter()"
                 >
-                  <span
-                    >Spreadsheet (.xlsx) cannot be viewed directly in
-                    browser.</span
-                  >
-                </div>
-
-                <!-- Handling Audio files -->
-                <div *ngIf="evidence.content_type.startsWith('audio/')">
-                  <audio controls>
-                    <source
-                      [src]="
-                        'data:' +
-                        evidence.content_type +
-                        ';base64,' +
-                        evidence.file_contents
-                      "
-                      type="{{ evidence.content_type }}"
-                    />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-
-                <!-- Handling Video files -->
-                <div *ngIf="evidence.content_type.startsWith('video/')">
-                  <video width="100%" controls>
-                    <source
-                      [src]="
-                        'data:' +
-                        evidence.content_type +
-                        ';base64,' +
-                        evidence.file_contents
-                      "
-                      type="{{ evidence.content_type }}"
-                    />
-                    Your browser does not support the video element.
-                  </video>
-                </div>
-
-                <!-- If file type doesn't match any specific one above -->
-                <div
-                  *ngIf="
-                    !evidence.content_type.startsWith('image/') &&
-                    !evidence.content_type.startsWith('audio/') &&
-                    !evidence.content_type.startsWith('video/')
-                  "
-                >
-                  <strong>File:</strong>
-                  <span>{{ evidence.content_type }}</span>
-                  <a
-                    [href]="
-                      'data:' +
-                      evidence.content_type +
-                      ';base64,' +
-                      evidence.file_contents
-                    "
-                    download
-                  >
-                    Download File
-                  </a>
-                </div>
+                  SEND TICKET BLOTTER
+                </button>
               </div>
-            </div>
-            <div *ngIf="!isLoading && evidences.length === 0">
-              No evidences found.
-            </div>
-
-            <div *ngIf="isModalOpen" class="modal-overlay" (click)="closeModal()">
-              <div class="modal-content" (click)="$event.stopPropagation()">
-                <button class="modal-close" (click)="closeModal()">X</button>
-                <div *ngIf="selectedEvidence">
-                  <div *ngIf="selectedEvidence.content_type.startsWith('image/')">
-                    <img
-                      [src]="'data:' + selectedEvidence.content_type + ';base64,' + cleanBase64(selectedEvidence.file_contents)"
-                      alt="Evidence Image"
-                    />
-                  </div>
-                  <div *ngIf="selectedEvidence.content_type === 'application/pdf'">
-                    <embed
-                      [src]="'data:' + selectedEvidence.content_type + ';base64,' + selectedEvidence.file_contents"
-                      width="100%"
-                      height="600px"
-                      type="application/pdf"
-                    />
-                  </div>
-                  <div *ngIf="selectedEvidence.content_type.startsWith('audio/')">
-                    <audio controls>
-                      <source
-                        [src]="'data:' + selectedEvidence.content_type + ';base64,' + selectedEvidence.file_contents"
-                        type="{{ selectedEvidence.content_type }}"
-                      />
-                    </audio>
-                  </div>
-                  <div *ngIf="selectedEvidence.content_type.startsWith('video/')">
-                    <video width="100%" controls>
-                      <source
-                        [src]="'data:' + selectedEvidence.content_type + ';base64,' + selectedEvidence.file_contents"
-                        type="{{ selectedEvidence.content_type }}"
-                      />
-                    </video>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div *ngIf="isSignatureVisible" class="modal">
-              <div class="modal-content">
-                <span class="close" (click)="closeSignature()">&times;</span>
-                <img [src]="currentSignature" alt="E-Signature" />
-              </div>
-            </div>
-          </table>
+            </section>
+          </main>
         </div>
-
-        <div class="submit-blotter">
-          <button
-            type="button"
-            class="send-blotter-btn"
-            (click)="onSendBlotter()"
-          >
-            SEND TICKET BLOTTER
-          </button>
-        </div>
-      </section>
+      </form>
     </main>
   </div>
-</form>
+</div>

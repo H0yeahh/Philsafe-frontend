@@ -151,6 +151,18 @@ export class AccountService {
       );
   }
 
+  getProfPic(accountId: number): Observable<Blob> {
+    return this.http.get(`${this.base}api/account/get/profilepic/${accountId}`, { responseType: 'blob' })
+        .pipe(
+            tap((response: any) => {
+                console.log('Response from getProfPic:', response);
+            }),
+            catchError(error => {
+                // console.error('Error fetching profile picture:', error);
+                return throwError(error);
+            })
+        );
+}
   getPersonById(id: number): Observable<IPerson> {
     const url = `${this.personURL}/retrieve/${id}`;
     return this.http.get<IPerson>(url).pipe(

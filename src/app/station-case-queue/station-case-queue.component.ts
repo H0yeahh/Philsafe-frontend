@@ -4,39 +4,53 @@ import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
 import { IReport } from '../case.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
-import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.service';
+import {
+  IPerson,
+  IRank,
+  PoliceAccountsService,
+} from '../police-accounts.service';
 import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { AccountService } from '../account.service';
+import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-station-case-queue',
   templateUrl: './station-case-queue.component.html',
-  styleUrls: ['./station-case-queue.component.css']
+  styleUrls: ['./station-case-queue.component.css'],
 })
 export class StationCaseQueueComponent implements OnInit {
-  reportsForm!: FormGroup;  // Form group for report submission
+  reportsForm!: FormGroup; // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
   //reports: IReport[] = [];  // Array to hold fetched reports`3
   reports: any;
-  
+  accounts: any;
   stations: IStation[] = [];
-  persons: IPerson[] = [];
+  persons: any = [];
   ranks: IRank[] = [];
-  
+
   stationID: string | null = null;
   citizenId: number = 0;
   fetch_Report: any;
   citizens: any;
-  currentPage: number = 1; 
-  pageSize: number = 10; 
-  totalReports: number = 0; 
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalReports: number = 0;
   filteredReports: any[] = [];
   searchQuery = '';
   policeDetails: any = {};
   stationDetails: any = {};
+  avatarUrl: string = 'assets/user-default.jpg';
+  accountData: any;
+  citizenData: any;
+  profilePics: { [citizenId: number]: any } = {};
+  reportId: any;
+  specificReport: any;
+  personId: any;
+  profilePicMap: { [key: number]: string } = {};
 
 
   constructor(
@@ -48,6 +62,7 @@ export class StationCaseQueueComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private authService: AuthService,
+    private accountService: AccountService
   ) {}
 
   // Initialize the form and fetch reports, stations, and ranks
@@ -56,14 +71,19 @@ export class StationCaseQueueComponent implements OnInit {
     //this.getOfficerStationId(); // Fetch officer's station ID on init
     this.fetchRanks();
     this.fetchStations();
-    this.fetchPersons();
+ 
+
     // this.fetchnationwideReports();
     //this.fetchReport();
     this.fetchCitizens();
+    this.fetchPersons();
+    this.fetchAccounts();
 
     const policeData = localStorage.getItem('policeDetails');
     const stationData = localStorage.getItem('stationDetails');
     const reportsData = localStorage.getItem('reports');
+    // const accountData = localStorage.getItem('accounts');
+    // const citizenData = localStorage.getItem('citizens');
 
     // Parse and assign the data if it exists
     if (policeData) {
@@ -76,15 +96,23 @@ export class StationCaseQueueComponent implements OnInit {
 
     if (reportsData) {
       this.reports = JSON.parse(reportsData);
+    } else {
+      console.warn('No reports data found in localStorage');
     }
+
+    // if (citizenData) {
+    //   this.citizens = JSON.parse(citizenData);
+    //   console.log("Citizens:", this.citizens)
+    // }
 
     console.log('Retrieved Police Details:', this.policeDetails);
     console.log('Retrieved Station Details:', this.stationDetails);
     console.log('Retrieved Reports:', this.reports);
 
+    
     this.filteredReports = this.reports;
 
-    
+   
   }
 
   // Define the form controls
@@ -97,21 +125,21 @@ export class StationCaseQueueComponent implements OnInit {
       reportBody: ['', Validators.required],
       citizen_id: ['', Validators.required],
       reportSubCategoryID: ['', Validators.required],
-      locationID: [''],  // Optional field
+      locationID: [''], // Optional field
       stationID: ['', Validators.required],
-      crimeID: [''],  // Optional field
+      crimeID: [''], // Optional field
       reported_date: ['', Validators.required],
-      incidentDate: [''],  // Optional field
+      incidentDate: [''], // Optional field
       blotterNum: ['', Validators.required],
       hasAccount: [true],
-      eSignature: ['', Validators.required],  // Assuming eSignature is a string or file
-      rankID: ['', Validators.required],  // Rank field added
-      personID: ['', Validators.required],  // Person field added
+      eSignature: ['', Validators.required], // Assuming eSignature is a string or file
+      rankID: ['', Validators.required], // Rank field added
+      personID: ['', Validators.required], // Person field added
       reportSubCategory: ['', Validators.required],
-      subcategory_name:['', Validators.required], 
-      status: ['', Validators.required], 
-      is_spam: ['', Validators.required], 
-      color: ['', Validators.required], 
+      subcategory_name: ['', Validators.required],
+      status: ['', Validators.required],
+      is_spam: ['', Validators.required],
+      color: ['', Validators.required],
     });
   }
 
@@ -120,7 +148,7 @@ export class StationCaseQueueComponent implements OnInit {
   //   // Assuming the officer's details are stored in localStorage after login
   //   const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
   //   this.stationID = officerDetails.stationId || null;
-    
+
   //   if (this.stationID) {
   //     this.fetchReports(this.stationID); // Fetch reports using the station ID
   //   } else {
@@ -149,64 +177,65 @@ export class StationCaseQueueComponent implements OnInit {
   //   );
   // }
 
-
   filterReports() {
     if (!this.searchQuery) {
       this.filteredReports = this.reports;
       return;
     }
-  
+
     const query = this.searchQuery.toLowerCase();
-  
+
     this.filteredReports = this.reports.filter((report) => {
-      const reportIdMatch = report.report_id.toString().toLowerCase().includes(query);
-      const citizenIdMatch = report.citizen_id.toString().toLowerCase().includes(query);
-      const nameMatch = this.getCitizenName(report.citizen_id)
+      const reportIdMatch = report.report_id
+        .toString()
         .toLowerCase()
         .includes(query);
-  
-      return reportIdMatch || citizenIdMatch || nameMatch;
+        const nameMatch = this.getCitizenName(report.citizen_id)
+        .toLowerCase()
+        .includes(query);
+      const incidentNameMatch = report.subcategory_name
+        .toLowerCase()
+        .includes(query);
+     
+
+      return reportIdMatch  || nameMatch || incidentNameMatch;
     });
   }
-  
-  
 
   isFieldMatched(fieldValue: any, query: string): boolean {
     if (!query) return false;
     const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
     return fieldStr.includes(query.toLowerCase());
   }
-  
+
   highlight(fieldValue: any): string {
     if (!this.searchQuery) return fieldValue;
     const fieldStr = fieldValue ? fieldValue.toString() : '';
     const regex = new RegExp(`(${this.searchQuery})`, 'gi');
     return fieldStr.replace(regex, '<mark>$1</mark>');
   }
-  
 
   isRowMatched(report: any): boolean {
     if (!this.searchQuery) return false;
     const query = this.searchQuery.toLowerCase().trim();
-    return Object.values(report).some((value) => 
+    return Object.values(report).some((value) =>
       value?.toString().toLowerCase().includes(query)
     );
   }
-  
+
   // fetchnationwideReports(): void {
   //   this.isLoading = true;  // Set loading state to true
   //   this.caseQueueService.getNationwideReports().subscribe(
   //     (response) => {
   //       if (Array.isArray(response)) {
   //       this.reports = response;
-      
+
   //         console.log('Fetched reports:', response);
   //         this.reports.forEach((report: { citizen_id: any; }) => {
   //           // console.log(report.citizen_id);
   //           this.citizenId = report.citizen_id
   //         });
 
-         
   //       } else {
   //         this.errorMessage = 'Unexpected response from server.';
   //       }
@@ -219,7 +248,6 @@ export class StationCaseQueueComponent implements OnInit {
   //     }
   //   );
   // }
-
 
   // Fetch stations
   fetchStations(): void {
@@ -238,7 +266,8 @@ export class StationCaseQueueComponent implements OnInit {
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         this.citizens = response;
-        console.log('Fetched citizens:', response);
+        localStorage.setItem('citizens', JSON.stringify(this.citizens));
+        console.log('Fetched citizens:', this.citizens);
       },
       (error) => {
         console.error('Error fetching citizens:', error);
@@ -267,9 +296,12 @@ export class StationCaseQueueComponent implements OnInit {
 
   // Fetch persons
   fetchPersons(): void {
-    this.personService.getAll().subscribe(
-      (response: IPerson[]) => {
+    this.personService.getPersons().subscribe(
+      (response) => {
         this.persons = response;
+        localStorage.setItem('persons', JSON.stringify(this.persons));
+        console.log('Fetched persons', this.persons);
+       
       },
       (error) => {
         console.error('Error fetching persons:', error);
@@ -277,6 +309,32 @@ export class StationCaseQueueComponent implements OnInit {
       }
     );
   }
+
+  fetchAccounts(): void {
+    this.accountService.getAccount().subscribe(
+      (response) => {
+        this.accounts = response;
+        localStorage.setItem('accounts', JSON.stringify(response));
+        console.log('Fetched Accounts', this.accounts);
+       
+      },
+      (error) => {
+        console.error('Error fetching persons:', error);
+        this.errorMessage = 'Failed to load persons. Please try again.';
+      }
+    );
+  }
+
+  // fetchAccounts(): Observable<any> {
+  //     return this.accountService.getAccount().pipe(
+  //       tap((response) => {
+  //         this.accounts = response;
+  //         console.log('Fetched Accounts', this.accounts)
+  //         localStorage.setItem('accounts', JSON.stringify(response));
+  //         this.tryFetchProfilePics();
+  //       })
+  //     );
+  //   }
 
   // Submit the form
   onSubmit(): void {
@@ -300,19 +358,19 @@ export class StationCaseQueueComponent implements OnInit {
       blotterNum: formData.blotterNum,
       hasAccount: formData.hasAccount,
       eSignature: formData.eSignature,
-      report_id: 0,  // This will be set by the server
+      report_id: 0, // This will be set by the server
       type: formData.type,
       complainant: formData.complainant,
       reported_date: formData.reported_date,
       ReportBody: formData.reportBody, // Use reportBody from form
-      subcategory_name:formData.subcategory_name,
+      subcategory_name: formData.subcategory_name,
       reportSubCategory: formData.reportSubCategory,
       ReportSubCategoryId: formData.reportSubCategoryID.toString(),
       DateTimeReportedDate: new Date().toISOString(),
       HasAccount: formData.hasAccount.toString(),
       status: formData.staus,
       is_spam: formData.is_spam,
-      color: formData.color
+      color: formData.color,
     };
 
     console.log('Submitting report with data:', report);
@@ -320,28 +378,26 @@ export class StationCaseQueueComponent implements OnInit {
     // this.submitReportForm(report);
   }
 
-  
-//   navigateToReportEndorse(reportIndex: number): void {
-//     const citizenId = this.reports[reportIndex]?.citizen_id;
-//     this.router.navigate(['/report-endorse'], { state: { citizenId } });
-// }
+  //   navigateToReportEndorse(reportIndex: number): void {
+  //     const citizenId = this.reports[reportIndex]?.citizen_id;
+  //     this.router.navigate(['/report-endorse'], { state: { citizenId } });
+  // }
 
-
-navigateToReportEndorse(reportId: number): void {
-  if (reportId) {
-    console.log('Navigating with Report ID:', reportId);
-    this.router.navigate(['/report-endorse'], { queryParams: { reportID: reportId } });
-  } else {
-    console.error('report ID not found for the selected report.');
-    alert('Invalid report id. Please select a valid report.');
+  navigateToReportEndorse(reportId: number): void {
+    if (reportId) {
+      console.log('Navigating with Report ID:', reportId);
+      this.router.navigate(['/report-endorse'], {
+        queryParams: { reportID: reportId },
+      });
+    } else {
+      console.error('report ID not found for the selected report.');
+      alert('Invalid report id. Please select a valid report.');
+    }
   }
-}
-
 
   goBack(): void {
     this.router.navigate(['/manage-police']);
   }
-
 
   clearSession() {
     sessionStorage.removeItem('userData');
@@ -364,4 +420,6 @@ navigateToReportEndorse(reportId: number): void {
       }
     );
   }
+
+
 }

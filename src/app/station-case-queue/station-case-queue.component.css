@@ -673,3 +673,11 @@ table th {
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.prof-pic img {
+  width: 40px; /* Set a fixed size for the profile picture */
+  height: 40px;
+  border-radius: 50%; /* Make the image a perfect circle */
+  object-fit: cover; /* Ensure the image scales without distortion */
+  border: 1px solid #3a1aaf
+}
