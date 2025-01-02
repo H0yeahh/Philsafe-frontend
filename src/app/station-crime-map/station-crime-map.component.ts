@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MapboxService } from '../mapbox.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environment';
 
 export interface crimeDetail {
     blotter_num: string;
@@ -99,7 +100,7 @@ export class StationCrimeMapComponent implements OnInit {
   }
 
   fetchCrimeDetails() {
-    this.http.get<crimeDetail[]>('https://192.168.1.60:7108/api/case/retrieve/nationwide').subscribe((data) => {
+    this.http.get<crimeDetail[]>(`${environment.ipAddUrl}api/case/retrieve/nationwide`).subscribe((data) => {
       this.crimeDetails = data || [];
       this.filteredCrimes = data || [];
       console.log('Fetched Crimes:', this.crimeDetails)

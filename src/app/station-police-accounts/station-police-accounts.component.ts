@@ -245,7 +245,7 @@ export class StationPoliceAccountsComponent implements OnInit {
         if (this.addPoliceForm.valid && this.passwordValid) {
             const accountData = this.addPoliceForm.value; // Get account data from the form
             // Ensure role is always set to "User (Uncertified)"
-            accountData.role = 'Police';
+            accountData.role = 'Admin';
             const ids = {   
                 homeAddressId: 0,
                 workAddressId: 0,
@@ -325,7 +325,7 @@ export class StationPoliceAccountsComponent implements OnInit {
                 // contactNum: accountData.contactNum,
                 // ...ids,
                 // role: 'Police',
-                role: 'Police',
+                role: 'Admin',
                 unit: accountData.unit,
                 rankID: accountData.rank_id,          // Include rank_id
                 stationID: accountData.stationId,      // Include stationId
