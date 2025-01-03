@@ -39,13 +39,22 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
+  // const requiredRoles = route.data['roles'] as Array<string>;
+  // if (requiredRoles.some(role => role === userRole)) {
+  //   console.log("Stored Role", userRole);
+  //   console.log("Required Role", requiredRoles)
+  //   return true;
+  // } else {
+  //   router.navigate(['/access-denied']);
+  //   return false;
+  // }
   const requiredRoles = route.data['roles'] as Array<string>;
-  if (requiredRoles.some(role => role === userRole)) {
-    console.log("Stored Role", userRole);
-    console.log("Required Role", requiredRoles)
-    return true;
-  } else {
-    router.navigate(['/access-denied']);
-    return false;
-  }
-};
+if (requiredRoles.some(role => role === userRole)) {
+  console.log("Stored Role", userRole);
+  console.log("Required Role", requiredRoles);
+  return true; // Allow access if the role matches
+} else {
+  router.navigate(['/access-denied']); // Redirect if role does not match
+  return false;
+}
+}

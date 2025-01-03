@@ -13,6 +13,7 @@ import {Account} from '../../data/Account/Account';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  accountData: any;
 
   constructor(
     private fb: FormBuilder,
@@ -40,29 +41,59 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
       (data) => {
         console.log(data);
 
-        if (data && data.role) {
-          console.log('Role before storing:', data.role); // Debug log
+      //   if (data && data.role) {
+      //     console.log('Role before storing:', data.role); // Debug log
 
-          // Check the role
-          if (data.role === 'Police') {
-            localStorage.setItem('userData', JSON.stringify(data));
-            localStorage.setItem('role', data.role);
-            console.log('Role stored in login:', localStorage.getItem('role')); 
-            console.log('Data stored as userData:', localStorage.getItem('userData'));
+      //     // Check the role
+      //     if (data.role === 'Police') {
+      //       localStorage.setItem('userData', JSON.stringify(data));
+      //       localStorage.setItem('role', data.role);
+      //       console.log('Role stored in login:', localStorage.getItem('role')); 
+      //       console.log('Data stored as userData:', localStorage.getItem('userData'));
 
-            alert('Login successful');
-            resolve(data);
-          } else {
-            console.error('Unauthorized: Role is not Police');
-            alert('Unauthorized: Only Police are allowed');
-            reject(new Error('Unauthorized: Only Police are allowed'));
-          }
+      //       alert('Login successful');
+      //       resolve(data);
+      //       this.accountData = data;
+         
+      //     } else if (data.role === 'Admin') {
+      //       localStorage.setItem('userData', JSON.stringify(data));
+      //       localStorage.setItem('role', data.role);
+      //       console.log('Role stored in login:', localStorage.getItem('role')); 
+      //       console.log('Data stored as userData:', localStorage.getItem('userData'));
+
+      //       alert('Login successful');
+      //       resolve(data);
+      //       this.accountData = data;
+      //     }
+            
+      //   } else {
+      //     console.error('Unauthorized: Role is not Police');
+      //     alert('Login data is invalid');
+      //     reject(new Error('Login data is invalid'));
+      //   }
+      // },
+      if (data && data.role) {
+        const validRoles = ['Police', 'Admin'];
+        if (validRoles.includes(data.role)) {
+          localStorage.setItem('userData', JSON.stringify(data));
+          localStorage.setItem('role', data.role);
+          console.log('Role stored in login:', localStorage.getItem('role')); 
+          console.log('Data stored as userData:', localStorage.getItem('userData'));
+      
+          alert('Login successful');
+          resolve(data);
+          this.accountData = data;
         } else {
-          console.error('Login data does not contain a role');
-          alert('Login data is invalid');
-          reject(new Error('Login data is invalid'));
+          console.error(`Unauthorized: Role is not valid (${data.role})`);
+          alert('Invalid role detected. Login failed.');
+          reject(new Error('Invalid role'));
         }
-      },
+      } else {
+        console.error('Unauthorized: Role is not provided');
+        alert('Login data is invalid');
+        reject(new Error('Login data is invalid'));
+      }
+    },      
       (error) => {
         console.error('Login failed:', error);
         reject(error);
@@ -117,8 +148,9 @@ async onSubmit() {
   if (this.loginForm.valid) {
     const { username, password } = this.loginForm.value;
     const signInType = this.identifySignInType(username); // Identify sign-in type
-    const loginReq: Account = await this.submitLogin({ email: username, password });
-    console.log(loginReq);
+    // const loginReq: Account = await this.submitLogin({ email: username, password });
+    // console.log(loginReq);
+    await this.submitLogin({ email: username, password });
     // this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'admin' });
     this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'Admin' });
     // if(loginReq.role==='Admin'){
@@ -126,12 +158,15 @@ async onSubmit() {
     // } else if(loginReq.role==='Chief'){
     //   this.router.navigate(['/station-case-queue'])
     // }
-    if (loginReq.role === 'Admin') {
+    if (this.accountData.role === 'Admin') {
       this.router.navigate(['/dashboard']);
-    } else if (loginReq.role === 'Chief') {
+      console.log("Admin logs in");
+    } else if (this.accountData.role === 'Chief') {
       this.router.navigate(['/station-case-queue']);
-    } else if (loginReq.role === 'Police') {
+    } else if (this.accountData
+      .role === 'Police') {
       this.router.navigate(['/station-dashboard']);
+      console.log("Police logs in")
     }
     
   }

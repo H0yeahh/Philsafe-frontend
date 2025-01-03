@@ -57,7 +57,11 @@ const routes: Routes = [
   // { path: 'witness-register', component: WitnessRegisterComponent },
   { path: 'station-register', component: StationRegistrationComponent },
   { path: 'station-add-location', component: StationAddLocationComponent },
-  { path: 'station-login', component: StationLoginComponent }, // Route for login
+  { path: 'station-login', component: StationLoginComponent },
+  { path: 'station-police-accounts', component: StationPoliceAccountsComponent }, 
+  //{ path: 'dashboard', component: PoliceDashboardComponent }, // Route for login
+  // Route for login
+   // Route for login
   { path: 'reporting-person', component: ReportingPersonComponent, 
     canActivate: [roleGuard], data: { roles: ['User'] } },
   { path: 'suspect-data', component: SuspectDataComponent, 
@@ -132,6 +136,8 @@ const routes: Routes = [
     canActivate: [roleGuard], data: { roles: ['Police'] } },
     { path: 'add-case', component: AddCaseComponent, 
       canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'dashboard', component: PoliceDashboardComponent, 
+        canActivate: [roleGuard], data: { roles: ['Admin'] } },
 
  
 
