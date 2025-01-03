@@ -50,6 +50,7 @@ export class ReportEndorseComponent implements OnInit {
   stationDetails: any = {};
   reportDetails: any = [];
   reportId: any;
+
   
   selectedReport: any = []; 
   isSignatureVisible: boolean = false;
@@ -60,6 +61,7 @@ export class ReportEndorseComponent implements OnInit {
   avatarUrl: string = 'assets/user-default.jpg';
   isIDvisible: boolean = false;
   currentID: string | null = null;
+  
 
 
   
@@ -97,7 +99,6 @@ export class ReportEndorseComponent implements OnInit {
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
-    this.fetchSuspects();
     this.fetchVictims();
    
 
@@ -133,6 +134,7 @@ export class ReportEndorseComponent implements OnInit {
 
       if (reportId) {
           this.reportId = Number(reportId);
+          this.fetchReportedSuspect(this.reportId);
 
           // Check if the report ID exists in the reports data
           const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
@@ -141,6 +143,7 @@ export class ReportEndorseComponent implements OnInit {
           if (matchingReport && matchingReport.citizen_id ) {
               console.log('Matching Report:', matchingReport);
               this.selectedReport = matchingReport;
+              
 
               this.citizenId = this.selectedReport.citizen_id;
               console.log("Citizen ID: ", this.citizenId)
@@ -481,17 +484,17 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
-  fetchSuspects() {
-    this.suspectService.retrieveAllWanteds().subscribe(
+  fetchReportedSuspect(reportID: number) {
+    this.suspectService.retrieveReportedSus(this.reportId).subscribe(
       (response) => {
-        this.suspects = response;
-        console.log('Fetched suspects', this.suspects)
-        localStorage.setItem('suspects', JSON.stringify(this.suspects))
+        this.suspects = response; 
+        console.log('Fetched Reported suspect', this.suspects)
+        localStorage.setItem('reported-suspect', JSON.stringify(this.suspects))
 
       },
       (error) => {
-        console.error('Error fetching suspects:', error);
-        this.errorMessage = 'Failed to load suspects. Please try again.';
+        console.error('Error fetching reported suspect:', error);
+        this.errorMessage = 'Failed to load suspect. Please try again.';
       }
     );
   }

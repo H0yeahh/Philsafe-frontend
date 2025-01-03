@@ -11,6 +11,13 @@ export class SuspectServiceService {
 
   constructor(private http: HttpClient) {}
 
+
+  // Retrieve all suspects
+  retrieveReportedSus(reportId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/fromreport/${reportId}`);
+  }
+
+
   // Retrieve all suspects
   retrieveAllSuspects(): Observable<any> {
     return this.http.get(`${this.baseUrl}/collect/all`);

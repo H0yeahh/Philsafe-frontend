@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+   
 }
 
 body {
@@ -21,6 +22,8 @@ body {
     padding: 50px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* overflow: hidden;
+    flex-wrap: nowrap; */
 }
 
 .emergency-banner {
@@ -622,8 +625,8 @@ tbody td a {
   }
   
   .evidence-item img {
-    max-width: 80%;
-    height: auto;
+    max-width: 100%;
+    max-height: 100%;
     display: block;
     margin: 0 auto;
   }
@@ -692,3 +695,26 @@ tbody td a {
   .modal-close:hover {
     color: #ff4d4d; /* Change close button color on hover */
   }
+
+  .complainant-data {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 700px;
+    /* overflow: hidden;
+    flex-wrap: nowrap; */
+  }
+
+
+  .category-label {
+    display: flex;
+    justify-content: center;
+    background-color: #888;
+    width: 100rem;
+    padding: 10px;
+    margin: 0px 50px 20px 0px;
+  }
+
+  
+
+  

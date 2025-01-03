@@ -222,7 +222,17 @@
             
           </div>
           <div *ngIf="citizenData" class="person-data">
-            <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
+            <section class="report-details">
+              <div class="complainant-data">
+                <div>
+                  <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
+                </div>      
+                <div>
+                  <span> <b>Complainant Id:</b> <br> <p style="text-align: end;">{{ citizenData.citizen_id }}</p></span>
+                </div>    
+              </div>   
+            </section>
+            
             <span>{{ accountData.contact_num }}</span>
             <span>{{ accountData.email }}</span>
             <span>
@@ -233,9 +243,9 @@
               {{ locationData.province || "" }}
               {{ locationData.Region || "" }}
             </span>
-          </div>
+          </div>   
         </div>
-
+        
         <div class="container">
           <main class="main-content">
             <h2 style="padding-bottom: 30px">
@@ -316,6 +326,11 @@
               
               </tr>
             </tbody> -->
+            <div class="category-label">
+            <tr>
+                REPORT DATA                       
+            </tr>
+            </div> 
                   <tr>
                     <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
                     <td style="text-align: end; padding-bottom: 2rem">
