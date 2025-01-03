@@ -136,8 +136,7 @@ const routes: Routes = [
     canActivate: [roleGuard], data: { roles: ['Police'] } },
     { path: 'add-case', component: AddCaseComponent, 
       canActivate: [roleGuard], data: { roles: ['Police'] } },
-  { path: 'dashboard', component: PoliceDashboardComponent, 
-        canActivate: [roleGuard], data: { roles: ['Admin'] } },
+  { path: 'dashboard', component: PoliceDashboardComponent },
 
  
 

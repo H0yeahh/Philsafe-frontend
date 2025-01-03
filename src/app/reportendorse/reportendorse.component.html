@@ -227,7 +227,7 @@
                 <div>
                   <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
                 </div>      
-                <div>
+                <div class="complainant-id">
                   <span> <b>Complainant Id:</b> <br> <p style="text-align: end;">{{ citizenData.citizen_id }}</p></span>
                 </div>    
               </div>   
@@ -326,63 +326,55 @@
               
               </tr>
             </tbody> -->
-            <div class="category-label">
+            <thead>
+              <tr>
+                <th colspan="2" class="category-label">REPORT DATA</th>
+              </tr>
+            </thead>
             <tr>
-                REPORT DATA                       
+              <td style="padding-bottom: 2rem"><h3>Reported ID</h3></td>
+              <td style="text-align: end; padding-bottom: 2rem">
+                <span>{{ selectedReport.report_id }}</span>
+              </td>
             </tr>
-            </div> 
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <span>{{ selectedReport.report_id }}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Reported Date</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <span>{{ selectedReport.reported_date | date }}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Incident Name</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <span>{{ selectedReport.subcategory_name }}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Category Name</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <span>{{ selectedReport.category_name }}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Incident Date</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <span>{{ selectedReport.incident_date | date }}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Narrative</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <span style="display: inline-block;
-                      max-width: 500px;      
-                      word-wrap: break-word;  
-                      overflow: hidden;
-                      text-align: justify
-                      ">{{ selectedReport.report_body }}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding-bottom: 2rem"><h3>Signature</h3></td>
-                    <td style="text-align: end; padding-bottom: 2rem">
-                      <a
-                        style="color: blue; text-decoration: underline"
-                        (click)="viewSignature(selectedReport.e_signature)"
-                        >View Signature</a
-                      >
-                    </td>
-                  </tr>
-
+            <tr>
+            <tr>
+              <td style="padding-bottom: 2rem"><h3>Reported Date</h3></td>
+              <td style="text-align: end; padding-bottom: 2rem">
+                <span>{{ selectedReport.reported_date | date }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 2rem"><h3>Incident Name</h3></td>
+              <td style="text-align: end; padding-bottom: 2rem">
+                <span>{{ selectedReport.subcategory_name }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 2rem"><h3>Category Name</h3></td>
+              <td style="text-align: end; padding-bottom: 2rem">
+                <span>{{ selectedReport.category_name }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 2rem"><h3>Incident Date</h3></td>
+              <td style="text-align: end; padding-bottom: 2rem">
+                <span>{{ selectedReport.incident_date | date }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 2rem"><h3>Narrative</h3></td>
+              <td style="text-align: end; padding-bottom: 2rem">
+                <span style="display: inline-block;
+                max-width: 500px;      
+                word-wrap: break-word;  
+                overflow: hidden;
+                text-align: justify
+                ">{{ selectedReport.report_body }}</span>
+              </td>
+            </tr>
+                
+                 
                   <tr>
                     <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
                     <td style="text-align: end; padding-bottom: 2rem">
@@ -394,6 +386,85 @@
                     </td>
                   </tr>
 
+
+                  <thead>
+                    <tr>
+                      <th colspan="2" class="category-label">SUSPECT DATA</th>
+                    </tr>
+                  </thead>
+                  <tr >
+                    <td style="padding-bottom: 2rem"><h3>Suspect ID</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ suspects?.suspect_id }}</span>
+                    </td>
+                  </tr>
+                  <tr >
+                    <td style="padding-bottom: 2rem"><h3>Suspect Name</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ suspects.first_name }} {{ suspects.last_name }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Civil Status</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ suspects.civil_status }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Gender</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ getGenderName(suspects.sex) }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Arrested</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ isCaught }}</span>
+                    </td>
+                  </tr>
+
+
+                  <thead>
+                    <tr>
+                      <th colspan="2" class="category-label">VICTIM DATA</th>
+                    </tr>
+                  </thead>
+                  <tr >
+                    <td style="padding-bottom: 2rem"><h3>Victim ID</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span *ngIf="victims">{{ victims.victim_id }}</span>
+                    </td>
+                  </tr>
+                  <tr >
+                    <td style="padding-bottom: 2rem"><h3>Victim Name</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ victims.firstname }} {{ victims.lastname }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Civil Status</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ victims.civil_status }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Gender</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ getGenderName(victims.sex) }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 2rem"><h3>Deceased</h3></td>
+                    <td style="text-align: end; padding-bottom: 2rem">
+                      <span>{{ isCaught }}</span>
+                    </td>
+                  </tr>
+
+                  <thead>
+                    <tr>
+                      <th colspan="2" class="category-label">EVIDENCE</th>
+                    </tr>
+                  </thead>
                   <tr>
                     <td style="padding-bottom: 2rem"><h3>Evidences:</h3></td>
                   </tr>
@@ -635,6 +706,32 @@
                     </div>
                     </div>
 
+                    <tr>
+                      <td style="padding-bottom: 0.5rem; padding-top:10rem;"><h3>Signed By</h3></td>
+                      <tr>
+                        <td style="text-align: left; padding-bottom: 0.5rem">
+                          <div *ngIf="selectedReport.e_signature.startsWith('data:image/')">
+                            <img
+                              [src]="selectedReport.e_signature"
+                              alt="E-Signature"
+                              style="max-width: 200px; max-height: 100px;"
+                            />
+                            
+                          </div>
+                          <div *ngIf="!selectedReport.e_signature.startsWith('data:image/')">
+                            <span>No signature available</span>
+                          </div>
+                        </td>
+                        
+                      </tr>
+                      <div *ngIf="citizenData" class="sign-name">
+                        <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+                      </div>
+                      
+                      <!-- <tr>
+                        <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+                      </tr> -->
+                      
                 </table>
               </div>
 

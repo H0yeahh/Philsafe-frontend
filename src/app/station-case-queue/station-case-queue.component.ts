@@ -96,6 +96,9 @@ export class StationCaseQueueComponent implements OnInit {
 
     if (reportsData) {
       this.reports = JSON.parse(reportsData);
+      this.reports.sort((b, a) => {
+        return new Date(a.reported_date).getTime() - new Date(b.reported_date).getTime();
+      });
     } else {
       console.warn('No reports data found in localStorage');
     }
@@ -266,7 +269,7 @@ export class StationCaseQueueComponent implements OnInit {
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         this.citizens = response;
-        localStorage.setItem('citizens', JSON.stringify(this.citizens));
+        // localStorage.setItem('citizens', JSON.stringify(this.citizens));
         console.log('Fetched citizens:', this.citizens);
       },
       (error) => {

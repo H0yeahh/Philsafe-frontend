@@ -37,8 +37,8 @@ export class ReportEndorseComponent implements OnInit {
   polices: any = [];
   citizens: any = []
   evidences: any = []
-  suspects: any = [];
-  victims: any = [];
+  suspects: any ={};
+  victims: any;
 
   stationID: string | null = null;
   citizenId: number = 0;
@@ -61,6 +61,7 @@ export class ReportEndorseComponent implements OnInit {
   avatarUrl: string = 'assets/user-default.jpg';
   isIDvisible: boolean = false;
   currentID: string | null = null;
+  isCaught: any;
   
 
 
@@ -69,6 +70,7 @@ export class ReportEndorseComponent implements OnInit {
   accountData: any;
   locationData: any;
   citizenData: any;
+  suspectData: any;
 
 
   constructor(
@@ -99,7 +101,7 @@ export class ReportEndorseComponent implements OnInit {
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
-    this.fetchVictims();
+   
    
 
     const policeData = localStorage.getItem('policeDetails');
@@ -135,6 +137,7 @@ export class ReportEndorseComponent implements OnInit {
       if (reportId) {
           this.reportId = Number(reportId);
           this.fetchReportedSuspect(this.reportId);
+          this.fetchReportedVictim(this.reportId);
 
           // Check if the report ID exists in the reports data
           const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
@@ -487,10 +490,14 @@ export class ReportEndorseComponent implements OnInit {
   fetchReportedSuspect(reportID: number) {
     this.suspectService.retrieveReportedSus(this.reportId).subscribe(
       (response) => {
-        this.suspects = response; 
-        console.log('Fetched Reported suspect', this.suspects)
-        localStorage.setItem('reported-suspect', JSON.stringify(this.suspects))
-
+        if (Array.isArray(response) && response.length > 0) {
+          this.suspects = response[0]; // Extract the first element of the array
+          console.log('Fetched Reported suspect', this.suspects);
+          // localStorage.setItem('reported-suspect', JSON.stringify(this.suspects));
+          this.isSuspectCaught(this.suspects.is_caught);
+        } else {
+          console.error('No suspect data found');
+        }
       },
       (error) => {
         console.error('Error fetching reported suspect:', error);
@@ -499,21 +506,49 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
-  fetchVictims() {
-    this.victimService.getAllVictims().subscribe(
+  fetchReportedVictim(reportID: number) {
+    this.victimService.retrieveReportedVictim(this.reportId).subscribe(
       (response) => {
-        this.victims = response;
-        console.log('Fetched victims', this.victims)
-        localStorage.setItem('victims', JSON.stringify(this.victims))
+        if (Array.isArray(response) && response.length > 0) {
+          this.victims = response[0]; // Extract the first element of the array
+          console.log('Fetched Reported victim', this.victims);
+          // localStorage.setItem('reported-victim', JSON.stringify(this.victims));
 
+        } else {
+          console.error('No victim data found');
+        }
+        // this.victims = response; // Extract the first element of the array
+        //   console.log('Fetched Reported victim', this.victims);
       },
       (error) => {
-        console.error('Error fetching victims:', error);
-        this.errorMessage = 'Failed to load victims. Please try again.';
+        console.error('Error fetching reported suspect:', error);
+        this.errorMessage = 'Failed to load suspect. Please try again.';
       }
     );
   }
+  
+  isSuspectCaught(isCaught: boolean){
+    if(isCaught) {
+      this.isCaught = 'Yes';
+    } else {
+      this.isCaught = 'No'
+    }
+  }
 
+
+  getGenderName(gender: string): string {
+    switch (gender) {
+      case 'M':
+        return 'Male';
+      case 'F':
+        return 'Female';
+      case 'X':
+        return 'Prefer not to say';
+      default:
+        return 'No gender found';
+    }
+  }
+  
   onReportClick(reportID: number): void {
     console.log(`Report ID clicked: ${reportID}`);
     

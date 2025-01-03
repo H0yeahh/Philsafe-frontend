@@ -22,6 +22,8 @@ body {
     padding: 50px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
     /* overflow: hidden;
     flex-wrap: nowrap; */
 }
@@ -35,6 +37,7 @@ body {
   }
   .flex {
     display: flex;
+    overflow: auto;
   }
   
   .h-screen {
@@ -419,6 +422,7 @@ body {
     justify-content: space-between;
     margin-bottom: 20px;
     color:black;
+    align-items: center;
 }
 
 .report-left, .report-right {
@@ -428,6 +432,8 @@ body {
 
 .form-group {
     margin-bottom: 15px;
+    flex: 1;
+    margin-right: 1rem;
 }
 
 .form-group label {
@@ -452,6 +458,8 @@ body {
 .action-buttons {
     text-align: right;
     margin-bottom: 20px;
+    display: flex;
+  gap: 1rem;
 }
 
 .endorse-btn, .dismiss-btn {
@@ -476,6 +484,7 @@ body {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
+    overflow-x: auto;
     /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
 }
 
@@ -487,13 +496,16 @@ table {
 thead th {
     background-color: #f5f5f5;
     padding: 10px;
-    text-align: left;
+    text-align: center;
 }
 
-tbody td {
+tbody td
+
+{
     padding: 10px 0px 0px 200px;
     border-bottom: 1px solid #ddd;
     text-align: end;
+    text-align: left;
  
 }
 
@@ -700,21 +712,64 @@ tbody td a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 700px;
+    gap: 60rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     /* overflow: hidden;
     flex-wrap: nowrap; */
   }
 
+  .complainant-id {
+    display: flex;
+    text-align: right;
+  }
 
+/* 
   .category-label {
     display: flex;
     justify-content: center;
-    background-color: #888;
-    width: 100rem;
+    background-color: #e5e5e5;
+    width: 80rem;
     padding: 10px;
     margin: 0px 50px 20px 0px;
-  }
+  } */
 
   
+  th {
+    background-color: #f2f2f2; /* Light background for header */
+    padding: 1rem; /* Padding for header cells */
+    text-align: center; /* Center align header text */
+  }
+  
+  td {
+    padding: 0.5rem; /* Padding for data cells */
+    text-align: left; /* Left align text in data cells */
+  }
+  
+  .category-label {
+    font-weight: bold; /* Make the header bold */
+    font-size: 1.2rem; /* Increase font size for visibility */
+  }
+  
+  .evidence-container {
+    margin-top: 1rem; /* Space above the evidence section */
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    table {
+      display: block; /* Make table scrollable on small screens */
+      overflow-x: auto; /* Allow horizontal scrolling */
+      white-space: nowrap; /* Prevent text wrapping */
+    }
+  }
+
+
+  .sign-name{
+    display: flex;
+    position: relative;
+    z-index: 1000;
+    bottom: 40px;
+  }
 
   

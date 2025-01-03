@@ -17,6 +17,10 @@ export class VictimDataService {
     return this.http.get<any>(`${this.apiUrl}api/victim/retrieve/all`);
   }
 
+  retrieveReportedVictim(reportId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}api/victim/fromreport/${reportId}`);
+  }
+
   // Fetch a single victim by ID
   getVictimById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}api/victim/retrieve/${id}`);
