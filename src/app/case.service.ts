@@ -34,15 +34,38 @@ export interface IReport {
   is_spam?: string;
 }
 
+export interface Crime {
+  crimeId: number;
+  title: string,
+  offenseType: string,
+  citeNumber: string,
+  dateTimeReported: string,
+  dateTimeCommitted: string,
+  description: string,
+  status: string,
+  incidentTypeId: number,
+  dateTimeCreated: string,
+  lastModified: string,
+  createdBy: string,
+  modifiedBy: string,
+  locationId: 0,
+  stationId: 0,
+
+  victim_id_list: number[],
+  suspect_id_list: number[],
+  police_id_list: number[]
+
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CaseService {
-  private readonly baseUrl = `${environment.ipAddUrl}api/report`; // Base URL
+  private readonly baseUrl = `${environment.ipAddUrl}api/`; // Base URL
   private readonly endpoints = {
     // getAll: `${this.baseUrl}/retrieve/citizen`,
-    getAll: `${this.baseUrl}/retrieve/nationwide`,
-    submitReport: `${this.baseUrl}/submit`, // Add the endpoint for submitting reports
+    getAll: `${this.baseUrl}report/retrieve/nationwide`,
+    submitReport: `${this.baseUrl}report/submit`, // Add the endpoint for submitting reports
     
   };
 
@@ -78,8 +101,17 @@ export class CaseService {
       catchError(this.handleError)
     );
   }
+  postCase(caseData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}case`, caseData).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-  
+  connectDot(reportId: number, crimeId: number, caseData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}connect/dot/${reportId}/${crimeId}`, caseData).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   // Error handling function
   private handleError(error: HttpErrorResponse): Observable<never> {

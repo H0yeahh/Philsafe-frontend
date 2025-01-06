@@ -1,217 +1,180 @@
-<!-- <div class="container">
-    <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
-    </div>
-    <div class="min-h-screen bg-zinc-100 flex">
-      <aside class="w-64 bg-white shadow-md">
-        <div class="p-4 text-center">
-          <img src="assets/police.svg" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
-          <h2 class="text-lg font-semibold">Abellana Police Station 2</h2>
-          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+<div class="container">
+  <div class="emergency-banner">
+    <!-- In case of emergencies, please dial your local emergency services number -->
+  </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-4 text-center">
+        <div class="logo">
+          <img src="assets/station10.png" alt="CCPO Logo" />
         </div>
-        <nav class="mt-7"> 
-          <ul class="list-none p-0">
-            <li>
-              <a  href="#" class="nav-link">
-                <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                <span>DASHBOARD</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                <span>INBOX</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                <span>REPORTS</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                <span>CRIME MAP</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
-                <span>STATION</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
-                <span>CONTACT SUPPORT</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-        
-        <div class="main-content bg-background p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">DASHBOARD</h1>
-            <div class="flex items-center space-x-4">
-              <select class="border border-zinc-300 rounded p-2">
-                <option>Quarterly</option>
-                <option>Monthly</option>
-                <option>Yearly</option>
-              </select>
-              <button class="button-reset flex items-center space-x-2 text-primary">
-                <img src="assets/refresh.svg" alt="Refresh Icon" class="icon-small">
-                <span>Refresh</span>
-              </button>
-              <button class="button-reset flex items-center space-x-2 text-primary">
-              <img src="assets/notification.svg" alt="Notification Icon">
-              </button>
-            </div>
-          </div>
-      
-          <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-100 p-4 rounded-lg text-center">
-              <h2 class="text-lg font-bold">Daily Reports</h2>
-              <p class="text-4xl font-bold">498</p>
-            </div>
-            <div class="bg-green-100 p-4 rounded-lg text-center">
-              <h2 class="text-lg font-bold">Weekly Reports</h2>
-              <p class="text-4xl font-bold">1,598</p>
-            </div>
-            <div class="bg-yellow-100 p-4 rounded-lg text-center">
-              <h2 class="text-lg font-bold">Monthly Reports</h2>
-              <p class="text-4xl font-bold">578</p>
-            </div>
-          </div>
-          <div class="bg-yellow-100 p-4 rounded-lg text-center">
-            <h2 class="text-lg font-bold">Annual Reports</h2>
-            <p class="text-4xl font-bold">578</p>
-          </div>
-        </div>
-      
-          <div class="bg-white p-4 rounded-lg">
-            <img src="assets/chart.jpg" alt="Chart Placeholder">
-          </div>
-        </div>
-      </div> -->
 
-      <div class="container">
-        <div class="emergency-banner">
-          <!-- In case of emergencies, please dial your local emergency services number -->
+        <div *ngIf="stationDetails; else loadingTemplate">
+          <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
         </div>
-        <div class="min-h-screen bg-zinc-100 flex">
-          <aside class="w-64 bg-white shadow-md">
-            <div class="p-4 text-center">
-              <div class="logo">
-                <img src="assets/station10.png" alt="CCPO Logo" />
-              </div>
-      
-              <div *ngIf="stationDetails; else loadingTemplate">
-                <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
-              </div>
-      
-              <ng-template #loadingTemplate>
-                <div id="loading">Loading Station Details...</div>
-              </ng-template>
-              <p class="text-sm text-zinc-600">Cebu City Police Office</p>
-            </div>
-            <nav class="mt-7">
-              <ul class="list-none p-0">
-                <li>
-                  <a [routerLink]="['/station-dashboard']" routerLinkActive="active" class="nav-link">
-                    <img
-                      src="assets/dashbold.svg"
-                      alt="Dashboard Icon"
-                      class="w-6 h-6 mr-2"
-                    />
-                    <span>DASHBOARD</span>
-                  </a>
-                </li>
-                <li>
-                  <a 
-                  [routerLink]="['/station-cases']"
-                  [ngClass]="{'active': isReportsActive()}"
-                  class="nav-link">
-                    <img
-                      src="assets/cases.svg"
-                      alt="Inbox Icon"
-                      class="w-6 h-6 mr-2"
-                    />
-                    <span>CASES</span>
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/station-case-queue']" routerLinkActive="active" class="nav-link">
-                    <img
-                      src="assets/reports.svg"
-                      alt="Reports Icon"
-                      class="w-6 h-6 mr-2"
-                    />
-                    <span>REPORTS</span>
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
-                    <img
-                      src="assets/crime-map.svg"
-                      alt="Crime Map Icon"
-                      class="w-6 h-6 mr-2"
-                    />
-                    <span>CRIME MAP</span>
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
-                    <img
-                      src="assets/station.svg"
-                      alt="Station Icon"
-                      class="w-6 h-6 mr-2"
-                    />
-                    <span>STATION</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="nav-link">
-                    <img
-                      src="assets/support.svg"
-                      alt="Contact Support Icon"
-                      class="w-6 h-6 mr-2"
-                    />
-                    <span>CONTACT SUPPORT</span>
-                  </a>
-                </li>
-              </ul>
-              <div class="logout">
-                <button type="submit" class="button" (click)="logout()">
-                  LOG OUT
-                </button>
-              </div>
-            </nav>
-          </aside>
-      
-         
-          <main class="content">
-            <section class="section-data">
-              <div class="case-container">
-                <div class="title">
-                  <h3><span>ADD CASE</span></h3>
-                </div>
-                <div class="forda-input">
-                  <input type="text" placeholder="Item">
-                  <input type="text" placeholder="Item">
-                  <input type="text" placeholder="Item">
-                  <input type="text" placeholder="Item">
-                  <input type="text" placeholder="Item">
-                </div>
-                <div class="add-case-button">
-                  <button>Add as Case</button>
-                </div>
-              </div>
-            </section>
-            
-           
-          </main>
-        </div>
+
+        <ng-template #loadingTemplate>
+          <div id="loading">Loading Station Details...</div>
+        </ng-template>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
       </div>
-      
+      <nav class="mt-7">
+        <ul class="list-none p-0">
+          <li>
+            <a
+              [routerLink]="['/station-dashboard']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-cases']"
+              [ngClass]="{ active: isReportsActive() }"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CASES</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-case-queue']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>REPORTS</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-crime-map']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/crime-map.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CRIME MAP</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-list-of-officers']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/station.svg"
+                alt="Station Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>STATION</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">
+              <img
+                src="assets/support.svg"
+                alt="Contact Support Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CONTACT SUPPORT</span>
+            </a>
+          </li>
+        </ul>
+        <div class="logout">
+          <button type="submit" class="button" (click)="logout()">
+            LOG OUT
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content flex-grow p-6">
+      <section class="section-data">
+        <div class="case-container">
+          <div class="title">
+            <h3><span>ADD CASE</span></h3>
+          </div>
+          <label style="padding-left: 30px;">
+            Incident Name: {{ reports.subcategory_name }}
+          </label>
+          <table class="forda-input">
+            <tbody>
+              <tr>
+                <td>
+                  <select [(ngModel)]="caseData.title">
+                    <option value="" disabled selected>Select Crime</option>
+                    <option *ngFor="let caseTitle of distinctTitles">{{ caseTitle }}</option>
+                  </select>
+                </td>
+
+                <td>
+                  <input
+                  type="text"
+                  [(ngModel)]="caseData.citeNumber"
+                  placeholder="Cite Number"
+                />
+                </td>
+              </tr>
+              
+              <select [(ngModel)]="caseData.offenseType">
+                <option value="" disabled selected>Select Offense</option>
+                <option *ngFor="let caseOffense of distinctOffenseTypes">
+                  {{ caseOffense }}
+                </option>
+              </select>
+              
+              <select [(ngModel)]="caseData.status">
+                <option value="" disabled selected>Status</option>
+                <option>Under Investigation</option>
+                <option>Solved</option>
+                <option>Closed</option>
+              </select>
+             
+              <select [(ngModel)]="caseData.createdBy">
+                <option value="" disabled selected>Created By</option>
+                <option *ngFor="let police of policeByStation">{{ police.rank_abbr }} {{ police.firstname }}, {{ police.lastname }}</option>
+              </select>
+              <select [(ngModel)]="caseData.modifiedBy">
+                <option value="" disabled selected>Modified By</option>
+                <option *ngFor="let police of policeByStation">{{ police.rank_abbr }} {{ police.firstname }}, {{ police.lastname }}</option>
+              </select>
+             
+                <textarea
+                style="width: 99%; height:150px; text-align: start; justify-content: flex-start;"
+                  [(ngModel)]="caseData.description"
+                  placeholder="Description"
+                ></textarea>
+                
+              
+
+            </tbody>
+          </table>
+          <div class="add-case-button">
+            <button (click)="submitCase()">Add as Case</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

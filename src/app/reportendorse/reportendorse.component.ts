@@ -37,8 +37,8 @@ export class ReportEndorseComponent implements OnInit {
   polices: any = [];
   citizens: any = []
   evidences: any = []
-  suspects: any ={};
-  victims: any;
+  suspects: any = [];
+  victims: any = [];
 
   stationID: string | null = null;
   citizenId: number = 0;
@@ -71,6 +71,7 @@ export class ReportEndorseComponent implements OnInit {
   locationData: any;
   citizenData: any;
   suspectData: any;
+  assignedTeam: any;
 
 
   constructor(
@@ -101,6 +102,8 @@ export class ReportEndorseComponent implements OnInit {
     this.fetchRanks();
     this.fetchStations();
     this.fetchPersons();
+    this.fetchVictims();
+    this.fetchSuspects();
    
    
 
@@ -142,6 +145,7 @@ export class ReportEndorseComponent implements OnInit {
           // Check if the report ID exists in the reports data
           const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
           this.fetchEvidences(matchingReport.report_id)
+          localStorage.setItem('report-data', JSON.stringify(matchingReport))
 
           if (matchingReport && matchingReport.citizen_id ) {
               console.log('Matching Report:', matchingReport);
@@ -320,7 +324,7 @@ export class ReportEndorseComponent implements OnInit {
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         this.citizens = response;
-        localStorage.setItem('citizens', this.citizens)
+        // localStorage.setItem('citizens', this.citizens)
         // console.log('Fetched citizens:', this.citizens);
         callback();
       },
@@ -352,31 +356,31 @@ export class ReportEndorseComponent implements OnInit {
       return;
     }
 
-    this.endorseForm.patchValue({
-      reportID: report.report_id,
-      type: report.type,
-      complainant: report.complainant,
-      dateReceived: report.reported_date, // Assuming reported_date is the field in queue params
-      reportBody: report.ReportBody, // Mapping from 'reportBody' in the form to 'ReportBody' in params
-      citizen_id: report.citizen_id,
-      reportSubCategoryID: report.ReportSubCategoryId, // Matching 'reportSubCategoryID' with 'ReportSubCategoryId'
-      locationID: report.locationID,
-      stationID: report.stationID,
-      crimeID: report.crimeID,
-      reportedDate: report.DateTimeReportedDate, // Mapping to DateTimeReportedDate in params
-      incidentDate: report.DateTimeIncidentDate, // Mapping to DateTimeIncidentDate
-      blotterNum: report.blotterNum,
-      hasAccount: report.HasAccount, // Assuming HasAccount should be mapped
-      eSignature: report.eSignature,
-      // rankID: report.rankID, // Ensure rankID is included if it's available in case params
-      // personID: report.personID, // Ensure personID is included if it's available in case params
-      reportSubCategory: report.reportSubCategory,
-      subcategory_name: report.subcategory_name,
-      status: report.status,
-      is_spam: report.is_spam, // Optional: only patch if available in service params
-      color: report.color, // Optional: only patch if available in service params
-    });
-    console.log('Form Value:', this.endorseForm.value);
+    // this.endorseForm.patchValue({
+    //   reportID: report.report_id,
+    //   type: report.type,
+    //   complainant: report.complainant,
+    //   dateReceived: report.reported_date, // Assuming reported_date is the field in queue params
+    //   reportBody: report.ReportBody, // Mapping from 'reportBody' in the form to 'ReportBody' in params
+    //   citizen_id: report.citizen_id,
+    //   reportSubCategoryID: report.ReportSubCategoryId, // Matching 'reportSubCategoryID' with 'ReportSubCategoryId'
+    //   locationID: report.locationID,
+    //   stationID: report.stationID,
+    //   crimeID: report.crimeID,
+    //   reportedDate: report.DateTimeReportedDate, // Mapping to DateTimeReportedDate in params
+    //   incidentDate: report.DateTimeIncidentDate, // Mapping to DateTimeIncidentDate
+    //   blotterNum: report.blotterNum,
+    //   hasAccount: report.HasAccount, // Assuming HasAccount should be mapped
+    //   eSignature: report.eSignature,
+    //   // rankID: report.rankID, // Ensure rankID is included if it's available in case params
+    //   // personID: report.personID, // Ensure personID is included if it's available in case params
+    //   reportSubCategory: report.reportSubCategory,
+    //   subcategory_name: report.subcategory_name,
+    //   status: report.status,
+    //   is_spam: report.is_spam, // Optional: only patch if available in service params
+    //   color: report.color, // Optional: only patch if available in service params
+    // });
+    // console.log('Form Value:', this.endorseForm.value);
   }
 
   fetchnationwideReports(): void {
@@ -430,6 +434,7 @@ export class ReportEndorseComponent implements OnInit {
         this.polices = response;
         console.log("Fetched Police in Station", this.polices)
         localStorage.setItem('policeByStation', JSON.stringify(this.polices))
+        this.assignedTeam = this.polices.unit
       },
       (error) => {
         console.error('Error fetching ranks:', error);
@@ -442,7 +447,7 @@ export class ReportEndorseComponent implements OnInit {
     this.personService.getPersons().subscribe(
       (response) => {
         this.persons = response;
-        localStorage.setItem('persons', this.persons)
+        localStorage.setItem('persons', JSON.stringify(this.persons))
         // console.log('Fetched persons:', this.persons);
       },
       (error) => {
@@ -492,8 +497,9 @@ export class ReportEndorseComponent implements OnInit {
       (response) => {
         if (Array.isArray(response) && response.length > 0) {
           this.suspects = response[0]; // Extract the first element of the array
+          let suspectData = response;
           console.log('Fetched Reported suspect', this.suspects);
-          // localStorage.setItem('reported-suspect', JSON.stringify(this.suspects));
+          localStorage.setItem('reported-suspect', JSON.stringify(suspectData));
           this.isSuspectCaught(this.suspects.is_caught);
         } else {
           console.error('No suspect data found');
@@ -511,8 +517,9 @@ export class ReportEndorseComponent implements OnInit {
       (response) => {
         if (Array.isArray(response) && response.length > 0) {
           this.victims = response[0]; // Extract the first element of the array
+          let victimData = response
           console.log('Fetched Reported victim', this.victims);
-          // localStorage.setItem('reported-victim', JSON.stringify(this.victims));
+          localStorage.setItem('reported-victim', JSON.stringify(victimData));
 
         } else {
           console.error('No victim data found');
@@ -526,6 +533,34 @@ export class ReportEndorseComponent implements OnInit {
       }
     );
   }
+
+  fetchVictims(){
+    this.victimService.getAllVictims().subscribe(
+      (response) => {
+        // console.log('Fetched Victims', response)
+        let victimss = '';
+        victimss = JSON.stringify(response)
+        localStorage.setItem('victims', victimss);
+      },
+      (error) => {
+        console.error('Error fetching victims')
+      }
+    )
+  }
+
+  fetchSuspects(){
+    this.suspectService.retrieveAllSuspects().subscribe(
+      (response) => {
+        // console.log('Fetched Suspects', response)
+        let suspectss = '';
+        suspectss = JSON.stringify(response)
+        localStorage.setItem('suspects', suspectss)
+      },
+      (error) => {
+        console.error('Error fetching suspects')
+      }
+    )
+  }
   
   isSuspectCaught(isCaught: boolean){
     if(isCaught) {
@@ -534,6 +569,8 @@ export class ReportEndorseComponent implements OnInit {
       this.isCaught = 'No'
     }
   }
+
+
 
 
   getGenderName(gender: string): string {
@@ -827,5 +864,36 @@ export class ReportEndorseComponent implements OnInit {
         console.error('Error during sign out:', error);
       }
     );
+  }
+
+  onAssignChange(selectedValue: any): void {
+    const unit = selectedValue.target.value
+    console.log('Selected Police Unit:', unit);
+    this.assignedTeam = unit;
+  }
+  
+  
+
+  navigateToCase(reportId: number) {
+
+    if(!this.assignedTeam){
+      alert("Please choose Assigned Team");
+    }
+    if(reportId) {
+      console.log("Pre-navigation values:", {
+        reportId: reportId,
+        assignedTeam: this.assignedTeam // Add this log
+      });
+      
+      // Only navigate if both values are present
+      if (this.assignedTeam) {
+        this.router.navigate(['/add-case'], {
+          state: {
+            reportId: reportId,
+            team: this.assignedTeam
+          }
+        });
+      }
+    }
   }
 }

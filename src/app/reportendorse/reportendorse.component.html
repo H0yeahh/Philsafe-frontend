@@ -208,7 +208,7 @@
     </aside>
 
     <main class="content">
-      <form [formGroup]="endorseForm">
+      <!-- <form [formGroup]="endorseForm"> -->
        
         <div class="univ-person-data">
           <div class="parent-person-data">
@@ -255,14 +255,17 @@
               <div class="report-header">
                 <div class="report-left">
                   <div class="form-group">
-                    <label for="duty-officer">Duty Officer:</label>
-                    <select id="duty-officer" formControlName="personID">
+                    <label for="duty-officer">Assigned Team</label>
+                    <select 
+                    id="duty-officer" 
+                    [(ngModel)]="assignedTeam"
+                    (change)="onAssignChange($event)"
+                    >
                       <option
                         *ngFor="let police of polices"
-                        [value]="police.police_id"
+                        [value]="police.unit"
                       >
-                        {{ police.rank_abbr }}. {{ police.firstname }}
-                        {{ police.lastname }}
+                        {{ police.unit }}
                       </option>
                     </select>
                   </div>
@@ -280,9 +283,9 @@
                     <button
                       type="button"
                       class="endorse-btn"
-                      [routerLink]="['/add-case']"
+                     (click)="navigateToCase(selectedReport.report_id)"
                     >
-                      Endorse
+                      Add Case
                     </button>
                   </td>
                   <td>
@@ -332,7 +335,7 @@
               </tr>
             </thead>
             <tr>
-              <td style="padding-bottom: 2rem"><h3>Reported ID</h3></td>
+              <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
               <td style="text-align: end; padding-bottom: 2rem">
                 <span>{{ selectedReport.report_id }}</span>
               </td>
@@ -751,7 +754,7 @@
             </section>
           </main>
         </div>
-      </form>
+      <!-- </form> -->
     </main>
   </div>
 </div>

@@ -46,6 +46,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   reports: any = [];
   stations: IStation[] = [];
   persons: IPerson[] = [];
+  cases: any = []
 
   ranks: IRank[] = [];
   personId: any;
@@ -339,6 +340,27 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  fetchCases(stationId){
+    this.caseQueueService.fetchCases(stationId).subscribe(
+      (response) => {
+        if (Array.isArray(response)) {
+          this.cases = response;
+        } else {
+          this.cases = response.data || [];
+          
+        }
+        console.log("Station ID", stationId);
+        console.log(`List of Cases in Station ${stationId}`, this.cases);
+        localStorage.setItem('cases', JSON.stringify(this.cases))
+      },
+      (error) => {
+        console.error('Error fetching cases:', error);
+        this.errorMessage = 'Failed to load cases. Please try again.';
+      }
+    );
+  }
+
+
   loadUserProfile() {
     const userData = localStorage.getItem('userData');
     console.log('USER DATA SESSION', userData);
@@ -394,6 +416,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
         localStorage.setItem('stationDetails', JSON.stringify(this.stationDetails));
         console.log('Station Data', this.stationDetails);
         this.fetchReportStation(this.stationDetails.station_id);
+        this.fetchCases(this.stationDetails.station_id)
       },
       (error) => {
         console.error('Error Fetching Station Data', error);
@@ -401,6 +424,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+
+  
   fetchReportStation(stationId: number) {
     this.caseQueueService.getReports(stationId).subscribe(
       (response) => {

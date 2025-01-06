@@ -114,6 +114,10 @@ export class StationCaseQueueComponent implements OnInit {
 
     
     this.filteredReports = this.reports;
+    localStorage.removeItem('reported-suspect');
+    localStorage.removeItem('reported-victim');
+    localStorage.removeItem('report-data');
+
 
    
   }

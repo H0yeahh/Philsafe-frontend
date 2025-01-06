@@ -159,6 +159,7 @@ export class StationCasesComponent {
           }
           console.log("Station ID", stationId);
           console.log(`List of Cases in Station ${stationId}`, this.cases);
+          localStorage.setItem('cases', JSON.stringify(this.cases))
         },
         (error) => {
           console.error('Error fetching cases:', error);
