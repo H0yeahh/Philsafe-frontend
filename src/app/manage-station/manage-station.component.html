@@ -75,7 +75,13 @@
                     Add Officer
                 </button>
                 <div class="search-filter">
-                    <input type="text" placeholder="Search station" class="search-bar" (input)="onSearch($event)" />
+                    <!-- <input type="text" placeholder="Search station" class="search-bar" (input)="onSearch($event)" /> -->
+                    <input
+                    type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterStation()"
+                      placeholder="Search"
+                      class="search-input"
+                    />
+        
                     <div class="display-options">
                         <label for="display-count">Display</label>
                         <select id="display-count">

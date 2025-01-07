@@ -31,6 +31,12 @@ export class ManageStationComponent implements OnInit {
   personId: any;
   policePersonData: any;
   reportSubscription: Subscription | undefined;
+  // filterStation: any[] = [];
+  searchQuery = '';
+  currentPage: number = 1; 
+  pageSize: number = 10; 
+  totalStations: number = 0; 
+
 
   constructor(
     private fb: FormBuilder,
@@ -271,6 +277,77 @@ export class ManageStationComponent implements OnInit {
     });
     window.scrollTo(0, 0); // Scroll to the top for form view
   }
+
+  filterStation() {
+    if (!this.searchQuery) {
+      this.filteredStations = this.stations;
+      return;
+    }
+  
+    const query = this.searchQuery.toLowerCase();
+  
+    this.filteredStations = this.stations.filter((station) => {
+      const stationIdMatch = station.station_id?.toString().toLowerCase().includes(query);
+      const stationhqMatch = station.hq.toString().toLowerCase().includes(query);
+      const locationIdMatch = station.location_id 
+        ? station.location_id.toString().toLowerCase().includes(query) 
+        : false;
+      // const officerinchargeIdMatch = station.officer_in_charge_id?.toLowerCase().includes(query);
+  
+      // return stationIdMatch || stationhqMatch || locationIdMatch || statusMatch;
+      return stationIdMatch || stationhqMatch || locationIdMatch;
+
+    });
+  }
+  
+
+  isFieldMatched(fieldValue: any, query: string): boolean {
+    if (!query) return false;
+    const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
+    return fieldStr.includes(query.toLowerCase());
+  }
+  
+  highlight(fieldValue: any): string {
+    if (!this.searchQuery) return fieldValue || '';
+    const fieldStr = fieldValue ? fieldValue.toString() : '';
+    const regex = new RegExp(`(${this.searchQuery})`, 'gi');
+    return fieldStr.replace(regex, '<mark>$1</mark>');
+  }
+  
+
+  isRowMatched(report: any): boolean {
+    if (!this.searchQuery) return false;
+    const query = this.searchQuery.toLowerCase().trim();
+    return Object.values(report).some((value) => 
+      value?.toString().toLowerCase().includes(query)
+    );
+  }
+
+  fetchStation(stationId){
+    this.caseQueueService.fetchCases(stationId).subscribe(
+      (response) => {
+        if (Array.isArray(response)) {
+          this.stations = response;
+        } else {
+          this.stations = response.data || [];
+          this.totalStations = this.stations.length;
+        }
+        console.log("Station ID", stationId);
+        console.log(`List of Stations in Station ${stationId}`, this.stations);
+        localStorage.setItem('stations', JSON.stringify(this.stations))
+      },
+      (error) => {
+        console.error('Error fetching stations:', error);
+        this.errorMessage = 'Failed to load stations. Please try again.';
+      }
+    );
+  }
+
+  pagedStations(): any[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.stations.slice(startIndex, startIndex + this.pageSize);
+  }
+
 
 
   // Delete station

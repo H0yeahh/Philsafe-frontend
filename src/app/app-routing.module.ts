@@ -293,12 +293,6 @@ const routes: Routes = [
     data: { roles: ['Police'] },
   },
   {
-    path: 'manage-users',
-    component: ManageStationComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
-  {
     path: 'case-management',
     component: CaseManagementComponent,
     canActivate: [roleGuard],
