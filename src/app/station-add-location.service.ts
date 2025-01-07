@@ -53,7 +53,7 @@ export class StationAddLocationService {
   }
   // https://localhost:7108/api/location/retrieve/all
   getLocations(): Observable<any> {
-    const url = `${this.base}/api/location/retrieve/all`;
+    const url = `${this.base}api/location/retrieve/all`;
     return this.http.get(url).pipe(
       catchError(this.handleError)
     );

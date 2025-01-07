@@ -6,6 +6,11 @@ import { IStation, JurisdictionService } from '../jurisdiction.service';
 import { IPerson,IRank,PoliceAccountsService} from '../police-accounts.service';
 import { PersonService } from '../person.service';
 import { ICitizen, ManageUsersService } from '../manage-users.service';
+import { AuthService } from '../auth.service';
+import { PoliceDashbordService } from '../police-dashbord.service';
+import { HttpClient } from '@angular/common/http';
+import { CaseQueueService } from '../case-queue.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-manage-users',
@@ -24,6 +29,11 @@ export class ManageUsersComponent implements OnInit {
   persons: IPerson[] = [];
   ranks: IRank[] = [];
   stationID: string | null = null;
+  adminData: any;
+  adminDetails: any;
+  personId: any;
+  policePersonData: any;
+  reportSubscription: Subscription | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +42,11 @@ export class ManageUsersComponent implements OnInit {
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
     private manageUserService: ManageUsersService,
-    private router: Router
+    private router: Router,
+    private caseQueueService: CaseQueueService,
+    private http: HttpClient,
+    private authService: AuthService,
+    private policeDashbordService: PoliceDashbordService,
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +55,11 @@ export class ManageUsersComponent implements OnInit {
     this.fetchRanks();
     // this.fetchStations();
     this.fetchPersons();
+
+    const userData = localStorage.getItem('userData');
+    this.adminDetails = JSON.parse(userData);
+    this.fetchAdminData(this.adminDetails.acc_id)
+    console.log('Fetched Admin', this.adminDetails)
   }
 
   // Define the form controls
@@ -72,6 +91,54 @@ export class ManageUsersComponent implements OnInit {
     } else {
       this.errorMessage = 'Station ID not found.';
     }
+  }
+
+  
+  loadUserProfile() {
+    const userData = localStorage.getItem('userData');
+    console.log('USER DATA SESSION', userData);
+    if (userData) {
+      try {
+        const parsedData = JSON.parse(userData);
+        this.personId = parsedData.personId;
+        this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
+          (response) => {
+            this.policePersonData = response;
+            console.log('Fetched Police Person Data', this.policePersonData);
+            // this.fetchPoliceData(this.policePersonData.police_id);
+            console.log('Police ID:', this.policePersonData.police_id);
+          },
+          (error) => {
+            console.error('Errod Police Person Data', error);
+          }
+        );
+
+        console.log('Person ID', this.personId);
+      } catch {
+        console.error('Error fetching localStorage');
+      }
+    }
+  }
+
+  fetchAdminData(accountID: number) {
+    this.policeDashbordService.getAdmin(accountID).subscribe(
+      (res) => {
+        // Find the matching police data by policeId
+        const adminData = res.find((p) => p.acc_id === accountID);
+        this.adminData = adminData;
+        localStorage.setItem('adminDetails', JSON.stringify(adminData));
+        if (adminData) {
+
+          console.log('Found admin data:', adminData);
+
+        } else {
+          console.error('Police ID not found in all admin data');
+        }
+      },
+      (error) => {
+        console.error('Error Fetching All Admin Data:', error);
+      }
+    );
   }
 
   // Fetch a specific station based on station ID
@@ -249,5 +316,33 @@ export class ManageUsersComponent implements OnInit {
   // Navigate back to the previous screen
   goBack(): void {
     this.router.navigate(['/manage-police']);
+  }
+
+  clearSession() {
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('citizenId');
+    localStorage.removeItem('sessionData');
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
+  logout() {
+    this.authService.logout().subscribe(
+      (response) => {
+        console.log('Signed out successfully:', response);
+        this.clearSession();
+        localStorage.setItem('authenticated', '0');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        console.error('Error during sign out:', error);
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.reportSubscription) {
+      this.reportSubscription.unsubscribe();
+    }
   }
 }

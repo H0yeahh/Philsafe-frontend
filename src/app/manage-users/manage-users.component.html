@@ -117,11 +117,19 @@
     <div class="flex h-screen">
 
       <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-        <button type="button" class="back-button mt-6" style="align-self: flex-start;">BACK</button>
+        <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>
         <div class="p-4 text-center">
           <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-          <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
-          <p class="text-sm text-zinc-600">CCPO Admin Personnels</p>
+
+          <div *ngIf="adminDetails; else loadingTemplate">
+            <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
+              {{ adminDetails?.last_name }} </h2>
+          </div>
+    
+          <ng-template #loadingTemplate>
+            <div id="loading">Loading Police Details...</div>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Admin</p>
         </div>
         <nav class="mt-4">
           <ul class="list-none p-0">
@@ -129,10 +137,10 @@
             <li><a href="/manage-users" class="nav-link">MANAGE USER</a></li>
             <li><a href="/ticket-requests" class="nav-link">TICKET REQUESTS</a></li>
             <li><a href="/manage-station" class="nav-link" >MANAGE STATION</a></li>
-            <li><a href="/crime-map" class="nav-link">CRIME MAP</a></li>
+            <li><a href="/police-crime-map" class="nav-link">CRIME MAP</a></li>
           </ul>
         </nav>
-        <button type="button" class="logout-button mt-auto">LOG OUT</button>            
+        <button type="button" class="logout-button mt-auto" (click)="logout()">LOG OUT</button>            
       </aside>
   
       <!-- Main Content -->

@@ -59,6 +59,8 @@ const routes: Routes = [
   // { path: 'station-register', component: StationRegistrationComponent },
   { path: 'station-add-location', component: StationAddLocationComponent },
   { path: 'station-login', component: StationLoginComponent },
+  // { path: 'manage-users', component: ManageUsersComponent },
+
   {
     path: 'station-police-accounts',
     component: StationPoliceAccountsComponent,
@@ -71,6 +73,12 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: PoliceDashboardComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Admin'] },
+  },
+  {
+    path: 'manage-users',
+    component: ManageUsersComponent,
     canActivate: [roleGuard],
     data: { roles: ['Admin'] },
   },

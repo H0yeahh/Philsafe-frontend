@@ -27,6 +27,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="/police-cases" class="nav-link">
+                          <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                          <span>CASES</span>
+                        </a>
+                      </li>
+                    <li>
                         <a routerLink="/manage-users" class="nav-link">
                             <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
                             <span>MANAGE USER</span>
@@ -56,7 +62,7 @@
         </aside>
 
 
-        <div class="main-content">
+        <!-- <div class="main-content">
             <div class="header">
                 <div class="header-title">
                     <h1>CASE REPORTS</h1>
@@ -84,19 +90,15 @@
                                 <th>BLOTTER ID</th>
                                 <th>INCIDENT TYPE</th>
                                 <th>COMPLAINT</th>
-                                <!-- <th>ENDORSED TO</th> -->
       
                             </tr>
                         </thead>
                          <tbody>
                             <tr *ngFor="let case of reports">
-                                <!-- <td><a href="#" (click)="onSelectReport(report)">{{ report.report_id}}</a></td> -->
-                                <!-- <td><a href="/report-endorse">{{ case.report_id}}</a></td> -->
                                 <td>{{ case.stationID}}</td>
                                 <td>{{ case.blotterNum }}</td>
                                 <td>{{ case.type }}</td>
                                 <td>{{ case.complainant }}</td>
-                                <!-- <td>{{ case.endorsed_to }}</td> -->
                             </tr>
                         </tbody>
                     </table>
@@ -104,6 +106,144 @@
             </section>
         </main>
         </div> 
+        </div> -->
+
+        <div class="main-content">
+            <div class="header">
+                <div class="header-title">
+                    <h1>LIST OF CASES</h1>
+                </div>
+                <div class="header-info">
+                  <p id="current-date"></p>
+                  <p id="current-time"></p>
+                    <div class="new-reports-container">
+                        <a href="/add-case" class="new-reports-link">
+                            Add New Case
+                            <span class="new-reports-badge"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <main class="main-content">
+                <header class="header"></header>
+                <div class="search-container">
+                  <input
+                  type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterCases()"
+                    placeholder="Search"
+                    class="search-input"
+                  />
+      
+                </div>
+                <section class="new-reports">
+                    <form>
+                        <table class="reports-table">
+                            <thead>
+                                <tr>
+                                    <th>Crime ID</th>
+                                    <th>Date Committed</th>
+                                    <th>Cite Number</th>
+                                    <th>Incident Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <!-- <tbody>
+                                <tr *ngFor="let case of cases  | paginate: { 
+                                  id: 'cases',
+                                  itemsPerPage: pageSize,
+                                  currentPage: currentPage,
+                                  totalItems: totalCases 
+                              }">
+                                    <td><a >{{ case.crime_id }}</a></td>
+                                    <td>{{ case.date_committed }}</td>
+                                    <td>{{ case.cite_number }}</td>
+                                    <td>{{ case.incident_type }}</td>
+                                    <td>{{ case.status }}</td>
+                                </tr>
+                            </tbody> -->
+                            <tbody>
+                            
+                              <ng-container *ngIf="searchQuery; else allcrimes">
+                                <ng-container *ngIf="filteredCases.length > 0; else noResults">
+                                  <tr
+                                    *ngFor="let crime of (searchQuery ? filteredCases : cases) | paginate: { 
+                                      id: 'cases', 
+                                      itemsPerPage: searchQuery ? filteredCases.length : pageSize, 
+                                      currentPage: currentPage, 
+                                      totalItems: searchQuery ? filteredCases.length : totalCases 
+                                    }"
+                                    [id]="'crime-' + crime.crime_id"
+                                  >
+                                    <td>
+                                      <a>
+                                        <span
+                                          [class.highlight]="isFieldMatched(crime.crime_id, searchQuery)"
+                                          [innerHTML]="highlight(crime.crime_id)"
+                                        ></span>
+                                      </a>
+                                    </td>
+                                    <td>
+                                      <span
+                                        [class.highlight]="isFieldMatched(crime.date_committed, searchQuery)"
+                                        [innerHTML]="highlight(crime.date_committed)"
+                                      ></span>
+                                    </td>
+                                    <td>
+                                      <span
+                                        [class.highlight]="isFieldMatched(crime.cite_number, searchQuery)"
+                                        [innerHTML]="highlight(crime.cite_number)"
+                                      ></span>
+                                    </td>
+                                    <td>
+                                      <span
+                                        [class.highlight]="isFieldMatched(crime.incident_type, searchQuery)"
+                                        [innerHTML]="highlight(crime.incident_type)"
+                                      ></span>
+                                    </td>
+                                   
+                                  </tr>
+                                </ng-container>
+                            
+                            
+                                <ng-template #noResults>
+                                  <tr>
+                                    <td colspan="4" class="no-results">
+                                      No results found for "{{ searchQuery }}"
+                                    </td>
+                                  </tr>
+                                </ng-template>
+                              </ng-container>
+                            
+                            
+                              <ng-template #allcrimes>
+                                <tr
+                                  *ngFor="let crime of cases | paginate: { 
+                                    id: 'cases', 
+                                    itemsPerPage: pageSize, 
+                                    currentPage: currentPage, 
+                                    totalItems: totalCases 
+                                  }"
+                                >
+                                  <td>
+                                    <a>
+                                      {{ crime.crime_id }}
+                                    </a>
+                                  </td>
+                                  <td>{{ crime.date_committed | date }}</td>
+                                  <td>{{ crime.cite_number }}</td>
+                                  <td>{{ crime.incident_type }}</td>
+                                  <td>{{ crime.status}}</td>
+                                </tr>
+                              </ng-template>
+                            </tbody>
+                        </table>
+      
+                        <pagination-controls 
+                        id="cases"
+                        (pageChange)="currentPage = $event">
+                      </pagination-controls>
+                    </form>
+                </section>
+            </main>
         </div>
       </div>
       
