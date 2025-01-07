@@ -46,7 +46,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
   //   return true;
   // } else {
   //   router.navigate(['/access-denied']);
-  //   return false;
+  //   return false;`
   // }
   const requiredRoles = route.data['roles'] as Array<string>;
 if (requiredRoles.some(role => role === userRole)) {

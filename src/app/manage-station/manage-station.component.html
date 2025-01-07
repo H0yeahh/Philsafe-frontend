@@ -1,59 +1,75 @@
-<!-- <div class="container">
+<div class="container">
     <div class="emergency-banner">
         In case of emergencies, please dial your local emergency services number
     </div>
     <div class="flex h-screen">
         <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-            <button type="submit" class="back-button mt-6" style="align-self: flex-start;">BACK</button>
+            <button type="button" class="back-button mt-6" style="align-self: flex-start" (click)="goBack()">
+                BACK
+            </button>
             <div class="p-4 text-center">
-                <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-                <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
-                <p class="text-sm text-zinc-600">CCPO Admin Personel</p>
+                <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4"
+                    style="width: 180px; height: 180px" />
+               
+        <div *ngIf="adminDetails; else loadingTemplate">
+            <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
+              {{ adminDetails?.last_name }} </h2>
+          </div>
+    
+          <ng-template #loadingTemplate>
+            <div id="loading">Loading Police Details...</div>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Admin</p>
             </div>
             <nav class="mt-4">
                 <ul class="list-none p-0">
                     <li>
-                        <a href="/dashboard" class="nav-link">
-                            <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                        <a routerLink="/dashboard" class="nav-link">
+                            <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2" />
                             <span>DASHBOARD</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/manage-users" class="nav-link">
-                            <img src="assets/manage user.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
+                        <a routerLink="/manage-users" class="nav-link">
+                            <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2" />
                             <span>MANAGE USER</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/ticket-request" class="nav-link">
-                            <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
+                        <a routerLink="/ticket-request" class="nav-link">
+                            <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2" />
                             <span>TICKET REQUESTS</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/manage-station" class="nav-link">
-                            <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
+                        <a routerLink="/manage-station" class="nav-link">
+                            <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2" />
                             <span>MANAGE STATION</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/station-crime-map" class="nav-link">
-                            <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                        <a routerLink="/station-crime-map" class="nav-link">
+                            <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2" />
                             <span>CRIME MAP</span>
                         </a>
                     </li>
                 </ul>
             </nav>
-            <button type="submit" class="logout-button mt-auto">LOG OUT</button>
+            <button type="button" class="logout-button mt-auto" (click)="logout()">
+                LOG OUT
+            </button>
         </aside>
 
-    
         <main class="main-content">
             <header class="header">
-                <button class="add-station" routerLink="/station-register">Add Station</button>
-                <button class="add-station" routerLink="/police-register">Add Officer</button>
+                <button class="add-station" routerLink="/station-register">
+                    Add Station
+                </button>
+                <button class="add-station" routerLink="/police-register">
+                    Add Officer
+                </button>
                 <div class="search-filter">
-                    <input type="text" placeholder="Search station" class="search-bar">
+                    <input type="text" placeholder="Search station" class="search-bar" (input)="onSearch($event)" />
                     <div class="display-options">
                         <label for="display-count">Display</label>
                         <select id="display-count">
@@ -66,41 +82,36 @@
             </header>
 
             <div class="table-container">
-                <table class="station-table">
-                    <thead>
-                        <tr>
-                            <th>Station ID</th>
-                            <th>Regional Office</th>
-                            <th>Station Name</th>
-                            <th>Officer In-Charge</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-   
-                        <tr>
-                            <td>OIDKH9OH</td>
-                            <td>Police Regional Office 1 (PRO1)</td>
-                            <td>Paian Police Station 01</td>
-                            <td>Romeo Acop</td>
-                            <td>
-                                <button class="edit-btn">✏️</button>
-                                <button class="delete-btn">🗑️</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>OIDAKRFF</td>
-                            <td>Police Regional Office 1 (PRO1)</td>
-                            <td>Abellana Police Station 02</td>
-                            <td>Ashley Gimenez</td>
-                            <td>
-                                <button class="edit-btn">✏️</button>
-                                <button class="delete-btn">🗑️</button>
-                            </td>
-                        </tr>
-   
-                    </tbody>
-                </table>
+                <form [formGroup]="managestationForm" (ngSubmit)="onSubmit()">
+                    <table class="station-table">
+                        <thead>
+                            <tr>
+                                <th>Station ID</th>
+                                <th>Station Name</th>
+                                <th>Barangay</th>
+                                <th>Officer In-Charge</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let station of stations; let i = index">
+                                <td>{{ station.station_id }}</td>
+                                <td>{{ station.hq }}</td>
+                                <td>{{ station.barangay }}</td>
+                                <td>{{ station.officer_in_charge_id }}</td>
+                                <td>
+                                    <button type="button" class="edit-btn" (click)="editStation(station)">
+                                        ✏️
+                                    </button>
+                                    <button type="button" class="delete-btn"
+                                        (click)="deleteStation(station.station_id)">
+                                        🗑️
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
             </div>
 
             <footer class="pagination">
@@ -111,219 +122,5 @@
                 </div>
             </footer>
         </main>
-    </div> -->
-
-
-    <!-- <div class="container">
-        <div class="emergency-banner">
-            In case of emergencies, please dial your local emergency services number
-        </div>
-        <div class="flex h-screen">
-            <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-                <button type="submit" class="back-button mt-6" style="align-self: flex-start;">BACK</button>
-                <div class="p-4 text-center">
-                    <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-                    <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
-                    <p class="text-sm text-zinc-600">CCPO Admin Personel</p>
-                </div>
-                <nav class="mt-4">
-                    <ul class="list-none p-0">
-                        <li>
-                            <a href="/dashboard" class="nav-link">
-                                <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                                <span>DASHBOARD</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/manage-users" class="nav-link">
-                                <img src="assets/manage user.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                                <span>MANAGE USER</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/ticket-request" class="nav-link">
-                                <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                                <span>TICKET REQUESTS</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/manage-station" class="nav-link">
-                                <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
-                                <span>MANAGE STATION</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/station-crime-map" class="nav-link">
-                                <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                                <span>CRIME MAP</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <button type="submit" class="logout-button mt-auto">LOG OUT</button>
-            </aside>
-    
-        
-            <main class="main-content">
-                <header class="header">
-                    <button class="add-station" routerLink="/station-register">Add Station</button>
-                    <button class="add-station" routerLink="/police-register">Add Officer</button>
-                    <div class="search-filter">
-                        <input type="text" placeholder="Search station" class="search-bar">
-                        <div class="display-options">
-                            <label for="display-count">Display</label>
-                            <select id="display-count">
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                            </select>
-                        </div>
-                    </div>
-                </header>
-    
-                <div class="table-container">
-                    <form [formGroup]="managestationForm" (ngSubmit)="onSubmit()"> 
-                      <table class="station-table">
-                        <thead>
-                          <tr>
-                            <th>Station ID</th>
-                            <th>Regional Office</th>
-                            <th>Station Name</th>
-                            <th>Officer In-Charge</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody formArrayName="stations">
-                          <tr *ngFor="let station of stations.IStation; let i = index" [formGroupName]="i">
-                            <td>{{ station.get('stationId').value }}</td>
-                            <td>{{ station.get('regionalOffice').value }}</td>
-                            <td>{{ station.get('stationName').value }}</td>
-                            <td>{{ station.get('officerInCharge').value }}</td>
-                            <td>
-                              <button type="button" class="edit-btn" (click)="editStation(i)">✏️</button>
-                              <button type="button" class="delete-btn" (click)="deleteStation(i)">🗑️</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <button type="submit">Submit</button>
-                    </form>
-                  </div>
-                  
-    
-                <footer class="pagination">
-                    <p>1/80</p>
-                    <div class="pagination-buttons">
-                        <button>&laquo;</button>
-                        <button>&raquo;</button>
-                    </div>
-                </footer>
-            </main>
-        </div> -->
-
-
-        <div class="container">
-            <div class="emergency-banner">
-                In case of emergencies, please dial your local emergency services number
-            </div>
-            <div class="flex h-screen">
-                <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-                    <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>
-                    <div class="p-4 text-center">
-                        <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-                        <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
-                        <p class="text-sm text-zinc-600">CCPO Admin Personnel</p>
-                    </div>
-                    <nav class="mt-4">
-                        <ul class="list-none p-0">
-                            <li>
-                                <a routerLink="/dashboard" class="nav-link">
-                                    <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                                    <span>DASHBOARD</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a routerLink="/manage-users" class="nav-link">
-                                    <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
-                                    <span>MANAGE USER</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a routerLink="/ticket-request" class="nav-link">
-                                    <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
-                                    <span>TICKET REQUESTS</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a routerLink="/manage-station" class="nav-link">
-                                    <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
-                                    <span>MANAGE STATION</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a routerLink="/station-crime-map" class="nav-link">
-                                    <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                                    <span>CRIME MAP</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <button type="button" class="logout-button mt-auto" routerLink="/login">LOG OUT</button>
-                </aside>
-        
-                <main class="main-content">
-                    <header class="header">
-                        <button class="add-station" routerLink="/station-register">Add Station</button>
-                        <button class="add-station" routerLink="/police-register">Add Officer</button>
-                        <div class="search-filter">
-                            <input type="text" placeholder="Search station" class="search-bar" (input)="onSearch($event)">
-                            <div class="display-options">
-                                <label for="display-count">Display</label>
-                                <select id="display-count">
-                                    <option value="10">10</option>
-                                    <option value="20">20</option>
-                                    <option value="30">30</option>
-                                </select>
-                            </div>
-                        </div>
-                    </header>
-        
-                    <div class="table-container">
-                        <form [formGroup]="managestationForm" (ngSubmit)="onSubmit()"> 
-                            <table class="station-table">
-                                <thead>
-                                    <tr>
-                                        <th>Station ID</th>
-                                        <th>Station Name</th>
-                                        <th>Barangay</th>
-                                        <th>Officer In-Charge</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let station of stations; let i = index">
-                                        <td>{{ station.station_id }}</td>
-                                        <td>{{ station.hq }}</td>
-                                        <td>{{ station.barangay }}</td>
-                                        <td>{{ station.officer_in_charge_id }}</td>
-                                        <td>
-                                            <button type="button" class="edit-btn" (click)="editStation(station)">✏️</button>
-                                            <button type="button" class="delete-btn" (click)="deleteStation(station.station_id)">🗑️</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </form>
-                    </div>
-        
-                    <footer class="pagination">
-                        <p>1/80</p>
-                        <div class="pagination-buttons">
-                            <button>&laquo;</button>
-                            <button>&raquo;</button>
-                        </div>
-                    </footer>
-                </main>
-            </div>
-        </div>
-        
+    </div>
+</div>

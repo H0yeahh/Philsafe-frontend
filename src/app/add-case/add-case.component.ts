@@ -69,8 +69,8 @@ export class AddCaseComponent {
     const caseData = localStorage.getItem('cases');
     const police = localStorage.getItem('policeByStation');
     const suspects = localStorage.getItem('suspects');
-    const victims = localStorage.getItem('victims');
     const reportData = localStorage.getItem('report-data');
+    const victims = localStorage.getItem('victims');
     const suspectData = localStorage.getItem('reported-suspect');
     const victimData = localStorage.getItem('reported-victim');
 

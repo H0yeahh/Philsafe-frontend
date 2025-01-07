@@ -8,6 +8,9 @@ import { IPerson, IRank, PoliceAccountsService } from '../police-accounts.servic
 import { PersonService } from '../person.service';
 // import { CreateCaseService, ICase } from '../create-case.service';
 import { CreateCasesService, ICase } from '../create-cases.service';
+import { PoliceDashbordService } from '../police-dashbord.service';
+import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -25,7 +28,11 @@ export class PoliceCasesComponent implements OnInit {
   persons: IPerson[] = [];
   ranks: IRank[] = [];
   case: ICase[] = [];
-  
+  adminData: any;
+  adminDetails: any;
+  personId: any;
+  policePersonData: any;
+  reportSubscription: Subscription | undefined;
   stationID: string | null = null;
 
   constructor(
@@ -36,7 +43,10 @@ export class PoliceCasesComponent implements OnInit {
     private personService: PersonService,
     // private createCaseService: CreateCaseService,
     private createCasesService: CreateCasesService,
-    private router: Router
+    private router: Router,
+    private policeDashbordService: PoliceDashbordService,
+    private authService: AuthService,
+
   ) {}
 
   // Initialize the form and fetch reports, stations, and ranks
@@ -48,6 +58,16 @@ export class PoliceCasesComponent implements OnInit {
     this.fetchPersons();
     this.fetchnationwideReports();
     this.fetchnationwideCase();
+
+    
+    const userData = localStorage.getItem('userData');
+    this.adminDetails = JSON.parse(userData);
+    this.fetchAdminData(this.adminDetails.acc_id)
+    console.log('Fetched Admin', this.adminDetails)
+
+    // this.onSelect();
+    // console.log('Initial form value:', this.timePeriodControl.value);
+    // console.log('Form valid:', this.policedashboardForm.valid);
 
   }
 
@@ -85,6 +105,53 @@ export class PoliceCasesComponent implements OnInit {
     } else {
       this.errorMessage = 'Station ID not found.';
     }
+  }
+
+  loadUserProfile() {
+    const userData = localStorage.getItem('userData');
+    console.log('USER DATA SESSION', userData);
+    if (userData) {
+      try {
+        const parsedData = JSON.parse(userData);
+        this.personId = parsedData.personId;
+        this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
+          (response) => {
+            this.policePersonData = response;
+            console.log('Fetched Police Person Data', this.policePersonData);
+            // this.fetchPoliceData(this.policePersonData.police_id);
+            console.log('Police ID:', this.policePersonData.police_id);
+          },
+          (error) => {
+            console.error('Errod Police Person Data', error);
+          }
+        );
+
+        console.log('Person ID', this.personId);
+      } catch {
+        console.error('Error fetching localStorage');
+      }
+    }
+  }
+
+  fetchAdminData(accountID: number) {
+    this.policeDashbordService.getAdmin(accountID).subscribe(
+      (res) => {
+        // Find the matching police data by policeId
+        const adminData = res.find((p) => p.acc_id === accountID);
+        this.adminData = adminData;
+        localStorage.setItem('adminDetails', JSON.stringify(adminData));
+        if (adminData) {
+          
+          console.log('Found admin data:', adminData);
+        
+        } else {
+          console.error('Police ID not found in all admin data');
+        }
+      },
+      (error) => {
+        console.error('Error Fetching All Admin Data:', error);
+      }
+    );
   }
 
   // Fetch reports from the backend service
@@ -243,5 +310,34 @@ export class PoliceCasesComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/manage-police']);
+  }
+
+
+  logout() {
+    this.authService.logout().subscribe(
+      (response) => {
+        console.log('Signed out successfully:', response);
+        this.clearSession();
+        localStorage.setItem('authenticated', '0');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        console.error('Error during sign out:', error);
+      }
+    );
+  }
+
+  clearSession() {
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('citizenId');
+    localStorage.removeItem('sessionData');
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
+  ngOnDestroy(): void {
+    if (this.reportSubscription) {
+      this.reportSubscription.unsubscribe();
+    }
   }
 }
