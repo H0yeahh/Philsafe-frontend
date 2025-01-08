@@ -28,7 +28,7 @@ export interface IReport {
 @Injectable({
   providedIn: 'root',
 })
-export class StationDashboardService {
+export class PoliceDashbordService {
   private apiUrl = `${environment.ipAddUrl}`;
 
   private endpoints = {
@@ -39,6 +39,7 @@ export class StationDashboardService {
     citizenReports: `${this.apiUrl}/api/report/retrieve/citizen`,
     categorizedReports: (subcategoryId: number) => `${this.apiUrl}/api/report/retrieve/category/${subcategoryId}`,
     crimeReports: (crimeId: number) => `${this.apiUrl}/api/report/retrieve/case/${crimeId}`,
+    admin:  `${this.apiUrl}api/admin/grant`,
   };
 
   constructor(private http: HttpClient) {}
@@ -84,6 +85,13 @@ export class StationDashboardService {
     const headers = this.getHeaders();
     return this.http
       .get<IReport[]>(this.endpoints.localReports(stationId), { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  getAdmin(accountID: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http
+      .get<any>(`${this.endpoints.admin}/${accountID}`, { headers })
       .pipe(catchError(this.handleError));
   }
 
