@@ -46,7 +46,8 @@ export class StationCasesComponent {
     totalCases: number = 0; 
     filteredCases: any[] = [];
     searchQuery = '';
-    
+    selectedStatus: string | null = null;
+
   
     constructor(
       private fb: FormBuilder,
@@ -153,6 +154,9 @@ export class StationCasesComponent {
         (response) => {
           if (Array.isArray(response)) {
             this.cases = response;
+            this.cases.sort((b, a) => {
+              return new Date(a.date_committed || a.datetime_committed).getTime() - new Date(b.date_committed || b.datetime_committed).getTime();
+            });
           } else {
             this.cases = response.data || [];
             this.totalCases = this.cases.length;
@@ -183,6 +187,18 @@ export class StationCasesComponent {
       } else {
         console.error('Citizen ID not found for the selected report.');
         alert('Invalid citizen ID. Please select a valid report.');
+      }
+    }
+
+    editCase(crimeId: number): void {
+      if (crimeId) {
+        console.log('Navigating with Crime ID:', crimeId);
+        this.router.navigate(['/edit-case'], {
+          queryParams: { crimeID: crimeId },
+        });
+      } else {
+        console.error('report ID not found for the selected report.');
+        alert('Invalid report id. Please select a valid report.');
       }
     }
   

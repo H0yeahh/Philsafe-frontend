@@ -95,6 +95,12 @@ export class PersonService {
   }
 
 
+  getALocation(locationId: number): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/location/retrieve/${locationId}`)
+      .pipe(catchError(this.handleError));
+  }
+
   postAccount(data: IAccount): Observable<any> {
     return this.http
       .post(this.accountUrl, data, { headers: this.headers })

@@ -1,59 +1,140 @@
 <div class="container">
-    <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
-    </div>
-    <div class="flex h-screen mt-16"> <!-- Added mt-16 class for margin-top -->
-      <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-        <button type="submit" class="back-button mt-6" style="align-self: flex-start;">BACK</button> <!-- Removed mt-6 class -->
-        <div class="p-4 text-center">
-          <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-          <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
-          <p class="text-sm text-zinc-600">Police Station 2, Abellana </p>
-        </div>
-        <nav class="mt-4"> <!-- Reduced margin-top to create less space -->
-          <ul class="list-none p-0">
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/dashboard.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                <span>DASHBOARD</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/crime.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                <span>CASES</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/crime-map.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                <span>CRIME MAP</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/support.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                <span>CONTACT SUPPORT</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-      <div class="flex-grow bg-white p-4 relative"> <!-- Added relative class -->
-       
-        <h2 class="text-xl font-semibold mt-16">PLOT LONGITUDE AND LATITUDE</h2> <!-- Added mt-16 class for margin-top -->
-        <p class="text-muted-foreground">Fuente Osmena Cebu City</p>
-        <p class="text-muted-foreground">(10.316780, 123.936507)</p>
-        <div id="map" class="mt-4" style="height: 400px; width: 100%;"></div> <!-- Added map div -->
-        <div class="flex justify-between mt-4">
-          <div class="text-muted-foreground">
-            <!-- Removed Date and Time from here -->
-          </div>
-          <div class="button-container"> <!-- Added button-container class -->
-            <button type="submit" class="edit-button">EDIT</button>
-            <button type="submit" class="save-button">SAVE</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="emergency-banner">
+    <!-- In case of emergencies, please dial your local emergency services number -->
   </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-4 text-center">
+        <div class="logo">
+          <img src="assets/station10.png" alt="CCPO Logo" />
+        </div>
+
+        <div *ngIf="stationDetails; else loadingTemplate">
+          <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div id="loading">Loading Station Details...</div>
+        </ng-template>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+      </div>
+      <nav class="mt-7">
+        <ul class="list-none p-0">
+          <li>
+            <a
+              [routerLink]="['/station-dashboard']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-cases']"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CASES</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-case-queue']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>REPORTS</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/plot-longitude-and-latitude']"
+              [ngClass]="{ active: isReportsActive() }"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/crime-map.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CRIME MAP</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/station-list-of-officers']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/station.svg"
+                alt="Station Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>STATION</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">
+              <img
+                src="assets/support.svg"
+                alt="Contact Support Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>CONTACT SUPPORT</span>
+            </a>
+          </li>
+        </ul>
+        <div class="logout">
+          <button type="submit" class="button" (click)="logout()">
+            LOG OUT
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content flex-grow p-6">
+      <section class="section-data">
+        <div class="plot-container">
+          <h3>Plot Longitude and Latitude</h3>
+        
+          
+          <div class="coordinates">
+            <p style="padding-right:100px;"><b>Selected Coordinates:</b></p>
+            <p class="p-tag">Longitude: {{ longitude }}</p>
+            <p class="p-tag">Latitude: {{ latitude }}</p>
+          </div>
+        
+         
+          <div id="map" class="map-container"></div>
+          <div class="submit-blotter">
+            <button
+              type="button"
+              class="send-blotter-btn"
+              (click)="navigateToBlotter()"
+            >
+              PLOT LONGITUDE AND LATITUDE
+            </button>
+          </div>
+         
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

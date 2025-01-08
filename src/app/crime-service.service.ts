@@ -8,7 +8,7 @@ import { environment } from './environment';
   providedIn: 'root'
 })
 export class CrimeService {
-  private baseUrl = `${environment.ipAddUrl}/api/case`;
+  private baseUrl = `${environment.ipAddUrl}api/case`;
 
   constructor(private http: HttpClient) {}
 
@@ -31,6 +31,10 @@ export class CrimeService {
 
   getSpecificCase(crimeId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/retrieve/specific/${crimeId}`);
+  }
+
+  getFurtherCase(crimeId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/retrieve/further/${crimeId}`);
   }
 
   getOngoingCases(stationId: number): Observable<any> {
@@ -74,6 +78,8 @@ export class CrimeService {
   updateCase(crimeId: number, crimeData: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/up/${crimeId}`, crimeData);
   }
+
+
 
   // // Interface for type safety
   // interface CrimeRequestDto {

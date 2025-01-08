@@ -118,12 +118,12 @@
           <div class="header-info">
             <p id="current-date"></p>
             <p id="current-time"></p>
-              <div class="new-reports-container">
+              <!-- <div class="new-reports-container">
                   <a href="/add-case" class="new-reports-link">
                       Add New Case
                       <span class="new-reports-badge"></span>
                   </a>
-              </div>
+              </div> -->
           </div>
       </div>
       <main class="main-content">
@@ -134,6 +134,12 @@
               placeholder="Search"
               class="search-input"
             />
+
+            <!-- <select [(ngModel)]="selectedStatus" (change)="filterCases()">
+              <option value="">All Cases</option>
+              <option value="Ongoing">Ongoing Cases</option>
+              <option value="Solved">Solved Cases</option>
+            </select> -->
 
           </div>
           <section class="new-reports">
@@ -224,13 +230,17 @@
                               currentPage: currentPage, 
                               totalItems: totalCases 
                             }"
+                            (click)="editCase(crime.crime_id)"
                           >
                             <td>
-                              <a>
+                           
                                 {{ crime.crime_id }}
-                              </a>
+                           
                             </td>
-                            <td>{{ crime.date_committed | date }}</td>
+                            <td>
+                              {{ crime.datetime_committed ? (crime.datetime_committed | date) : (crime.date_committed ? (crime.date_committed | date) : 'N/A') }}
+                            </td>
+                            
                             <td>{{ crime.cite_number }}</td>
                             <td>{{ crime.incident_type }}</td>
                             <td>{{ crime.status}}</td>

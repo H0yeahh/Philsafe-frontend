@@ -20,8 +20,15 @@ export class AddCaseComponent {
     offenseType: '',
     citeNumber: '',
     dateTimeReported: '',
-    dateTimeCommitted: '',
     dateTimeCreated: '',
+    dateTimeCommitted: '',
+    dateCommitted: {
+      year: 0,
+      month: 0,
+      day: 0,
+      dayOfWeek: 0
+    },
+    dateReported: '',
     description: '',
     status: '',
     incidentTypeId: 0,
@@ -52,6 +59,8 @@ export class AddCaseComponent {
   distinctTitles: any = [];
   distinctOffenseTypes: any = [];
   team: any;
+  loading: boolean = false;
+
 
   constructor(
     private jurisdictionService: JurisdictionService,
@@ -139,8 +148,25 @@ export class AddCaseComponent {
       this.caseData.incidentTypeId = this.reports.report_subcategory_id;
       this.caseData.dateTimeReported = this.reports.reported_date;
       this.caseData.dateTimeCommitted = this.reports.incident_date;
-      this.caseData.dateTimeCreated = new Date().toLocaleString();
-      this.caseData.dateTimeCreated = new Date().toLocaleString();
+      //this.caseData.dateTimeCreated = new Date().toLocaleString();
+      // if (this.reports.incident_date && this.reports.reported_date) {
+      //   this.caseData.date_committed = new Date(this.reports.incident_date);
+      //   this.caseData.dateReported = new Date(this.reports.reported_date).toISOString().split('T')[0];
+      // } else {
+      //   console.error('Invalid incident and reported date');
+      // }
+      // Create a Date object from the incident date
+      const dateCommitted = new Date(this.reports.incident_date);
+
+      // Build the object that the backend requires
+      this.caseData.dateCommitted = {
+        year: dateCommitted.getFullYear(),
+        month: dateCommitted.getMonth() + 1,  // Months are 0-indexed, so add 1
+        day: dateCommitted.getDate(),
+        dayOfWeek: dateCommitted.getDay()  // Sunday = 0, Monday = 1, etc.
+      };
+
+    
       this.caseData.locationId = this.reports.location_id;
 
     } else {
@@ -194,17 +220,22 @@ export class AddCaseComponent {
 
   submitCase() {
     console.log('Case Data to be posted', this.caseData);
+    this.loading = true;
     this.caseService.postCase(this.caseData).subscribe(
       (response) => {
         console.log('Case successfully added', response);
+        alert("Case has been successfully added!")
         this.caseService
           .connectDot(this.reportId, response.id, this.caseData)
           .subscribe(
             (response) => {
               console.log('Report successfully added to case', response);
+              this.loading = false;
+              this.router.navigate(['/station-dashboard']);
             },
             (error) => {
               console.error('Error adding case to report', error);
+              this.loading = false;
             }
           );
       },
@@ -212,5 +243,5 @@ export class AddCaseComponent {
         console.error('Error adding case', error);
       }
     );
-  }
+   }
 }

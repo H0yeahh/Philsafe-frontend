@@ -51,6 +51,7 @@ export class StationCaseQueueComponent implements OnInit {
   specificReport: any;
   personId: any;
   profilePicMap: { [key: number]: string } = {};
+  crimeId: any;
 
 
   constructor(
@@ -96,12 +97,17 @@ export class StationCaseQueueComponent implements OnInit {
 
     if (reportsData) {
       this.reports = JSON.parse(reportsData);
-      this.reports.sort((b, a) => {
+    
+     
+      // this.reports = this.reports.filter((report: any) => report.crime_id === null || report.crime_id === undefined);
+    
+      this.reports.sort((b: any, a: any) => {
         return new Date(a.reported_date).getTime() - new Date(b.reported_date).getTime();
       });
     } else {
       console.warn('No reports data found in localStorage');
     }
+    
 
     // if (citizenData) {
     //   this.citizens = JSON.parse(citizenData);

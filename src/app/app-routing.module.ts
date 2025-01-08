@@ -44,6 +44,7 @@ import { PoliceReportsComponent } from './police-reports/police-reports.componen
 import { PoliceCasesComponent } from './police-cases/police-cases.component';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
+import { EditCaseComponent } from './edit-case/edit-case.component';
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] } 
 
@@ -137,7 +138,8 @@ const routes: Routes = [
     { path: 'add-case', component: AddCaseComponent, 
       canActivate: [roleGuard], data: { roles: ['Police'] } },
   { path: 'dashboard', component: PoliceDashboardComponent },
-
+  { path: 'edit-case', component: EditCaseComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
  
 
   // { path: '', redirectTo: '/home-page', pathMatch: 'full' },

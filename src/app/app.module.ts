@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http'; // Updated import
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http'; 
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -53,6 +53,7 @@ import { CasesComponent } from './cases/cases.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
+import { EditCaseComponent } from './edit-case/edit-case.component';
 
 
 @NgModule({
@@ -104,6 +105,7 @@ import { AddCaseComponent } from './add-case/add-case.component';
     CasesComponent,
     StationCasesComponent,
     AddCaseComponent,
+    EditCaseComponent,
   ],
   imports: [
     BrowserModule,

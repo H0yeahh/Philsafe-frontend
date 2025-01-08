@@ -34,6 +34,13 @@ export interface IReport {
   is_spam?: string;
 }
 
+interface DateCommitted {
+  year: number;
+  month: number;
+  day: number;
+  dayOfWeek: number;
+}
+
 export interface Crime {
   crimeId: number;
   title: string,
@@ -41,6 +48,8 @@ export interface Crime {
   citeNumber: string,
   dateTimeReported: string,
   dateTimeCommitted: string,
+  dateCommitted: DateCommitted;
+  dateReported: string;
   description: string,
   status: string,
   incidentTypeId: number,
@@ -50,6 +59,7 @@ export interface Crime {
   modifiedBy: string,
   locationId: 0,
   stationId: 0,
+
 
   victim_id_list: number[],
   suspect_id_list: number[],
@@ -108,7 +118,13 @@ export class CaseService {
   }
 
   connectDot(reportId: number, crimeId: number, caseData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}connect/dot/${reportId}/${crimeId}`, caseData).pipe(
+    return this.http.put(`${this.baseUrl}report/connect/dot/${reportId}/${crimeId}`, caseData).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  collectCrimeReports(crimeId: number, caseData: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}report/retrieve/case/${crimeId}`, caseData).pipe(
       catchError(this.handleError)
     );
   }
