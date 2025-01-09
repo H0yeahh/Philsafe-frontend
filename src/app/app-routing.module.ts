@@ -71,7 +71,7 @@ const routes: Routes = [
   // Route for login
   // Route for login
   {
-    path: 'dashboard',
+    path: 'dashboard',  
     component: PoliceDashboardComponent,
     canActivate: [roleGuard],
     data: { roles: ['Admin'] },
@@ -238,12 +238,12 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  {
-    path: 'manage-users',
-    component: ManageUsersComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
+  // {
+  //   path: 'manage-users',
+  //   component: ManageUsersComponent,
+  //   canActivate: [roleGuard],
+  //   data: { roles: ['Police'] },
+  // },
   {
     path: 'ticket-request',
     component: TicketRequestComponent,

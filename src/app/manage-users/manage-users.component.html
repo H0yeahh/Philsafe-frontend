@@ -133,11 +133,42 @@
         </div>
         <nav class="mt-4">
           <ul class="list-none p-0">
-            <li><a href="/dashboard" class="nav-link">DASHBOARD</a></li>
-            <li><a href="/manage-users" class="nav-link">MANAGE USER</a></li>
-            <li><a href="/ticket-requests" class="nav-link">TICKET REQUESTS</a></li>
-            <li><a href="/manage-station" class="nav-link" >MANAGE STATION</a></li>
-            <li><a href="/police-crime-map" class="nav-link">CRIME MAP</a></li>
+            <li>
+              <a routerLink="/dashboard" class="nav-link">
+                  <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                  <span>DASHBOARD</span>
+              </a>
+          </li>
+          <li>
+              <a href="/police-cases" class="nav-link">
+                <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                <span>CASES</span>
+              </a>
+            </li>
+          <li>
+              <a routerLink="/manage-users" class="nav-link">
+                  <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
+                  <span>MANAGE USER</span>
+              </a>
+          </li>
+          <li>
+              <a routerLink="/ticket-request" class="nav-link">
+                  <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
+                  <span>TICKET REQUESTS</span>
+              </a>
+          </li>
+          <li>
+              <a routerLink="/manage-station" class="nav-link">
+                  <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
+                  <span>MANAGE STATION</span>
+              </a>
+          </li>
+          <li>
+              <a routerLink="/station-crime-map" class="nav-link">
+                  <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                  <span>CRIME MAP</span>
+              </a>
+          </li>
           </ul>
         </nav>
         <button type="button" class="logout-button mt-auto" (click)="logout()">LOG OUT</button>            
@@ -155,39 +186,44 @@
   
         <!-- User Table -->
         <div class="table-container mt-8">
-          <div class="table-controls flex justify-between items-center mb-4">
-            <form [formGroup]="userForm" class="filter">
-              <input type="text" placeholder="Search user" formControlName="search" class="search-bar">
+          <!-- <div class="table-controls flex justify-between items-center mb-4"> -->
+            <form [formGroup]="userForm" class="filter" (ngSubmit)="onSubmit()">
+              <!-- <input type="text" placeholder="Search user" formControlName="search" class="search-bar" > -->
+              <input
+              type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterUsers()"
+                placeholder="Search"
+                class="search-input"
+              />
             </form>
-            <div class="pagination flex items-center">
+            <!-- <div class="pagination flex items-center">
               <label for="entries">Display</label>
               <select id="entries" formControlName="entries">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
-              </select>
+              </select> -->
               <!-- <span>/{{ totalUsers }}</span> -->
-            </div>
-          </div>
+            <!-- </div>
+          </div> -->
           <table class="user-table w-full border-collapse">
             <thead>
               <tr>
                 <th class="border border-zinc-300 p-2">ID NUM</th>
                 <th class="border border-zinc-300 p-2">USER LIST</th>
                 <th class="border border-zinc-300 p-2">STATUS</th>
-                <th class="border border-zinc-300 p-2">ADDRESS</th>
+                <th class="border border-zinc-300 p-2">GENDER</th>
                 <th class="border border-zinc-300 p-2">ACTION</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let user of citizen">
-                <td class="border border-zinc-300 p-2">{{ user.citizen_id }}</td>
-                <td class="border border-zinc-300 p-2">{{ user.firstname }}{{ user.middlename}}{{ user.lastname }}</td>
-                <td class="border border-zinc-300 p-2">{{ user.civil_status }}</td>
-                <td class="border border-zinc-300 p-2">{{ user.location_id}}</td>
-                <td class="border border-zinc-300 p-2">
-                  <button (click)="editCitizen(user)" class="action-btn edit">✏️</button>
-                  <button (click)="deleteCitizen(+user.citizen_id)" class="action-btn delete">🗑️</button>
+                  <tr *ngFor="let user of citizen; let i = index">
+                    <td  class="border border-zinc-300 p-2">{{ user.person_id }}</td>
+                    <td  class="border border-zinc-300 p-2">{{ user.firstname }} {{ user.lastname }}</td>
+                    <td  class="border border-zinc-300 p-2">{{ user.civil_status }}</td>
+                    <td  class="border border-zinc-300 p-2">{{ user.sex }}</td>
+                    <td  class="border border-zinc-300 p-2">
+                  <!-- <button (click)="editCitizen(user)" class="action-btn edit">✏️</button> -->
+                  <button (click)="deleteCitizen(+user.citizen_id)" class="action-btn delete">SPAM</button>
                   <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
                 </td>
               </tr>

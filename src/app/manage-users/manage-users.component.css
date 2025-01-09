@@ -950,3 +950,22 @@
     color: white;
     border-radius: 3px;
 }
+
+
+/* .search-bar {
+  padding: 8px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+} */
+
+.search-container {
+  margin-bottom: 1rem;
+ 
+}
+
+.search-input {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border-radius: 1px solid #ddd;
+}

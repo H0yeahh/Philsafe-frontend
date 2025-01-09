@@ -30,11 +30,11 @@ export class ManageUsersService  {
   // API endpoints
   private endpoints = {
     citizen: `${this.apiUrl}api/citizen/collect/citizens/all`,
-    citizenVerification: (person_id: number) => `${this.apiUrl}api/citizen/verify/${person_id}`,
+    citizenVerification: (personId: number) => `${this.apiUrl}api/citizen/verify/${personId}`,
     submitCitizen: `${this.apiUrl}api/citizen`,
-    updateStation: (stationId: number) => `${this.apiUrl}api/jurisdiction/${stationId}`,
-    deleteStation: (stationId: number) => `${this.apiUrl}api/jurisdiction/${stationId}`,
-    searchStation: (query: string) => `${this.apiUrl}api/jurisdiction/search?query=${query}`
+    // updateCitizen: (personId: number) => `${this.apiUrl}api/jurisdiction/${personId}`,
+    deleteCitizen: (personId: number) => `${this.apiUrl}api/banish/citizen/${personId}`,
+    searchCitien: (query: string) => `${this.apiUrl}api/jurisdiction/search?query=${query}`
   };
 
   constructor(private http: HttpClient) {}
@@ -73,16 +73,16 @@ export class ManageUsersService  {
   }
 
   // Update an existing station
-  editCitizen(person_id: number, updatedCitizen: ICitizen): Observable<ICitizen> {
-    const headers = this.getHeaders();
-    return this.http.put<ICitizen>(this.endpoints.updateStation(person_id), updatedCitizen, { headers })
-      .pipe(catchError(this.handleError));
-  }
+  // editCitizen(person_id: number, updatedCitizen: ICitizen): Observable<ICitizen> {
+  //   const headers = this.getHeaders();
+  //   return this.http.put<ICitizen>(this.endpoints.updateCitizen(person_id), updatedCitizen, { headers })
+  //     .pipe(catchError(this.handleError));
+  // }
 
   // Delete a station by ID
   deleteCitizen(citizenId: number): Observable<void> {
     const headers = this.getHeaders();
-    return this.http.delete<void>(this.endpoints.deleteStation(citizenId), { headers })
+    return this.http.delete<void>(this.endpoints.deleteCitizen(citizenId), { headers })
       .pipe(catchError(this.handleError));
   }
 

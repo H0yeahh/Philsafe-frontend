@@ -34,6 +34,9 @@ export class ManageUsersComponent implements OnInit {
   personId: any;
   policePersonData: any;
   reportSubscription: Subscription | undefined;
+  searchQuery = '';
+  filteredUsers: any[] = [];
+  Users: any;
 
   constructor(
     private fb: FormBuilder,
@@ -55,6 +58,8 @@ export class ManageUsersComponent implements OnInit {
     this.fetchRanks();
     // this.fetchStations();
     this.fetchPersons();
+    this.fetchAdminData;
+    this.fetchCitizens();
 
     const userData = localStorage.getItem('userData');
     this.adminDetails = JSON.parse(userData);
@@ -159,6 +164,48 @@ export class ManageUsersComponent implements OnInit {
     );
   }
 
+  filterUsers() {
+    if (!this.searchQuery) {
+      this.filteredUsers = this.Users;
+      return;
+    }
+  
+    const query = this.searchQuery.toLowerCase();
+  
+    this.filteredUsers = this.Users.filter((crime) => {
+      const crimeIdMatch = crime.crime_id?.toString().toLowerCase().includes(query);
+      const citeNumMatch = crime.cite_number?.toString().toLowerCase().includes(query);
+      const incidentNameMatch = crime.incident_type 
+        ? crime.incident_type.toString().toLowerCase().includes(query) 
+        : false;
+      const statusMatch = crime.status?.toLowerCase().includes(query);
+  
+      return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
+    });
+  }
+  
+
+  isFieldMatched(fieldValue: any, query: string): boolean {
+    if (!query) return false;
+    const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
+    return fieldStr.includes(query.toLowerCase());
+  }
+  
+  highlight(fieldValue: any): string {
+    if (!this.searchQuery) return fieldValue || '';
+    const fieldStr = fieldValue ? fieldValue.toString() : '';
+    const regex = new RegExp(`(${this.searchQuery})`, 'gi');
+    return fieldStr.replace(regex, '<mark>$1</mark>');
+  }
+  
+
+  isRowMatched(report: any): boolean {
+    if (!this.searchQuery) return false;
+    const query = this.searchQuery.toLowerCase().trim();
+    return Object.values(report).some((value) => 
+      value?.toString().toLowerCase().includes(query)
+    );
+  }
   // Fetch list of all stations
   // fetchStations(): void {
   //   this.jurisdictionService.getAll().subscribe(
@@ -188,7 +235,7 @@ export class ManageUsersComponent implements OnInit {
 
   // Fetch persons
   fetchPersons(): void {
-    this.personService.getAll().subscribe(
+    this.personService.getPersons().subscribe(
       (response: IPerson[]) => {
         this.persons = response;
       },
@@ -198,6 +245,19 @@ export class ManageUsersComponent implements OnInit {
       }
     );
   }
+
+  fetchCitizens(): void {
+    this.manageUserService.getCitizens().subscribe(
+      (response: ICitizen[]) => {
+        this.citizen = response;
+      },
+      (error) => {
+        console.error('Error fetching citizen:', error);
+        this.errorMessage = 'Failed to load citizens. Please try again.';
+      }
+    );
+  }
+
 
   // Submit the form data
   onSubmit(): void {
