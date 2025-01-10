@@ -10,13 +10,14 @@
                 <img src="assets/station10.png" alt="CCPO Logo" />
               </div>
       
-              <div *ngIf="stationDetails; else loadingTemplate">
+              <!-- <div *ngIf="stationDetails; else loadingTemplate">
                 <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
               </div>
       
               <ng-template #loadingTemplate>
                 <div id="loading">Loading Station Details...</div>
-              </ng-template>
+              </ng-template> -->
+              <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
               <p class="text-sm text-zinc-600">Cebu City Police Office</p>
             </div>
             <nav class="mt-7">
@@ -212,7 +213,36 @@
                           </td>
                         </tr>
       
-                        
+                        <thead>
+                            <tr>
+                              <th colspan="2" class="category-label">ASSIGNED TO</th>
+                            </tr>
+                          </thead>
+                          <tbody *ngIf="polices && polices.length > 0; else noDataTemplate">
+                            <ng-container *ngFor="let police of polices">
+                              <tr>
+                                <td style="padding-bottom: 2rem"><h3>Police ID</h3></td>
+                                <td style="text-align: end; padding-bottom: 2rem">
+                                  <span>{{ police.police_id }}</span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-bottom: 2rem"><h3>Police Name</h3></td>
+                                <td style="text-align: end; padding-bottom: 2rem">
+                                  <span>{{ police.firstname }} {{ police.lastname }}</span>
+                                </td>
+                              </tr>
+                            </ng-container>
+                          </tbody>
+                          
+                          <ng-template #noDataTemplate>
+                            <tr>
+                              <td colspan="2" style="text-align: center; padding: 1rem;">No officers assigned.</td>
+                            </tr>
+                          </ng-template>
+                            
+                  
+                          
       
                         <thead>
                           <tr>

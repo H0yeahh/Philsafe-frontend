@@ -53,11 +53,7 @@ import { CasesComponent } from './cases/cases.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
-<<<<<<< HEAD
 import { EditCaseComponent } from './edit-case/edit-case.component';
-=======
-import { PoliceMapComponent } from './police-map/police-map.component';
->>>>>>> bfe2946c66626ae0a9d5e5aa23c932ffe7eced28
 
 
 @NgModule({
@@ -109,11 +105,7 @@ import { PoliceMapComponent } from './police-map/police-map.component';
     CasesComponent,
     StationCasesComponent,
     AddCaseComponent,
-<<<<<<< HEAD
     EditCaseComponent,
-=======
-    PoliceMapComponent,
->>>>>>> bfe2946c66626ae0a9d5e5aa23c932ffe7eced28
   ],
   imports: [
     BrowserModule,

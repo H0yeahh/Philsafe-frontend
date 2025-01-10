@@ -152,8 +152,10 @@
           <h1>LIST OF REPORTS</h1>
         </div>
         <div class="header-info">
-          <p>Date: May 24, 2024</p>
-          <p>Time: 0100</p>
+          <div class="current">
+            <p><strong>Date:</strong> {{ currentDate }}</p>
+            <p><strong>Time:</strong> {{ currentTime }}</p>
+          </div>
           <div class="new-reports-container">
             <!-- <a href="/station-reports" class="new-reports-link">
                       CASE REPORTS

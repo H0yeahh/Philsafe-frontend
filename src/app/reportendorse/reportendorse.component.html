@@ -265,7 +265,7 @@
                         *ngFor="let police of polices"
                         [value]="police.unit"
                       >
-                        {{ police.unit }}
+                        {{ police.unit   }}
                       </option>
                     </select>
                   </div>
@@ -368,12 +368,10 @@
             <tr>
               <td style="padding-bottom: 2rem"><h3>Narrative</h3></td>
               <td style="text-align: end; padding-bottom: 2rem">
-                <span style="display: inline-block;
-                max-width: 500px;      
-                word-wrap: break-word;  
-                overflow: hidden;
-                text-align: justify
-                ">{{ selectedReport.report_body }}</span>
+                <div class="narrative">
+                  <textarea class="report-body">{{ selectedReport.report_body }}</textarea>
+                </div>
+                
               </td>
             </tr>
                 

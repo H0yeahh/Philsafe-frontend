@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { AuthService } from '../auth.service';
   templateUrl: './station-cases.component.html',
   styleUrl: './station-cases.component.css'
 })
-export class StationCasesComponent {
+export class StationCasesComponent implements OnDestroy{
 
 
  
@@ -47,6 +47,10 @@ export class StationCasesComponent {
     filteredCases: any[] = [];
     searchQuery = '';
     selectedStatus: string | null = null;
+
+    currentDate: string = '';
+    currentTime: string = '';
+    intervalId: any;
 
   
     constructor(
@@ -80,31 +84,35 @@ export class StationCasesComponent {
       } else {
         console.warn('No stationDetails found in localStorage.');
       }
+
+      this.updateDateTime();
+      setInterval(() => this.updateDateTime(), 60000);
+      this.intervalId = setInterval(() => this.updateDateTime(), 1000);
+      
     }
 
 
-    // filterCases() {
-    //   if (!this.searchQuery) {
-    //     this.filteredCases = this.cases;
-    //     return;
-    //   }
-    
-    //   const query = this.searchQuery.toLowerCase();
-    
-    //   this.filteredCases = this.cases.filter((crime) => {
-    //     const crimeIdMatch = crime.crime_id.toString().toLowerCase().includes(query);
-    //     const citeNumMatch = crime.cite_number.toString().toLowerCase().includes(query);
-    //     const statusMatch = crime.status.toLowerCase().includes(query);
-    //     const incidentNameMatch = crime.incident_type 
-    //     ? crime.incident_type.toString().toLowerCase().includes(query) 
-    //     : false;
+    updateDateTime(): void {
+      const now = new Date();
+      this.currentDate = now.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      this.currentTime = now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true // Use 12-hour format
+      });
+    }
 
-        
-    
-    //     return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
-    //   });
-    // }
-    
+    ngOnDestroy(): void {
+      if (this.intervalId) {
+        clearInterval(this.intervalId); // Clear the interval when the component is destroyed
+      }
+    }
+  
     filterCases() {
       if (!this.searchQuery) {
         this.filteredCases = this.cases;

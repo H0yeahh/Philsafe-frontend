@@ -6,7 +6,7 @@
     <aside class="w-64 bg-white shadow-md">
       <div class="p-4 text-center">
         <img src="assets/station10.png" alt="CCPO Logo" class="mx-auto mb-4 logo">
-        <h2 class="text-lg font-semibold">Punta Princesa Police Station 10</h2>
+        <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
         <p class="text-sm text-zinc-600">Cebu City Police Office</p>
       </div>
       <nav class="mt-7">
@@ -55,10 +55,11 @@
     <main class="flex-1 p-6">
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-bold">CRIME MAP</h1>
-        <div class="text-right date-time">
-          <p><strong>Date:</strong> May 24, 2024</p>
-          <p><strong>Time:</strong> 0100</p>
+        <div class="text-left date-time">
+          <p><strong>Date:</strong> {{ currentDate }}</p>
+          <p><strong>Time:</strong> {{ currentTime }}</p>
         </div>
+        
       </div>
       
       <div class="drop-down">

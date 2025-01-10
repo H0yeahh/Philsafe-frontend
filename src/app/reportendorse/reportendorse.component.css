@@ -773,4 +773,21 @@ tbody td a {
     bottom: 40px;
   }
 
+
+  .narrative {
+
+    padding-top: 20px
+  }
+  .report-body {
+
+    display: inline-block;
+    max-width: 500px;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    text-align: end;
+    border-radius: 12px;
+    padding: 20px;
+    height: 96px;
+    width: 551px;
+  }
   

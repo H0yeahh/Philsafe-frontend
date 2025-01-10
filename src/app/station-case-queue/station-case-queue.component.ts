@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
@@ -20,7 +20,7 @@ import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
   templateUrl: './station-case-queue.component.html',
   styleUrls: ['./station-case-queue.component.css'],
 })
-export class StationCaseQueueComponent implements OnInit {
+export class StationCaseQueueComponent implements OnInit, OnDestroy{
   reportsForm!: FormGroup; // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
@@ -51,7 +51,9 @@ export class StationCaseQueueComponent implements OnInit {
   specificReport: any;
   personId: any;
   profilePicMap: { [key: number]: string } = {};
-  crimeId: any;
+  crimeId: any;currentDate: string = '';
+  currentTime: string = '';
+  intervalId: any;
 
 
   constructor(
@@ -68,6 +70,10 @@ export class StationCaseQueueComponent implements OnInit {
 
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
+
+    this.updateDateTime();
+  setInterval(() => this.updateDateTime(), 60000);
+  this.intervalId = setInterval(() => this.updateDateTime(), 1000);
     this.initializeForm();
     //this.getOfficerStationId(); // Fetch officer's station ID on init
     this.fetchRanks();
@@ -190,6 +196,27 @@ export class StationCaseQueueComponent implements OnInit {
   //   );
   // }
 
+  updateDateTime(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.currentTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true // Use 12-hour format
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId); // Clear the interval when the component is destroyed
+    }
+  }
+  
   filterReports() {
     if (!this.searchQuery) {
       this.filteredReports = this.reports;

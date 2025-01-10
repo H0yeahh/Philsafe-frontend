@@ -225,17 +225,25 @@
 </div> -->
 
     <main class="content">
-      <div class="welcome">
-        <h3>Welcome back,</h3>
-        <div *ngIf="policeDetails; else loading">
-          <h1>
+      <div class="welcome flex justify-between items-center mb-4">
+        <div class="sub-welcome">
+          <h3>Welcome back,</h3>
+       
+          <h1 *ngIf="policeDetails; else loading">
             {{ policeDetails?.rank_abbr }} {{ policeDetails?.firstname }}
             {{ policeDetails?.lastname }}
-          </h1>
-        </div>
+          </h1> 
+        
         <ng-template #loading>
-          <div id="loading">Loading User...</div>
+          <p id="loading">Loading User...</p>
         </ng-template>
+
+        </div>
+        
+        <div class="text-left date-time">
+          <p><strong>Date:</strong> {{ currentDate }}</p>
+          <p><strong>Time:</strong> {{ currentTime }}</p>
+        </div>
       </div>
       
       <div class="header">

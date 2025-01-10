@@ -112,18 +112,17 @@
 
      <div class="main-content">
       <div class="header">
-          <div class="header-title">
+          <div class="header-title ">
               <h1>LIST OF CASES</h1>
+              
           </div>
           <div class="header-info">
             <p id="current-date"></p>
             <p id="current-time"></p>
-              <!-- <div class="new-reports-container">
-                  <a href="/add-case" class="new-reports-link">
-                      Add New Case
-                      <span class="new-reports-badge"></span>
-                  </a>
-              </div> -->
+            <div class="current">
+              <p><strong>Date:</strong> {{ currentDate }}</p>
+              <p><strong>Time:</strong> {{ currentTime }}</p>
+            </div>  
           </div>
       </div>
       <main class="main-content">

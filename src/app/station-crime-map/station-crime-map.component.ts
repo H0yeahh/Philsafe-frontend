@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MapboxService } from '../mapbox.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environment';
@@ -29,11 +29,15 @@ export interface crimeDetail {
 })
 
 
-export class StationCrimeMapComponent implements OnInit {
+export class StationCrimeMapComponent implements OnInit, OnDestroy {
   isDropdownOpen = false; // Track dropdown state
   selectedCrimes: string[] = ['ROBBERY']; // Track selected crimes
   crimeDetails: crimeDetail[] = []; // Object to hold crime details
   filteredCrimes: crimeDetail[] = [];
+  currentDate: string = '';
+  currentTime: string = '';
+  intervalId: any;
+
   crimes = [
     { name: 'ROBBERY', icon: 'assets/robbery.png' },
     { name: 'RAPE', icon: 'assets/rape.png' },
@@ -54,6 +58,7 @@ export class StationCrimeMapComponent implements OnInit {
   ];
 
   summary:any = {}
+  stationDetails: any;
   // map:any ={};
 
   // localToken = 'pk.eyJ1IjoibWltc2gyMyIsImEiOiJjbHltZ2F3MTIxbWY2Mmtvc2YyZXd0ZWF1In0.YP4QQgS9F_Mqj3m7cB8gLw'
@@ -64,11 +69,54 @@ export class StationCrimeMapComponent implements OnInit {
 
   async ngOnInit() {
     // this.iframeUrl = this.safe.transform(this.baseMapUrl)
+
+    const now = new Date();
+    // Format the date (e.g., "May 24, 2024")
+    // this.currentDate = now.toLocaleDateString('en-US', {
+    //   year: 'numeric',
+    //   month: 'long',
+    //   day: 'numeric'
+    // });
+    // // Format the time (e.g., "0100")
+    // this.currentTime = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
+    this.updateDateTime();
+  setInterval(() => this.updateDateTime(), 60000);
+  this.intervalId = setInterval(() => this.updateDateTime(), 1000);
+  
+
     await this.fetchCrimeDetails();
     await this.mapboxService.initializeMap('map-container', [123.900, 10.295], 13)
     this.mapboxService.getMap().on('load', () => {
       this.filterCrimes()
     })
+
+    const stationData = localStorage.getItem('stationDetails');
+    if (stationData) {
+      this.stationDetails = JSON.parse(stationData);
+    }
+
+    
+  }
+
+  updateDateTime(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.currentTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true // Use 12-hour format
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId); // Clear the interval when the component is destroyed
+    }
   }
 
   getSummary() {

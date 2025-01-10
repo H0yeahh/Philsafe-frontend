@@ -65,6 +65,9 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   annualAvg: any;
   stationId: any;
   timePeriodControl: FormControl;
+  currentDate: string = '';
+  currentTime: string = '';
+  intervalId: any;
 
   constructor(
     @Inject(StationDashboardService)
@@ -105,6 +108,9 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.fetchReportStation(this.stationId);
     this.calculateReportsAverage();
     this.calculateReportsCount();
+    this.updateDateTime();
+  setInterval(() => this.updateDateTime(), 60000);
+  this.intervalId = setInterval(() => this.updateDateTime(), 1000);
 
     this.timePeriodControl = new FormControl('weekly');
 
@@ -117,6 +123,24 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     console.log('Initial form value:', this.timePeriodControl.value);
     console.log('Form valid:', this.dashboardForm.valid);
   }
+
+
+  updateDateTime(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.currentTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true // Use 12-hour format
+    });
+  }
+
+
 
   onSelect() {
     console.log(
@@ -484,6 +508,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.reportSubscription) {
       this.reportSubscription.unsubscribe();
+    }
+
+    if (this.intervalId) {
+      clearInterval(this.intervalId); // Clear the interval when the component is destroyed
     }
   }
 }

@@ -102,8 +102,8 @@ export class EditCaseComponent {
       this.fetchRanks();
       this.fetchStations();
       this.fetchPersons();
-      this.fetchVictims();
-      this.fetchSuspects();
+      // this.fetchVictims();
+      // this.fetchSuspects();
      
      
   
@@ -119,7 +119,7 @@ export class EditCaseComponent {
   
       if (stationData) {
         this.stationDetails = JSON.parse(stationData);
-        this.fetchPoliceByStation(this.stationDetails.station_id)
+        // this.fetchPoliceByStation(this.stationDetails.station_id)
       }
   
       if (reportsData) {
@@ -295,20 +295,20 @@ export class EditCaseComponent {
       );
     }
   
-    fetchPoliceByStation(stationId: number): void {
-      this.policeAccountsService.getPoliceByStation(stationId).subscribe(
-        (response) => {
-          this.polices = response;
-          console.log("Fetched Police in Station", this.polices)
-          localStorage.setItem('policeByStation', JSON.stringify(this.polices))
-          this.assignedTeam = this.polices.unit
-        },
-        (error) => {
-          console.error('Error fetching ranks:', error);
-          this.errorMessage = 'Failed to load ranks. Please try again.';
-        }
-      );
-    }
+    // fetchPoliceByStation(stationId: number): void {
+    //   this.policeAccountsService.getPoliceByStation(stationId).subscribe(
+    //     (response) => {
+    //       this.polices = response;
+    //       console.log("Fetched Police in Station", this.polices)
+    //       localStorage.setItem('policeByStation', JSON.stringify(this.polices))
+    //       this.assignedTeam = this.polices.unit
+    //     },
+    //     (error) => {
+    //       console.error('Error fetching ranks:', error);
+    //       this.errorMessage = 'Failed to load ranks. Please try again.';
+    //     }
+    //   );
+    // }
   
     fetchPersons(): void {
       this.personService.getPersons().subscribe(
@@ -362,83 +362,83 @@ export class EditCaseComponent {
 
    
   
-    fetchReportedSuspect(crimeId: number) {
-      this.crimeService.getInvolvedCases(this.reportId).subscribe(
-        (response) => {
-          if (Array.isArray(response) && response.length > 0) {
-            this.suspects = response[0]; // Extract the first element of the array
-            let suspectData = response;
-            console.log('Fetched Reported suspect', this.suspects);
-            localStorage.setItem('reported-suspect', JSON.stringify(suspectData));
-            this.isSuspectCaught(this.suspects.is_caught);
-          } else {
-            console.error('No suspect data found');
-          }
-        },
-        (error) => {
-          console.error('Error fetching reported suspect:', error);
-          this.errorMessage = 'Failed to load suspect. Please try again.';
-        }
-      );
-    }
+    // fetchReportedSuspect(crimeId: number) {
+    //   this.crimeService.getInvolvedCases(this.reportId).subscribe(
+    //     (response) => {
+    //       if (Array.isArray(response) && response.length > 0) {
+    //         this.suspects = response[0]; // Extract the first element of the array
+    //         let suspectData = response;
+    //         console.log('Fetched Reported suspect', this.suspects);
+    //         localStorage.setItem('reported-suspect', JSON.stringify(suspectData));
+    //         this.isSuspectCaught(this.suspects.is_caught);
+    //       } else {
+    //         console.error('No suspect data found');
+    //       }
+    //     },
+    //     (error) => {
+    //       console.error('Error fetching reported suspect:', error);
+    //       this.errorMessage = 'Failed to load suspect. Please try again.';
+    //     }
+    //   );
+    // }
   
-    fetchReportedVictim(reportID: number) {
-      this.victimService.retrieveReportedVictim(this.reportId).subscribe(
-        (response) => {
-          if (Array.isArray(response) && response.length > 0) {
-            this.victims = response[0]; // Extract the first element of the array
-            let victimData = response
-            console.log('Fetched Reported victim', this.victims);
-            localStorage.setItem('reported-victim', JSON.stringify(victimData));
+    // fetchReportedVictim(reportID: number) {
+    //   this.victimService.retrieveReportedVictim(this.reportId).subscribe(
+    //     (response) => {
+    //       if (Array.isArray(response) && response.length > 0) {
+    //         this.victims = response[0]; // Extract the first element of the array
+    //         let victimData = response
+    //         console.log('Fetched Reported victim', this.victims);
+    //         localStorage.setItem('reported-victim', JSON.stringify(victimData));
   
-          } else {
-            console.error('No victim data found');
-          }
-          // this.victims = response; // Extract the first element of the array
-          //   console.log('Fetched Reported victim', this.victims);
-        },
-        (error) => {
-          console.error('Error fetching reported suspect:', error);
-          this.errorMessage = 'Failed to load suspect. Please try again.';
-        }
-      );
-    }
+    //       } else {
+    //         console.error('No victim data found');
+    //       }
+    //       // this.victims = response; // Extract the first element of the array
+    //       //   console.log('Fetched Reported victim', this.victims);
+    //     },
+    //     (error) => {
+    //       console.error('Error fetching reported suspect:', error);
+    //       this.errorMessage = 'Failed to load suspect. Please try again.';
+    //     }
+    //   );
+    // }
   
-    fetchVictims(){
-      this.victimService.getAllVictims().subscribe(
-        (response) => {
-          // console.log('Fetched Victims', response)
-          let victimss = '';
-          victimss = JSON.stringify(response)
-          localStorage.setItem('victims', victimss);
-        },
-        (error) => {
-          console.error('Error fetching victims')
-        }
-      )
-    }
+    // fetchVictims(){
+    //   this.victimService.getAllVictims().subscribe(
+    //     (response) => {
+    //       // console.log('Fetched Victims', response)
+    //       let victimss = '';
+    //       victimss = JSON.stringify(response)
+    //       localStorage.setItem('victims', victimss);
+    //     },
+    //     (error) => {
+    //       console.error('Error fetching victims')
+    //     }
+    //   )
+    // }
   
-    fetchSuspects(){
-      this.suspectService.retrieveAllSuspects().subscribe(
-        (response) => {
-          // console.log('Fetched Suspects', response)
-          let suspectss = '';
-          suspectss = JSON.stringify(response)
-          localStorage.setItem('suspects', suspectss)
-        },
-        (error) => {
-          console.error('Error fetching suspects')
-        }
-      )
-    }
+    // fetchSuspects(){
+    //   this.suspectService.retrieveAllSuspects().subscribe(
+    //     (response) => {
+    //       // console.log('Fetched Suspects', response)
+    //       let suspectss = '';
+    //       suspectss = JSON.stringify(response)
+    //       localStorage.setItem('suspects', suspectss)
+    //     },
+    //     (error) => {
+    //       console.error('Error fetching suspects')
+    //     }
+    //   )
+    // }
     
-    isSuspectCaught(isCaught: boolean){
-      if(isCaught) {
-        this.isCaught = 'Yes';
-      } else {
-        this.isCaught = 'No'
-      }
-    }
+    // isSuspectCaught(isCaught: boolean){
+    //   if(isCaught) {
+    //     this.isCaught = 'Yes';
+    //   } else {
+    //     this.isCaught = 'No'
+    //   }
+    // }
   
   
   
@@ -749,7 +749,16 @@ export class EditCaseComponent {
       this.crimeService.getFurtherCase(crimeId).subscribe(
         (res) => {
           this.addtlDetails = res;
+
           console.log("Additional Details", this.addtlDetails);
+
+          if (this.addtlDetails?.list_of_officers && Array.isArray(this.addtlDetails.list_of_officers)) {
+            this.polices = this.addtlDetails.list_of_officers;
+            console.log('Officers assigned to polices:', this.polices);
+          } else {
+            console.error('No officers found or list_of_officers is not an array.');
+            this.polices = []; 
+          }
         },
         (err) => {
           console.error('Error fetching addtl details', err)
@@ -758,9 +767,18 @@ export class EditCaseComponent {
     }
 
     plotLongAndLat(locationId: number){
-      this.router.navigate(['/plot-longitude-and-latitude']), {
-        locationId: locationId
+      console.log('Navigating Plot with location ID', locationId)
+      console.log('Navigating Plot with location Data', this.locationData);
+
+      const serializedData = JSON.stringify(this.locationData);
+
+
+      this.router.navigate(['/plot-longitude-and-latitude'], {
+       queryParams: { 
+        locationID: locationId,
+        data: serializedData, 
       }
+      });
     }
     
 }

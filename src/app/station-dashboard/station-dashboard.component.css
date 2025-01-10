@@ -344,6 +344,12 @@
   width: 100%;
 }
 
+.sub-welcome {
+
+  display: flex;
+  flex-direction: column;
+}
+
 .stat-box:hover {
   transform: translateY(-10px);
 }
