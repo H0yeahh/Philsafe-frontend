@@ -31,6 +31,7 @@ import { CaseService } from '../case.service';
 import { AuthService } from '../auth.service';
 import { CaseQueueService } from '../case-queue.service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-station-dashboard',
@@ -68,6 +69,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   currentDate: string = '';
   currentTime: string = '';
   intervalId: any;
+  avatarUrl: string = 'assets/ccpo_logo.jpg';
 
   constructor(
     @Inject(StationDashboardService)
@@ -79,7 +81,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     private caseService: CaseService,
     private router: Router,
     private authService: AuthService,
-    private caseQueueService: CaseQueueService
+    private caseQueueService: CaseQueueService,
+    private accountService: AccountService
   ) {
     Chart.register(
       CategoryScale,
@@ -187,10 +190,11 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
   loadUserProfile() {
     const userData = localStorage.getItem('userData');
+    const parsedData = JSON.parse(userData);
     console.log('USER DATA SESSION', userData);
     if (userData) {
       try {
-        const parsedData = JSON.parse(userData);
+        
         this.personId = parsedData.personId;
         this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
           (response) => {
@@ -208,6 +212,19 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       } catch {
         console.error('Error fetching localStorage');
       }
+
+      this.accountService.getProfPic(parsedData.acc_id).subscribe(
+        (profilePicBlob: Blob) => {
+          if (profilePicBlob) {
+              // Create a URL for the Blob
+              this.avatarUrl = URL.createObjectURL(profilePicBlob);
+              console.log('PROFILE PIC URL', this.avatarUrl);
+          } else {
+              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              this.avatarUrl = 'assets/user-default.jpg';
+          }
+        }
+      )
     }
   }
 

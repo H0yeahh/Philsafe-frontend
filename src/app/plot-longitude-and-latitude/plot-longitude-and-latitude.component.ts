@@ -96,7 +96,9 @@ export class PlotLongitudeAndLatitudeComponent implements OnInit {
 
     this.locationService.editLoc(this.locationId, this.locationData).subscribe(
       (res) => {
+        alert('Location successfully plotted on the crime map.')
         console.log('Location Data successfully updated!', res);
+        this.router.navigate(['station-dashboard'])
       },
       (err) => {
         console.error('Location Data failed to updated', err);
