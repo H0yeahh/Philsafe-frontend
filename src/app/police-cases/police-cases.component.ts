@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
-import { IReport } from '../case.service';
+import { CaseService, IReport } from '../case.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
 import {
   IPerson,
@@ -58,6 +58,7 @@ export class PoliceCasesComponent {
   constructor(
     private fb: FormBuilder,
     private caseQueueService: CaseQueueService,
+    private caseService: CaseService,
     private jurisdictionService: JurisdictionService,
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
@@ -70,24 +71,10 @@ export class PoliceCasesComponent {
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
 
-    const storedStationDetails = localStorage.getItem('stationDetails');
-    if (storedStationDetails) {
-      try {
-        this.stationDetails = JSON.parse(storedStationDetails);
-        this.stationID = this.stationDetails.station_id || 0;
-        console.log('Station ID:', this.stationID);
+    this.fetchCases();
+  
 
-        // Fetch reports after setting stationID
-        if (this.stationID !== 0) {
-          this.fetchCases(this.stationID);
-        }
-      } catch (error) {
-        console.error('Error parsing stationDetails:', error);
-      }
-    } else {
-      console.warn('No stationDetails found in localStorage.');
-    }
-
+  
     const userData = localStorage.getItem('userData');
     this.adminDetails = JSON.parse(userData);
     this.fetchAdminData(this.adminDetails.acc_id)
@@ -207,17 +194,13 @@ export class PoliceCasesComponent {
     );
   }
 
-  fetchCases(stationId) {
-    this.caseQueueService.fetchCases(stationId).subscribe(
+  fetchCases() {
+    this.caseService.getAllCases().subscribe(
       (response) => {
-        if (Array.isArray(response)) {
+        
           this.cases = response;
-        } else {
-          this.cases = response.data || [];
-          this.totalCases = this.cases.length;
-        }
-        console.log("Station ID", stationId);
-        console.log(`List of Cases in Station ${stationId}`, this.cases);
+       
+        console.log(`List of Cases Nationwide`, this.cases);
         localStorage.setItem('cases', JSON.stringify(this.cases))
       },
       (error) => {

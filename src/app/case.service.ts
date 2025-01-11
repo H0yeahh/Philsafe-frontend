@@ -65,6 +65,8 @@ export class CaseService {
   private readonly endpoints = {
     // getAll: `${this.baseUrl}/retrieve/citizen`,
     getAll: `${this.baseUrl}report/retrieve/nationwide`,
+    getAllCases: `${this.baseUrl}case/retrieve/nationwide`,
+
     submitReport: `${this.baseUrl}report/submit`, // Add the endpoint for submitting reports
     
   };
@@ -89,6 +91,13 @@ export class CaseService {
     const headers = this.getHeaders();  // Add headers with session token
     
     return this.http.get<IReport[]>(this.endpoints.getAll, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAllCases(): Observable<any> {  // Strongly typed response
+    const headers = this.getHeaders();  // Add headers with session token
+    return this.http.get<any>(this.endpoints.getAllCases, { headers }).pipe(
       catchError(this.handleError)
     );
   }
