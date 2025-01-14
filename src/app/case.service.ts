@@ -34,6 +34,19 @@ export interface IReport {
   is_spam?: string;
 }
 
+export interface ICitizen {
+  citizen_id: number;
+    person_id: number;
+    is_certified?: string;
+    firstname: string;
+    middlename: string;
+    lastname: string;
+    sex: string;
+    birthdate: string;
+    bio_status: boolean;
+    civil_status: string;
+}
+
 export interface Crime {
   crimeId: number;
   title: string,
@@ -57,6 +70,8 @@ export interface Crime {
 
 }
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -66,6 +81,12 @@ export class CaseService {
     // getAll: `${this.baseUrl}/retrieve/citizen`,
     getAll: `${this.baseUrl}report/retrieve/nationwide`,
     getAllCases: `${this.baseUrl}case/retrieve/nationwide`,
+    getAllCitizen: `${this.baseUrl}citizen/collect/citizens/all`,
+    getAllSpammers: `${this.baseUrl}citizen/collect/spammers/all`,
+    getAllSpammedReports: `${this.baseUrl}report/retrieve/archivedReports`,
+    getAllReportss: `${this.baseUrl}report/retrieve/nationwide`,
+    
+
 
     submitReport: `${this.baseUrl}report/submit`, // Add the endpoint for submitting reports
     
@@ -95,9 +116,59 @@ export class CaseService {
     );
   }
 
+  // getTotalUsers(): Observable<number> {
+  //   return this.http.get<number>(`${this.baseUrl}citizen/collect/citizens/all`);
+  // }
+
+  // getTotalUsers(): Observable<number> {
+  //   return this.http.get<{ count: number }>(`${this.baseUrl}citizen/collect/citizens/all`).pipe(
+  //     map(response => response.count) // Extract the `count` value from the response
+  //   );
+  // }
+
+  getTotalUsers(): Observable<number> {
+    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/citizens/all`).pipe(
+      map(users => users.length)
+    );
+  }
+
+  getTotalSpammers(): Observable<number> {
+    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/spammers/all`).pipe(
+      map(users => users.length)
+    );
+  }
+
   getAllCases(): Observable<any> {  // Strongly typed response
     const headers = this.getHeaders();  // Add headers with session token
     return this.http.get<any>(this.endpoints.getAllCases, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAllCitizens(): Observable<any> {  // Strongly typed response
+    const headers = this.getHeaders();  // Add headers with session token
+    return this.http.get<any>(this.endpoints.getAllCitizen, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAllSpammers(): Observable<any> {  // Strongly typed response
+    const headers = this.getHeaders();  // Add headers with session token
+    return this.http.get<any>(this.endpoints.getAllSpammers, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAllSpamReports(): Observable<any> {  // Strongly typed response
+    const headers = this.getHeaders();  // Add headers with session token
+    return this.http.get<any>(this.endpoints.getAllSpammedReports, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAllReports(): Observable<any> {  // Strongly typed response
+    const headers = this.getHeaders();  // Add headers with session token
+    return this.http.get<any>(this.endpoints.getAllReportss, { headers }).pipe(
       catchError(this.handleError)
     );
   }

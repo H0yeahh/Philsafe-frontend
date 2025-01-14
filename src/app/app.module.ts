@@ -54,6 +54,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
 import { PoliceMapComponent } from './police-map/police-map.component';
+import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
+import { SpamReportsComponent } from './spam-reports/spam-reports.component';
 
 
 @NgModule({
@@ -106,6 +108,8 @@ import { PoliceMapComponent } from './police-map/police-map.component';
     StationCasesComponent,
     AddCaseComponent,
     PoliceMapComponent,
+    SpammerUsersComponent,
+    SpamReportsComponent,
   ],
   imports: [
     BrowserModule,

@@ -847,6 +847,8 @@
   
 
 
+
+
   .main-content {
     flex-grow: 1;
     padding: 10px;
@@ -902,127 +904,6 @@
   
   
   
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .header-title h1 {
-    font-size: 24px;
-    color: black;
-  }
-  
-  .header-info {
-    font-size: 14px;
-    color: black;
-    text-align: right;
-    margin-left: auto; /* Ensures it moves all the way to the right */
-    padding-right: 10px; /* Add some space between the text and the edge */
-  }
-  
-  .content {
-  padding: 20px;
-  }
-  
-  .officer-info {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .officer-info label {
-    margin-right: 10px;
-    font-size: 14px;
-  }
-  
-  .officer-info select,
-  .officer-info input {
-    padding: 5px;
-    margin-right: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .save-btn {
-    background-color: #1e40af;
-    color: white; /* Text color changed to white */
-    font-weight: bold; /* Text is now bold */
-    padding: 6px 12px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-  }
-  
-  .save-btn:hover {
-    background-color: #b91c1c; /* Change color on hover */
-  }
-  
-  .case-container {
-  background-color: #f9f9f9;
-  padding: 200px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  max-width: 1200px; /* Set a max width to prevent it from stretching too much */
-  margin: 0 auto; /* Center the container horizontally */
-  }
-  
-  table {
-    width: 120%;
-    border-collapse: collapse;
-  }
-  
-  table th,
-  table td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  table th {
-    background-color: #f2f2f2;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .assign-dropdown {
-    padding: 6px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .spam-btn {
-    background-color: #b91c1c;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-    margin-left: 10px;
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-  }
-  
-  .spam-btn:hover {
-    background-color: #1e40af; /* Change color on hover */
-  }
-  
-  .status.assigned {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .status.spam {
-    color: #b91c1c;
-    font-weight: bold;
-  }
-  
-  
   
   
   .new-reports-container {
@@ -1042,17 +923,57 @@
     margin-top: 25px;
   }
 
-  .welcome {
-    padding: 0 auto;
+
+
+
+
+  
+  
+  
+  .w-1-4 {
+    width: 25%;
   }
   
-  .welcome, h3 {
-    margin: 0%;
+  .bg-white {
+    background-color: #ffffff;
   }
-
-
-
-/*For the table*/
+  
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .p-4 {
+    padding: 1rem; /* Corrected padding value */
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .text-lg {
+    font-size: 1.125rem;
+  }
+  
+  .font-bold {
+    font-weight: 600;
+  }
+  
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .text-zinc-600 {
+    color: #718096;
+  }
+  
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  
+  .text-zinc-700 {
+    color: #4a5568;
+  }
+  
   .hover-bg-zinc-200:hover {
     background-color: #edf2f7;
   }
@@ -1091,7 +1012,7 @@
   
   .justify-between {
     justify-content: space-between;
-  }
+  }   
   
   .text-2xl {
     font-size: 1.5rem;
@@ -1550,6 +1471,11 @@ table th {
 }
 
 
+
+
+
+
+
 .new-reports-container {
   display: flex;
   justify-content: flex-end;
@@ -1579,7 +1505,6 @@ table th {
   border-radius: 50%;
 } */
 
-
 .search-container {
   margin-bottom: 1rem;
  
@@ -1600,6 +1525,7 @@ table th {
   font-style: italic;
   color: gray;
 }
+
 
 
 .nav-link {
@@ -1660,14 +1586,25 @@ table th {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.prof-pic img {
+  width: 40px; /* Set a fixed size for the profile picture */
+  height: 40px;
+  border-radius: 50%; /* Make the image a perfect circle */
+  object-fit: cover; /* Ensure the image scales without distortion */
+  border: 1px solid #3a1aaf
+}
 
 
+.spam-button {
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-
-
-
-
-
-
-
-
+.spam-button:hover {
+  background-color: #5cb85c;
+}

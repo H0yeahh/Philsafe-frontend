@@ -27,7 +27,6 @@ export class PoliceCasesComponent {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  //reports: IReport[] = [];  // Array to hold fetched reports`3
   reports: any;
 
   stations: IStation[] = [];
@@ -53,6 +52,7 @@ export class PoliceCasesComponent {
   personId: any;
   policePersonData: any;
   reportSubscription: Subscription | undefined;
+  totalUsers: number = 0;
 
 
   constructor(
@@ -81,28 +81,6 @@ export class PoliceCasesComponent {
     console.log('Fetched Admin', this.adminDetails)
   }
 
-
-  // filterCases() {
-  //   if (!this.searchQuery) {
-  //     this.filteredCases = this.cases;
-  //     return;
-  //   }
-
-  //   const query = this.searchQuery.toLowerCase();
-
-  //   this.filteredCases = this.cases.filter((crime) => {
-  //     const crimeIdMatch = crime.crime_id.toString().toLowerCase().includes(query);
-  //     const citeNumMatch = crime.cite_number.toString().toLowerCase().includes(query);
-  //     const statusMatch = crime.status.toLowerCase().includes(query);
-  //     const incidentNameMatch = crime.incident_type 
-  //     ? crime.incident_type.toString().toLowerCase().includes(query) 
-  //     : false;
-
-
-
-  //     return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
-  //   });
-  // }
 
   filterCases() {
     if (!this.searchQuery) {
@@ -209,6 +187,7 @@ export class PoliceCasesComponent {
       }
     );
   }
+
 
   pagedCases(): any[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;

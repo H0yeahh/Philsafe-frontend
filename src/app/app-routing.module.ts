@@ -45,6 +45,8 @@ import { PoliceCasesComponent } from './police-cases/police-cases.component';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
 import { PoliceMapComponent } from './police-map/police-map.component';
+import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
+import { SpamReportsComponent } from './spam-reports/spam-reports.component';
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] }
 
@@ -83,6 +85,12 @@ const routes: Routes = [
     data: { roles: ['Admin'] },
   },
   {
+    path: 'spammer-users',
+    component: SpammerUsersComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Admin'] },
+  },
+  {
     path: 'police-cases',
     component: PoliceCasesComponent,
     canActivate: [roleGuard],
@@ -109,6 +117,18 @@ const routes: Routes = [
   {
     path: 'police-register',
     component: PoliceRegisterComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Admin'] },
+  },
+  {
+    path: 'police-reports',
+    component: PoliceReportsComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Admin'] },
+  },
+  {
+    path: 'spam-reports',
+    component: SpamReportsComponent,
     canActivate: [roleGuard],
     data: { roles: ['Admin'] },
   },

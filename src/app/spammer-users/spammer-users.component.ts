@@ -11,16 +11,16 @@ import { PoliceDashbordService } from '../police-dashbord.service';
 import { HttpClient } from '@angular/common/http';
 import { CaseQueueService } from '../case-queue.service';
 import { Subscription } from 'rxjs';
-import { CaseService } from '../case.service';
+import { CaseService, IReport } from '../case.service';
 import { environment } from '../environment';
 
 @Component({
-  selector: 'app-manage-users',
-  templateUrl: './manage-users.component.html',
-  styleUrl: './manage-users.component.css',
+  selector: 'app-spammer-users',
+  templateUrl: './spammer-users.component.html',
+  styleUrl: './spammer-users.component.css'
 })
-export class ManageUsersComponent implements OnInit {
-  userForm!: FormGroup;
+export class SpammerUsersComponent implements OnInit {
+  spammerUserForm!: FormGroup;
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -40,6 +40,7 @@ export class ManageUsersComponent implements OnInit {
   filteredUsers: any[] = [];
   Users: any;
   totalUsers: number = 0;
+  report: IReport[];
 
   constructor(
     private fb: FormBuilder,
@@ -63,8 +64,9 @@ export class ManageUsersComponent implements OnInit {
     // this.fetchStations();
     this.fetchPersons();
     this.fetchAdminData;
-    this.fetchCitizens();
+    this.fetchSpammers();
     this.loadTotalUsers();
+    this.fetchSpammedReports();
 
     const userData = localStorage.getItem('userData');
     this.adminDetails = JSON.parse(userData);
@@ -74,7 +76,7 @@ export class ManageUsersComponent implements OnInit {
 
   // Define the form controls
   initializeForm(): void {
-    this.userForm = this.fb.group({
+    this.spammerUserForm = this.fb.group({
       citizen_id: ['', Validators.required],
       person_id: ['', Validators.required],
       firstname: ['', Validators.required],
@@ -238,6 +240,18 @@ export class ManageUsersComponent implements OnInit {
     );
   }
 
+  fetchSpammedReports(): void {
+    this.caseService.getAllSpamReports().subscribe(
+      (response: IReport[]) => {
+        this.report = response;
+      },
+      (error) => {
+        console.error('Error fetching reports:', error);
+        this.errorMessage = 'Failed to load reports. Please try again.';
+      }
+    );
+  }
+
   // Fetch persons
   fetchPersons(): void {
     this.personService.getPersons().subscribe(
@@ -251,14 +265,11 @@ export class ManageUsersComponent implements OnInit {
     );
   }
 
-  fetchCitizens(): void {
-    this.manageUserService.getCitizens().subscribe(
-      (response) => {
-        if(!response.is_spammer){
-          this.citizen = response;
-          console.log('Spammers:', response.is_spammer)
-        }
-        
+  fetchSpammers(): void {
+    this.manageUserService.getSpammers().subscribe(
+      (response: ICitizen[]) => {
+        this.citizen = response;
+        console.log('Spammers', this.citizen)
       },
       (error) => {
         console.error('Error fetching citizen:', error);
@@ -268,7 +279,7 @@ export class ManageUsersComponent implements OnInit {
   }
 
   loadTotalUsers(): void {
-    this.caseService.getTotalUsers().subscribe(
+    this.caseService.getTotalSpammers().subscribe(
       (totalUsers: number) => {
         console.log('Total number of users:', totalUsers);
         this.totalUsers = totalUsers;
@@ -282,13 +293,13 @@ export class ManageUsersComponent implements OnInit {
 
   // Submit the form data
   onSubmit(): void {
-    if (this.userForm.invalid) {
+    if (this.spammerUserForm.invalid) {
       alert('Please fill all required fields correctly.');
       return;
     }
 
     this.isLoading = true;
-    const formData = this.userForm.value;
+    const formData = this.spammerUserForm.value;
 
     const citizen: ICitizen = {
       citizen_id: formData.citizen_id,
@@ -316,7 +327,7 @@ export class ManageUsersComponent implements OnInit {
         this.isLoading = false;
         this.successMessage = 'Station submitted successfully!';
         this.errorMessage = null;
-        this.userForm.reset();
+        this.spammerUserForm.reset();
         setTimeout(() => this.router.navigate(['/manage-station']), 2000);
       },
       (error) => {
@@ -340,7 +351,7 @@ export class ManageUsersComponent implements OnInit {
 
   // Edit station information
   editCitizen(citizen: ICitizen): void {
-    this.userForm.patchValue({
+    this.spammerUserForm.patchValue({
       citizen_id: citizen.citizen_id,
       person_id: citizen.person_id,
       location_id: citizen.location_id,
@@ -377,19 +388,19 @@ export class ManageUsersComponent implements OnInit {
   //   }
   // }
 
-  spamCitizen(citizen_id: number): void {
-    if (confirm('Are you sure you want to spam this citizen?')) {
+  reinstateCitizen(citizen_id: number): void {
+    if (confirm('Are you sure you want to reinstate this citizen?')) {
       const apiUrl = (`${environment.ipAddUrl}api/citizen/scold/citizen/${citizen_id}`);
 
       this.http.put(apiUrl, {}).subscribe(
         () => {
-          this.successMessage = 'Citizen spammed successfully.';
+          this.successMessage = 'Citizen reinstate successfully.';
           this.citizen = this.citizen.filter((c) => c.citizen_id !== citizen_id);
           this.filteredCitizens = this.filteredCitizens.filter((citizen) => citizen.citizen_id !== citizen_id);
         },
         (error) => {
-          console.error('Error spamming citizen:', error);
-          this.errorMessage = 'Failed to spam citizen. Please try again.';
+          console.error('Error reinstating citizen:', error);
+          this.errorMessage = 'Failed to reinstate citizen. Please try again.';
         }
       );
     }
