@@ -121,12 +121,14 @@
           <table class="forda-input">
             <tbody>
               <tr>
-                <td>
+                <!-- <td>
                   <select [(ngModel)]="caseData.title">
                     <option value="" disabled selected>Select Crime</option>
-                    <option *ngFor="let caseTitle of distinctTitles">{{ caseTitle }}</option>
+                    <option *ngFor="let caseOffense of distinctOffenseTypes">
+                      {{ caseOffense }}
+                    </option>
                   </select>
-                </td>
+                </td> -->
 
                 <td>
                   <input
@@ -173,6 +175,11 @@
           <div class="add-case-button">
             <button (click)="submitCase()">Add as Case</button>
           </div>
+          <div *ngIf="loading" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Updating report, please wait...</p>
+          </div>
+          
         </div>
       </section>
     </main>

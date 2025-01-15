@@ -46,7 +46,9 @@ import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
 import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
-import { SpamReportsComponent } from './spam-reports/spam-reports.component';
+import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
+
+
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] }
 
@@ -61,19 +63,12 @@ const routes: Routes = [
   // { path: 'station-register', component: StationRegistrationComponent },
   { path: 'station-add-location', component: StationAddLocationComponent },
   { path: 'station-login', component: StationLoginComponent },
-  // { path: 'manage-users', component: ManageUsersComponent },
-
-  {
-    path: 'station-police-accounts',
-    component: StationPoliceAccountsComponent,
-  },
-  // { path: 'police-cases', component: PoliceCasesComponent },
-
-  // { path: 'dashboard', component: PoliceDashboardComponent }, // Route for login
+  { path: 'station-police-accounts', component: StationPoliceAccountsComponent }, 
+  //{ path: 'dashboard', component: PoliceDashboardComponent }, // Route for login
   // Route for login
   // Route for login
   {
-    path: 'dashboard',  
+    path: 'dashboard',
     component: PoliceDashboardComponent,
     canActivate: [roleGuard],
     data: { roles: ['Admin'] },
@@ -87,6 +82,12 @@ const routes: Routes = [
   {
     path: 'spammer-users',
     component: SpammerUsersComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Admin'] },
+  },
+  {
+    path: 'spam-reports',
+    component: SpamReportsComponent,
     canActivate: [roleGuard],
     data: { roles: ['Admin'] },
   },
@@ -117,18 +118,6 @@ const routes: Routes = [
   {
     path: 'police-register',
     component: PoliceRegisterComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Admin'] },
-  },
-  {
-    path: 'police-reports',
-    component: PoliceReportsComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Admin'] },
-  },
-  {
-    path: 'spam-reports',
-    component: SpamReportsComponent,
     canActivate: [roleGuard],
     data: { roles: ['Admin'] },
   },
@@ -258,12 +247,12 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  // {
-  //   path: 'manage-users',
-  //   component: ManageUsersComponent,
-  //   canActivate: [roleGuard],
-  //   data: { roles: ['Police'] },
-  // },
+  {
+    path: 'manage-users',
+    component: ManageUsersComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Police'] },
+  },
   {
     path: 'ticket-request',
     component: TicketRequestComponent,

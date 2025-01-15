@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http'; // Updated import
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http'; 
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -55,7 +55,7 @@ import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
 import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
-import { SpamReportsComponent } from './spam-reports/spam-reports.component';
+import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
 
 
 @NgModule({
@@ -109,8 +109,7 @@ import { SpamReportsComponent } from './spam-reports/spam-reports.component';
     AddCaseComponent,
     PoliceMapComponent,
     SpammerUsersComponent,
-    SpamReportsComponent,
-  ],
+    SpamReportsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

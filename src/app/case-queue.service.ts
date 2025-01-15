@@ -50,7 +50,8 @@ export class CaseQueueService {
     getReport: `${this.apiUrl}api/report/retrieve/citizen`,
     getCitizens: `${this.apiUrl}api/citizen/collect/citizens/all`,
     getCases: `${this.apiUrl}api/case/retrieve/local`,
-    getStationReport: `${this.apiUrl}api/report/retrieve/local`
+    getStationReport: `${this.apiUrl}api/report/retrieve/local`,
+    getUnconnectedReport: `${this.apiUrl}api/report/retrieve/local/unconnected`
   };
 
   constructor(private http: HttpClient) {}
@@ -70,6 +71,12 @@ export class CaseQueueService {
 
   // Fetch reports for a specific station
   getReports(stationId: number) {
+    // const headers = this.getHeaders();
+    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getReportsAll(stationId: number) {
     // const headers = this.getHeaders();
     return this.http.get(`${this.endpoints.getStationReport}/${stationId}`)
       .pipe(catchError(this.handleError));

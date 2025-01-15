@@ -34,6 +34,7 @@ export class StationPoliceAccountsComponent implements OnInit {
     stations: IStation[] = [];
     persons: IPerson[] = [];
     profilePicture: File | null = null;
+    profileExt: string = '';
     previewUrl: string | ArrayBuffer | null = null;
     // Properties to hold retrieved IDs
     accountID: string | null = null; // To hold account ID
@@ -130,15 +131,21 @@ export class StationPoliceAccountsComponent implements OnInit {
     onPhotoSelected(event: Event) {
         const input = event.target as HTMLInputElement;
         if (input.files && input.files.length > 0) {
+            
             this.selectedPhoto = input.files[0]; // Store the selected file
             const reader = new FileReader();
-            reader.onload = (e: ProgressEvent<FileReader>) => {
-                if (e.target) {
-                    this.profilePic = e.target.result; // Set the profile picture preview
-                }
+            const byteArray = new Uint8Array(reader.result as ArrayBuffer);
+            this.profilePic = byteArray;
+            this.profileExt = this.selectedPhoto.name.split('.').pop() || 'jpg';
+
+            console.log('Profile Picture Metadata:', {
+                profile_pic: this.profilePic,
+                extension: this.profileExt
+              });
+              reader.readAsArrayBuffer(this.selectedPhoto);
             };
-            reader.readAsDataURL(this.selectedPhoto);
-        }
+            
+        
     }
 
     // Method to handle password changes
@@ -233,6 +240,8 @@ export class StationPoliceAccountsComponent implements OnInit {
     }
 
     async onSubmit() {
+
+   
         this.errorMessage = ''; // Clear previous error message
         // // Log the validity of each form control
         Object.keys(this.addPoliceForm.controls).forEach(key => {
@@ -243,9 +252,8 @@ export class StationPoliceAccountsComponent implements OnInit {
         });
 
         if (this.addPoliceForm.valid && this.passwordValid) {
-            const accountData = this.addPoliceForm.value; // Get account data from the form
-            // Ensure role is always set to "User (Uncertified)"
-            accountData.role = 'Admin';
+            const accountData = this.addPoliceForm.value; 
+            // accountData.role = 'Admin';
             const ids = {   
                 homeAddressId: 0,
                 workAddressId: 0,
@@ -372,6 +380,20 @@ export class StationPoliceAccountsComponent implements OnInit {
             formData.append('createdBy', policeReqData.createdBy.toString());
             formData.append('datetimeCreated', policeReqData.datetimeCreated);
             formData.append('personId', ids.personId.toString());
+
+            if (this.profilePic) {
+         
+                if (typeof this.profilePic === 'string') {
+                    formData.append('profile_pic', this.profilePic);
+                }
+               
+                else if (this.profilePic instanceof ArrayBuffer) {
+                    const blob = new Blob([this.profilePic]);
+                    formData.append('profile_pic', blob, 'assets/ccpo_logo.jpg');
+                }
+            }
+
+        
 
             const accountRequest: any = await this.submitAccount(formData);
                     if (accountRequest.code === 200) {

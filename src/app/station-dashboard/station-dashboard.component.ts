@@ -31,6 +31,7 @@ import { CaseService } from '../case.service';
 import { AuthService } from '../auth.service';
 import { CaseQueueService } from '../case-queue.service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-station-dashboard',
@@ -65,6 +66,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   annualAvg: any;
   stationId: any;
   timePeriodControl: FormControl;
+  currentDate: string = '';
+  currentTime: string = '';
+  intervalId: any;
+  avatarUrl: string = 'assets/ccpo_logo.jpg';
 
   constructor(
     @Inject(StationDashboardService)
@@ -76,7 +81,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     private caseService: CaseService,
     private router: Router,
     private authService: AuthService,
-    private caseQueueService: CaseQueueService
+    private caseQueueService: CaseQueueService,
+    private accountService: AccountService
   ) {
     Chart.register(
       CategoryScale,
@@ -105,6 +111,9 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.fetchReportStation(this.stationId);
     this.calculateReportsAverage();
     this.calculateReportsCount();
+    this.updateDateTime();
+  setInterval(() => this.updateDateTime(), 60000);
+  this.intervalId = setInterval(() => this.updateDateTime(), 1000);
 
     this.timePeriodControl = new FormControl('weekly');
 
@@ -117,6 +126,24 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     console.log('Initial form value:', this.timePeriodControl.value);
     console.log('Form valid:', this.dashboardForm.valid);
   }
+
+
+  updateDateTime(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.currentTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true // Use 12-hour format
+    });
+  }
+
+
 
   onSelect() {
     console.log(
@@ -163,10 +190,11 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
   loadUserProfile() {
     const userData = localStorage.getItem('userData');
+    const parsedData = JSON.parse(userData);
     console.log('USER DATA SESSION', userData);
     if (userData) {
       try {
-        const parsedData = JSON.parse(userData);
+        
         this.personId = parsedData.personId;
         this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
           (response) => {
@@ -184,6 +212,19 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       } catch {
         console.error('Error fetching localStorage');
       }
+
+      this.accountService.getProfPic(parsedData.acc_id).subscribe(
+        (profilePicBlob: Blob) => {
+          if (profilePicBlob) {
+              // Create a URL for the Blob
+              this.avatarUrl = URL.createObjectURL(profilePicBlob);
+              console.log('PROFILE PIC URL', this.avatarUrl);
+          } else {
+              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              this.avatarUrl = 'assets/user-default.jpg';
+          }
+        }
+      )
     }
   }
 
@@ -484,6 +525,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.reportSubscription) {
       this.reportSubscription.unsubscribe();
+    }
+
+    if (this.intervalId) {
+      clearInterval(this.intervalId); // Clear the interval when the component is destroyed
     }
   }
 }

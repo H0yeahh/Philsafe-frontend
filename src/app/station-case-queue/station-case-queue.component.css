@@ -559,7 +559,10 @@ table th {
 }
 
 
+.current {
+  text-align: left;
 
+}
 
 
 

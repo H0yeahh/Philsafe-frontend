@@ -134,7 +134,7 @@
           </li>
           <li>
             <a
-              [routerLink]="['/add-case']"
+              [routerLink]="['/station-cases']"
               routerLinkActive="active"
               class="nav-link"
             >
@@ -265,7 +265,7 @@
                         *ngFor="let police of polices"
                         [value]="police.unit"
                       >
-                        {{ police.unit }}
+                        {{ police.unit   }}
                       </option>
                     </select>
                   </div>
@@ -366,14 +366,17 @@
               </td>
             </tr>
             <tr>
-              <td style="padding-bottom: 2rem"><h3>Narrative</h3></td>
+              <td style="padding-bottom: 2rem; vertical-align: top;"><h3>Narrative</h3></td>
               <td style="text-align: end; padding-bottom: 2rem">
-                <span style="display: inline-block;
-                max-width: 500px;      
-                word-wrap: break-word;  
-                overflow: hidden;
-                text-align: justify
-                ">{{ selectedReport.report_body }}</span>
+                <div class="narrative">
+                  <textarea
+                  style="width: 99%; height:150px; text-align: justify; justify-content: flex-start; resize: none;"
+                    [(ngModel)]="selectedReport.report_body"
+                    placeholder="Description"
+                    readonly
+                  ></textarea>
+                </div>
+                
               </td>
             </tr>
                 

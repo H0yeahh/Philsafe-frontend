@@ -89,7 +89,7 @@ body {
   }
   
 .main-content {
-    width: 90%;
+    width: 100%;
   }
   
   .bg-background {
@@ -773,21 +773,18 @@ tbody td a {
     bottom: 40px;
   }
 
-
-  .narrative {
-
-    padding-top: 20px
-  }
-  .report-body {
-
-    display: inline-block;
-    max-width: 500px;
-    overflow-wrap: break-word;
-    overflow: hidden;
-    text-align: end;
-    border-radius: 12px;
-    padding: 20px;
-    height: 96px;
-    width: 551px;
+  
+  textarea{
+  
+    background-color: #ffffff;
+    color:#000000;
+    border:#c9c9c9 solid 0.1px;
+    border-radius: 20px;
+    padding: 10px;
+    width: 150%;
+    max-width: 160%;
+    margin: 20px; 
+    flex: 1;
+    /* box-shadow: 0 2px 2px rgba(0.1, 0.1, 0.1, 0.1); */
   }
   
