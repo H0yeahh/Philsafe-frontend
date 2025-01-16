@@ -7,7 +7,7 @@ import { environment } from './environment';
 
 
 export interface ICitizen {
-  citizen_id: string;
+  citizen_id: number;
   person_id: string;
   is_certified: boolean;
   firstname : string;
@@ -18,6 +18,7 @@ export interface ICitizen {
   civil_status: string;
   bio_status: string;
   location_id: number;
+  is_spammer: boolean;
 }
 
 
@@ -30,11 +31,12 @@ export class ManageUsersService  {
   // API endpoints
   private endpoints = {
     citizen: `${this.apiUrl}api/citizen/collect/citizens/all`,
-    citizenVerification: (person_id: number) => `${this.apiUrl}api/citizen/verify/${person_id}`,
+    spammers: `${this.apiUrl}api/citizen/collect/spammers/all`,
+    citizenVerification: (personId: number) => `${this.apiUrl}api/citizen/verify/${personId}`,
     submitCitizen: `${this.apiUrl}api/citizen`,
-    updateStation: (stationId: number) => `${this.apiUrl}api/jurisdiction/${stationId}`,
-    deleteStation: (stationId: number) => `${this.apiUrl}api/jurisdiction/${stationId}`,
-    searchStation: (query: string) => `${this.apiUrl}api/jurisdiction/search?query=${query}`
+    // updateCitizen: (personId: number) => `${this.apiUrl}api/jurisdiction/${personId}`,
+    spamCitizen: (personId: number) => `${this.apiUrl}api/banish/citizen/${personId}`,
+    searchCitien: (query: string) => `${this.apiUrl}api/jurisdiction/search?query=${query}`
   };
 
   constructor(private http: HttpClient) {}
@@ -52,9 +54,15 @@ export class ManageUsersService  {
   }
 
   // Fetch all stations
-  getCitizens(): Observable<ICitizen[]> {
+  getCitizens(): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.get<ICitizen[]>(this.endpoints.citizen, { headers })
+    return this.http.get(this.endpoints.citizen, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  getSpammers(): Observable<ICitizen[]> {
+    const headers = this.getHeaders();
+    return this.http.get<ICitizen[]>(this.endpoints.spammers, { headers })
       .pipe(catchError(this.handleError));
   }
 
@@ -73,16 +81,16 @@ export class ManageUsersService  {
   }
 
   // Update an existing station
-  editCitizen(person_id: number, updatedCitizen: ICitizen): Observable<ICitizen> {
-    const headers = this.getHeaders();
-    return this.http.put<ICitizen>(this.endpoints.updateStation(person_id), updatedCitizen, { headers })
-      .pipe(catchError(this.handleError));
-  }
+  // editCitizen(person_id: number, updatedCitizen: ICitizen): Observable<ICitizen> {
+  //   const headers = this.getHeaders();
+  //   return this.http.put<ICitizen>(this.endpoints.updateCitizen(person_id), updatedCitizen, { headers })
+  //     .pipe(catchError(this.handleError));
+  // }
 
   // Delete a station by ID
-  deleteCitizen(citizenId: number): Observable<void> {
+  spamCitizen(citizenId: number): Observable<void> {
     const headers = this.getHeaders();
-    return this.http.delete<void>(this.endpoints.deleteStation(citizenId), { headers })
+    return this.http.delete<void>(this.endpoints.spamCitizen(citizenId), { headers })
       .pipe(catchError(this.handleError));
   }
 

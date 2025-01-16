@@ -50,11 +50,11 @@ export interface IPerson {
   providedIn: 'root',
 })
 export class PersonService {
-  private readonly apiUrl = `${environment.ipAddUrl}api`;
-  private readonly accountUrl = `${this.apiUrl}/account/signup/upgrade`;
-  private readonly personUrl = `${this.apiUrl}/person`;
-  private readonly policeUrl = `${this.apiUrl}/police`;
-  private readonly locationUrl = `${this.apiUrl}/location/retrieve/all`;
+  private apiUrl = `${environment.ipAddUrl}api`;
+  private accountUrl = `${this.apiUrl}/account/signup/upgrade`;
+  private personUrl = `${this.apiUrl}/person`;
+  private policeUrl = `${this.apiUrl}/police`;
+  private locationUrl = `${this.apiUrl}/location/retrieve/all`;
 
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 

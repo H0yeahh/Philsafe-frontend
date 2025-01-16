@@ -1,10 +1,13 @@
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
-import { IReport } from '../case.service';
+import { CaseService, IReport } from '../case.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
 import {
   IPerson,
@@ -29,7 +32,6 @@ export class PoliceCasesComponent {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  //reports: IReport[] = [];  // Array to hold fetched reports`3
   reports: any;
 
   stations: IStation[] = [];
@@ -55,11 +57,13 @@ export class PoliceCasesComponent {
   personId: any;
   policePersonData: any;
   reportSubscription: Subscription | undefined;
+  totalUsers: number = 0;
 
 
   constructor(
     private fb: FormBuilder,
     private caseQueueService: CaseQueueService,
+    private caseService: CaseService,
     private jurisdictionService: JurisdictionService,
     private policeAccountsService: PoliceAccountsService,
     private personService: PersonService,
@@ -72,52 +76,16 @@ export class PoliceCasesComponent {
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
 
-    const storedStationDetails = localStorage.getItem('stationDetails');
-    if (storedStationDetails) {
-      try {
-        this.stationDetails = JSON.parse(storedStationDetails);
-        this.stationID = this.stationDetails.station_id || 0;
-        console.log('Station ID:', this.stationID);
+    this.fetchCases();
+  
 
-        // Fetch reports after setting stationID
-        if (this.stationID !== 0) {
-          this.fetchCases(this.stationID);
-        }
-      } catch (error) {
-        console.error('Error parsing stationDetails:', error);
-      }
-    } else {
-      console.warn('No stationDetails found in localStorage.');
-    }
-
+  
     const userData = localStorage.getItem('userData');
     this.adminDetails = JSON.parse(userData);
     this.fetchAdminData(this.adminDetails.acc_id)
     console.log('Fetched Admin', this.adminDetails)
   }
 
-
-  // filterCases() {
-  //   if (!this.searchQuery) {
-  //     this.filteredCases = this.cases;
-  //     return;
-  //   }
-
-  //   const query = this.searchQuery.toLowerCase();
-
-  //   this.filteredCases = this.cases.filter((crime) => {
-  //     const crimeIdMatch = crime.crime_id.toString().toLowerCase().includes(query);
-  //     const citeNumMatch = crime.cite_number.toString().toLowerCase().includes(query);
-  //     const statusMatch = crime.status.toLowerCase().includes(query);
-  //     const incidentNameMatch = crime.incident_type 
-  //     ? crime.incident_type.toString().toLowerCase().includes(query) 
-  //     : false;
-
-
-
-  //     return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
-  //   });
-  // }
 
   filterCases() {
     if (!this.searchQuery) {
@@ -209,17 +177,18 @@ export class PoliceCasesComponent {
     );
   }
 
+<<<<<<< HEAD
   fetchCases(stationId) {
     this.caseQueueService.fetchCasesPage(stationId, this.currentPage, this.pageSize).subscribe(
+=======
+  fetchCases() {
+    this.caseService.getAllCases().subscribe(
+>>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
       (response) => {
-        if (Array.isArray(response)) {
+        
           this.cases = response;
-        } else {
-          this.cases = response.data || [];
-          this.totalCases = this.cases.length;
-        }
-        console.log("Station ID", stationId);
-        console.log(`List of Cases in Station ${stationId}`, this.cases);
+       
+        console.log(`List of Cases Nationwide`, this.cases);
         localStorage.setItem('cases', JSON.stringify(this.cases))
       },
       (error) => {
@@ -228,6 +197,7 @@ export class PoliceCasesComponent {
       }
     );
   }
+
 
   pagedCases(): any[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;

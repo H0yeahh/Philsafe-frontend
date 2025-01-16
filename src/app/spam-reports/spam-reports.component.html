@@ -28,7 +28,7 @@
                     <li>
                         <a href="/police-reports" class="nav-link">
                           <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                          <span>REPORTS</span>
+                          <span>REPORTs</span>
                         </a>
                       </li>
                       <li>
@@ -76,14 +76,14 @@
         <div class="main-content">
             <div class="header">
                 <div class="header-title">
-                    <h1>REPORTS</h1>
+                    <h1>SPAM REPORTS</h1>
                 </div>
                 <div class="header-info">
                     <p></p>
                     <p></p>
                     <div class="new-reports-container">
-                        <a href="/spam-reports" class="new-reports-link">
-                            SPAM REPORTS
+                        <a href="/police-reports" class="new-reports-link">
+                            All REPORTS
                             <span class="new-reports-badge"></span>
                         </a>
                     </div>
@@ -93,7 +93,7 @@
                 <header class="header"></header>
         
                 <section class="new-reports">
-                    <form [formGroup]="policereportsForm" (ngSubmit)="onSubmit()">
+                    <form [formGroup]="spamreportsForm" (ngSubmit)="onSubmit()">
                         <table class="reports-table">
                             <thead>
                                 <tr>
@@ -112,8 +112,8 @@
                                     <td>{{ report.reported_date }}</td>
                                     <td>
                                         <!-- Action Button to Mark as Spam -->
-                                        <button type="button" class="spam-button" (click)="markAsSpam(report.report_id)">
-                                           SPAM
+                                        <button type="button" class="spam-button" (click)="activateReport(report.report_id)">
+                                           ACTIVATE
                                         </button>
                                     </td>
                                 </tr>
