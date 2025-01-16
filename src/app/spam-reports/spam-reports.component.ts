@@ -27,8 +27,8 @@ export class SpamReportsComponent implements OnInit {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  //reports: IReport[] = [];  // Array to hold fetched reports`3
-  reports: any;
+  reports: IReport[] = [];  // Array to hold fetched reports`3
+  // reports: any;
   accounts: any;
   stations: IStation[] = [];
   persons: any = [];
@@ -61,6 +61,7 @@ export class SpamReportsComponent implements OnInit {
   // filteredReports: IReport[] = [];
 
 
+
   constructor(
     private fb: FormBuilder,
     private caseQueueService: CaseQueueService,
@@ -84,11 +85,13 @@ export class SpamReportsComponent implements OnInit {
  
 
     // this.fetchnationwideReports();
-    //this.fetchReport();
+    // this.fetchReports();
     this.fetchCitizens();
     this.fetchPersons();
     this.fetchAccounts();
     this.fetchSpammedReports();
+    this.fetchAccounts();
+
 
     
 
@@ -475,15 +478,15 @@ export class SpamReportsComponent implements OnInit {
   // }
 
 
-  activateReport(repId: any): void {
+  activateReport(repId: number): void {
     if (confirm('Are you sure you want to activate this report?')) {
-      const apiUrl = (`${environment.ipAddUrl}report/retrieve/archivedReports`);
-
+      //const apiUrl = (`${environment.ipAddUrl}api/report/retrieve/archivedReports`);
+      const apiUrl = (`${environment.ipAddUrl}api/report/updatespam/${repId}`);
       this.http.put(apiUrl, {}).subscribe(
         () => {
           this.successMessage = 'Report was activated successfully.';
-          this.reports = this.reports.filter((r) => r.reportId !== repId);
-          this.filteredReports = this.filteredReports.filter((reports) => repId.reportId !== repId);
+          this.reports = this.reports.filter((r) => r.report_id !== repId);
+          this.filteredReports = this.filteredReports.filter((reports) => reports.repId !== repId);
         },
         (error) => {
           console.error('Error activating the report:', error);

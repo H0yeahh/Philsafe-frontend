@@ -311,7 +311,7 @@ const routes: Routes = [
     path: 'police-reports',
     component: PoliceReportsComponent,
     canActivate: [roleGuard],
-    data: { roles: ['Police'] },
+    data: { roles: ['Admin'] },
   },
   {
     path: 'police-cases',

@@ -40,6 +40,9 @@ export class ManageUsersComponent implements OnInit {
   filteredUsers: any[] = [];
   Users: any;
   totalUsers: number = 0;
+  currentPage: number = 1;
+  pageSize: number = 10;
+ 
 
   constructor(
     private fb: FormBuilder,
