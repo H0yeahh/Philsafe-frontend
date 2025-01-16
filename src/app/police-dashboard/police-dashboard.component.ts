@@ -68,6 +68,8 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
   stationId: any;
   timePeriodControl: FormControl;
   adminData: any
+  currentPage: number = 1;
+  pageSize: number = 10;
   
 
   constructor(
@@ -107,7 +109,7 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
     // this.fetchPersons();
     // this.fetchNationwideReports();
     this.loadUserProfile();
-    this.fetchReportStation(this.stationId);
+    // this.fetchReportStation(this.stationId);
     this.calculateReportsAverage();
     this.calculateReportsCount();
     this.fetchReport();
@@ -150,25 +152,25 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  fetchCases(stationId){
-    this.caseQueueService.fetchCases(stationId).subscribe(
-      (response) => {
-        if (Array.isArray(response)) {
-          this.cases = response;
-        } else {
-          this.cases = response.data || [];
+  // fetchCases(stationId){
+  //   this.caseQueueService.fetchCases(stationId, this.currentPage, this.pageSize).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         this.cases = response;
+  //       } else {
+  //         this.cases = response.data || [];
           
-        }
-        console.log("Station ID", stationId);
-        console.log(`List of Cases in Station ${stationId}`, this.cases);
-        localStorage.setItem('cases', JSON.stringify(this.cases))
-      },
-      (error) => {
-        console.error('Error fetching cases:', error);
-        this.errorMessage = 'Failed to load cases. Please try again.';
-      }
-    );
-  }
+  //       }
+  //       console.log("Station ID", stationId);
+  //       console.log(`List of Cases in Station ${stationId}`, this.cases);
+  //       localStorage.setItem('cases', JSON.stringify(this.cases))
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching cases:', error);
+  //       this.errorMessage = 'Failed to load cases. Please try again.';
+  //     }
+  //   );
+  // }
 
 
   loadUserProfile() {
@@ -246,8 +248,8 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
         this.stationDetails = response;
         localStorage.setItem('stationDetails', JSON.stringify(this.stationDetails));
         console.log('Station Data', this.stationDetails);
-        this.fetchReportStation(this.stationDetails.station_id);
-        this.fetchCases(this.stationDetails.station_id)
+        // this.fetchReportStation(this.stationDetails.station_id);
+        // this.fetchCases(this.stationDetails.station_id)
       },
       (error) => {
         console.error('Error Fetching Station Data', error);
@@ -257,26 +259,26 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
 
 
   
-  fetchReportStation(stationId: number) {
-    this.caseQueueService.getReports(stationId).subscribe(
-      (response) => {
-        this.reports = response;
-        localStorage.setItem('reports', JSON.stringify(this.reports));
-        console.log('Fetched Reports', this.reports);
-        if (this.reports && this.reports.length) {
-          this.calculateReportsAverage();
-          this.calculateReportsCount();
-          this.onSelect();
-          // this.createChart();
-        } else {
-          console.warn('No reports available.');
-        }
-      },
-      (error) => {
-        console.error('Error Fetching Reports in Station ', error);
-      }
-    );
-  }
+  // fetchReportStation(stationId: number) {
+  //   this.caseQueueService.getReports(stationId).subscribe(
+  //     (response) => {
+  //       this.reports = response;
+  //       localStorage.setItem('reports', JSON.stringify(this.reports));
+  //       console.log('Fetched Reports', this.reports);
+  //       if (this.reports && this.reports.length) {
+  //         this.calculateReportsAverage();
+  //         this.calculateReportsCount();
+  //         this.onSelect();
+  //         // this.createChart();
+  //       } else {
+  //         console.warn('No reports available.');
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error Fetching Reports in Station ', error);
+  //     }
+  //   );
+  // }
 
   fetchReport() {
     this.caseQueueService.getNationwideReports().subscribe(

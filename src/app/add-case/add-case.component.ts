@@ -112,7 +112,13 @@ export class AddCaseComponent {
 
     if (caseData) {
       this.caseDetails = JSON.parse(caseData);
-      // console.log('Cases', this.caseDetails)
+
+    if (this.caseDetails && this.caseDetails.status) {
+        const status = this.caseDetails.status.trim(); // Trim any extra spaces
+        this.caseDetails.status = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    } else {
+        console.error("Status is undefined or null in case details.");
+    }
       this.cases = this.caseDetails;
 
       this.distinctTitles = Array.from(
@@ -219,6 +225,7 @@ export class AddCaseComponent {
   }
 
   submitCase() {
+    
     console.log('Case Data to be posted', this.caseData);
     this.loading = true;
     this.caseService.postCase(this.caseData).subscribe(

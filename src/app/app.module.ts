@@ -54,6 +54,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
 import { EditCaseComponent } from './edit-case/edit-case.component';
+import { StationPoliceArchivesComponent } from './station-police-archives/station-police-archives.component';
 
 
 @NgModule({
@@ -106,6 +107,7 @@ import { EditCaseComponent } from './edit-case/edit-case.component';
     StationCasesComponent,
     AddCaseComponent,
     EditCaseComponent,
+    StationPoliceArchivesComponent,
   ],
   imports: [
     BrowserModule,

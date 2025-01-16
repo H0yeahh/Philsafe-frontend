@@ -88,6 +88,11 @@ export class StationCasesComponent implements OnDestroy{
       this.updateDateTime();
       setInterval(() => this.updateDateTime(), 60000);
       this.intervalId = setInterval(() => this.updateDateTime(), 1000);
+
+      const savedPage = localStorage.getItem('currentPage');
+      if (savedPage) {
+        this.currentPage = +savedPage; // Restore the saved page
+      }
       
     }
 
@@ -157,32 +162,44 @@ export class StationCasesComponent implements OnDestroy{
     }
 
 
-    fetchCases(stationId){
-      this.caseQueueService.fetchCases(stationId).subscribe(
-        (response) => {
-          if (Array.isArray(response)) {
-            this.cases = response;
-            this.cases.sort((b, a) => {
-              return new Date(a.date_committed || a.datetime_committed).getTime() - new Date(b.date_committed || b.datetime_committed).getTime();
-            });
-          } else {
-            this.cases = response.data || [];
-            this.totalCases = this.cases.length;
+    fetchCases(stationId: number): void {
+      this.currentPage = 1;
+      let allCases: any[] = [];
+    
+      const fetchPage = (pageNumber: number) => {
+        this.caseQueueService.fetchCasesPage(stationId, pageNumber, this.pageSize).subscribe(
+          (response) => {
+            const cases = Array.isArray(response) ? response : response.data || [];
+            allCases = [...allCases, ...cases];
+    
+        
+            if (cases.length < this.pageSize) {
+              this.cases = allCases; 
+              this.cases.sort((b, a) => {
+                return new Date(a.date_committed || a.datetime_committed).getTime() - new Date(b.date_committed || b.datetime_committed).getTime();
+              });
+              console.log(`Fetched all cases for Station ${stationId}:`, this.cases);
+              localStorage.setItem('cases', JSON.stringify(this.cases));
+            } else {
+              // Otherwise, fetch the next page
+              fetchPage(pageNumber + 1);
+            }
+          },
+          (error) => {
+            console.error('Error fetching cases:', error);
+            this.errorMessage = 'Failed to load all cases. Please try again.';
           }
-          console.log("Station ID", stationId);
-          console.log(`List of Cases in Station ${stationId}`, this.cases);
-          localStorage.setItem('cases', JSON.stringify(this.cases))
-        },
-        (error) => {
-          console.error('Error fetching cases:', error);
-          this.errorMessage = 'Failed to load cases. Please try again.';
-        }
-      );
+        );
+      };
+    
+      // Start fetching from the first page
+      fetchPage(this.currentPage);
     }
+    
 
-    pagedCases(): any[] {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      return this.cases.slice(startIndex, startIndex + this.pageSize);
+    onPageChange(page: any) {
+      this.currentPage = page;
+      localStorage.setItem('currentPage', page.toString()); 
     }
   
    
@@ -202,7 +219,10 @@ export class StationCasesComponent implements OnDestroy{
       if (crimeId) {
         console.log('Navigating with Crime ID:', crimeId);
         this.router.navigate(['/edit-case'], {
-          queryParams: { crimeID: crimeId },
+          queryParams: { 
+            crimeID: crimeId,
+            page: this.currentPage
+           },
         });
       } else {
         console.error('report ID not found for the selected report.');
@@ -226,6 +246,7 @@ export class StationCasesComponent implements OnDestroy{
           this.clearSession();
           localStorage.setItem('authenticated', '0');
           this.router.navigate(['/login']);
+          localStorage.removeItem('currentPage');
         },
         (error) => {
           console.error('Error during sign out:', error);
@@ -234,5 +255,36 @@ export class StationCasesComponent implements OnDestroy{
     }
 
 
+    getStatusProgress(status: string): number {
+   
+      const normalizedStatus = status.trim().toLowerCase();
+      
+      switch (normalizedStatus) {
+        case 'under investigation':
+          return 50;
+        case 'solved':
+        case 'cleared':
+          return 100;
+        default:
+          console.log('Unmatched status:', status); 
+          return 0;
+      }
+    }
+    
+    getStatusColor(status: string): string {
+      // Normalize the status string
+      const normalizedStatus = status.trim().toLowerCase();
+      
+      switch (normalizedStatus) {
+        case 'under investigation':
+          return '#2196F3';
+        case 'solved':
+        case 'cleared':
+          return '#4CAF50';
+        default:
+          console.log('Unmatched status:', status); 
+          return '#9E9E9E';
+      }
+    }
 
 }

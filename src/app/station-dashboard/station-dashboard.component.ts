@@ -47,7 +47,9 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   reports: any = [];
   stations: IStation[] = [];
   persons: IPerson[] = [];
-  cases: any = []
+  cases: any = [];
+  currentPage: number = 1; 
+  pageSize: number = 10; 
 
   ranks: IRank[] = [];
   personId: any;
@@ -101,12 +103,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.initializeForm();
-    // this.getOfficerStationId();
-    // this.fetchRanks();
-    // this.fetchStations();
-    // this.fetchPersons();
-    // this.fetchNationwideReports();
+ 
     this.loadUserProfile();
     this.fetchReportStation(this.stationId);
     this.calculateReportsAverage();
@@ -167,25 +164,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  fetchCases(stationId){
-    this.caseQueueService.fetchCases(stationId).subscribe(
-      (response) => {
-        if (Array.isArray(response)) {
-          this.cases = response;
-        } else {
-          this.cases = response.data || [];
-          
-        }
-        console.log("Station ID", stationId);
-        console.log(`List of Cases in Station ${stationId}`, this.cases);
-        localStorage.setItem('cases', JSON.stringify(this.cases))
-      },
-      (error) => {
-        console.error('Error fetching cases:', error);
-        this.errorMessage = 'Failed to load cases. Please try again.';
-      }
-    );
-  }
+  
+  
 
 
   loadUserProfile() {
@@ -257,7 +237,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
         localStorage.setItem('stationDetails', JSON.stringify(this.stationDetails));
         console.log('Station Data', this.stationDetails);
         this.fetchReportStation(this.stationDetails.station_id);
-        this.fetchCases(this.stationDetails.station_id)
+        // this.fetchCases(this.stationDetails.station_id)
       },
       (error) => {
         console.error('Error Fetching Station Data', error);

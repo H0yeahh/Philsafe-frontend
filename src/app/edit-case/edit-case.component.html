@@ -93,7 +93,7 @@
                     <span>STATION</span>
                   </a>
                 </li>
-                <li>
+                <!-- <li>
                   <a href="#" class="nav-link">
                     <img
                       src="assets/support.svg"
@@ -102,7 +102,7 @@
                     />
                     <span>CONTACT SUPPORT</span>
                   </a>
-                </li>
+                </li> -->
               </ul>
               <div class="logout">
                 <button type="submit" class="button" (click)="logout()">
@@ -127,17 +127,27 @@
                         <div class="form-group">
                         </div>
                       </div>
+                    
                       <tr>
                         <td>
+                          <!-- Button to mark as solved if the status is not SOLVED -->
                           <button
                             type="button"
                             class="endorse-btn"
-                           
+                            (click)="markSolved(crimeData.crime_id)"
+                            *ngIf="crimeData.status.trim() !== 'Solved'"
                           >
                             Mark as Solved
                           </button>
+                      
+                          <!-- Display "SOLVED" text if the status is SOLVED -->
+                          <span *ngIf="crimeData.status.trim() === 'Solved'" class="status-solved">
+                            SOLVED
+                          </span>
                         </td>
                       </tr>
+                      
+
                     </div>
                     <div class="table-container">
                       <table>

@@ -84,33 +84,33 @@ export class PoliceReportsComponent implements OnInit {
     const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
     this.stationID = officerDetails.stationId || null;
     
-    if (this.stationID) {
-      this.fetchReports(this.stationID); // Fetch reports using the station ID
-    } else {
-      this.errorMessage = 'Station ID not found.';
-    }
+    // if (this.stationID) {
+    //   this.fetchReports(this.stationID); // Fetch reports using the station ID
+    // } else {
+    //   this.errorMessage = 'Station ID not found.';
+    // }
   }
 
-  // Fetch reports from the backend service
-  fetchReports(stationId: string): void {
-    this.isLoading = true;  // Set loading state to true
-    this.caseQueueService.getReports(Number(stationId)).subscribe(
-      (response) => {
-        if (Array.isArray(response)) {
-          this.reports = response;
-          console.log('Fetched reports:', this.reports);
-        } else {
-          this.errorMessage = 'Unexpected response from server.';
-        }
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching reports:', error);
-        this.errorMessage = 'Failed to load reports. Please try again.';
-        this.isLoading = false;
-      }
-    );
-  }
+  // // Fetch reports from the backend service
+  // fetchReports(stationId: string): void {
+  //   this.isLoading = true;  // Set loading state to true
+  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         this.reports = response;
+  //         console.log('Fetched reports:', this.reports);
+  //       } else {
+  //         this.errorMessage = 'Unexpected response from server.';
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching reports:', error);
+  //       this.errorMessage = 'Failed to load reports. Please try again.';
+  //       this.isLoading = false;
+  //     }
+  //   );
+  // }
 
   fetchnationwideReports(): void {
     this.isLoading = true;  // Set loading state to true

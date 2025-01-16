@@ -323,25 +323,25 @@ export class ManageStationComponent implements OnInit {
     );
   }
 
-  fetchStation(stationId){
-    this.caseQueueService.fetchCases(stationId).subscribe(
-      (response) => {
-        if (Array.isArray(response)) {
-          this.stations = response;
-        } else {
-          this.stations = response.data || [];
-          this.totalStations = this.stations.length;
-        }
-        console.log("Station ID", stationId);
-        console.log(`List of Stations in Station ${stationId}`, this.stations);
-        localStorage.setItem('stations', JSON.stringify(this.stations))
-      },
-      (error) => {
-        console.error('Error fetching stations:', error);
-        this.errorMessage = 'Failed to load stations. Please try again.';
-      }
-    );
-  }
+  // fetchStation(stationId){
+  //   this.caseQueueService.fetchCases(stationId).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         this.stations = response;
+  //       } else {
+  //         this.stations = response.data || [];
+  //         this.totalStations = this.stations.length;
+  //       }
+  //       console.log("Station ID", stationId);
+  //       console.log(`List of Stations in Station ${stationId}`, this.stations);
+  //       localStorage.setItem('stations', JSON.stringify(this.stations))
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching stations:', error);
+  //       this.errorMessage = 'Failed to load stations. Please try again.';
+  //     }
+  //   );
+  // }
 
   pagedStations(): any[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
