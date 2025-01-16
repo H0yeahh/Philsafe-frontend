@@ -44,11 +44,16 @@ import { PoliceReportsComponent } from './police-reports/police-reports.componen
 import { PoliceCasesComponent } from './police-cases/police-cases.component';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
+<<<<<<< HEAD
+import { EditCaseComponent } from './edit-case/edit-case.component';
+import { StationPoliceArchivesComponent } from './station-police-archives/station-police-archives.component';
+=======
 import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
 import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
 
 
+>>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] }
 
@@ -66,6 +71,89 @@ const routes: Routes = [
   { path: 'station-police-accounts', component: StationPoliceAccountsComponent }, 
   //{ path: 'dashboard', component: PoliceDashboardComponent }, // Route for login
   // Route for login
+<<<<<<< HEAD
+   // Route for login
+  { path: 'reporting-person', component: ReportingPersonComponent, 
+    canActivate: [roleGuard], data: { roles: ['User'] } },
+  { path: 'suspect-data', component: SuspectDataComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'victim-data', component: VictimDataComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'narrative-of-incident', component: NarrativeOfIncidentComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-edit-officers', component: StationEditOfficersComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'add-new-officer', component: AddNewOfficerComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-crime-map', component: StationCrimeMapComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-dashboard', component: StationDashboardComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-list-of-officers', component: StationListOfOfficersComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-reports', component: StationReportsComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } }, // Add route for StationReportsComponent
+  { path: 'police-login', component: PoliceLoginComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'police-register', component: PoliceRegisterComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'edit-profile', component: PoliceEditProfileComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'police-jurisdiction', component: PoliceJurisdictionComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'police-privacy', component: PolicePrivacyComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'dashboard', component: PoliceDashboardComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'crime-map', component: CrimeMapComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'plot-longitude-and-latitude', component: PlotLongitudeAndLatitudeComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'payment-method', component: PaymentMethodComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'home-page', component: HomePageComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'access-denied', component: AccessDeniedComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-case-queue', component: StationCaseQueueComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'manage-users', component: ManageUsersComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } }, 
+  { path: 'ticket-request', component: TicketRequestComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'ticket-request-details', component: TicketRequestDetailsComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } }, // Route for Ticket Request Details with a parameter // Add route for Ticket Request
+  { path: 'manage-station', component: ManageStationComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'add-person', component: AddPersonComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },// Route for Manage Station
+  { path: 'edit-report', component: EditReportComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'report-endorse', component: ReportEndorseComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-police-accounts', component: StationPoliceAccountsComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'email', component: EmailComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'manage-users', component: ManageStationComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'case-management', component: CaseManagementComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'police-reports', component: PoliceReportsComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'police-cases', component: PoliceCasesComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-cases', component: StationCasesComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+    { path: 'add-case', component: AddCaseComponent, 
+      canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'dashboard', component: PoliceDashboardComponent },
+  { path: 'edit-case', component: EditCaseComponent, 
+    canActivate: [roleGuard], data: { roles: ['Police'] } },
+  { path: 'station-police-archives', component: StationPoliceArchivesComponent, 
+      canActivate: [roleGuard], data: { roles: ['Police'] } },
+ 
+=======
   // Route for login
   {
     path: 'dashboard',
@@ -334,6 +422,7 @@ const routes: Routes = [
   // { path: 'dashboard', component: PoliceDashboardComponent,
   //   canActivate: [roleGuard], data: { roles: ['Admin'] }
   //  },
+>>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 
   // { path: '', redirectTo: '/home-page', pathMatch: 'full' },
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirect to registration by default

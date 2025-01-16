@@ -598,7 +598,21 @@ table th {
 
 .search-container {
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
  
+}
+
+
+
+.filterReports label{
+  padding-right: 20px;
+}
+.filterReports  select{
+
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
 .search-input {
@@ -627,8 +641,8 @@ table th {
   padding: 0.5rem;
   /* border-radius: 0.5rem; */
   text-transform: uppercase;
-  font-weight: bold; /* Make the text bold */
-  justify-content: flex-start; /* Align items to the start */
+  font-weight: bold; 
+  justify-content: flex-start; 
 }
 
 .nav-link:hover {
@@ -641,7 +655,7 @@ table th {
 }
 
 .nav-icon {
-  margin-right: 0.5rem; /* Adjusted margin to make the container smaller */
+  margin-right: 0.5rem; 
 }
 
 
@@ -683,4 +697,16 @@ table th {
   border-radius: 50%; /* Make the image a perfect circle */
   object-fit: cover; /* Ensure the image scales without distortion */
   border: 1px solid #3a1aaf
+}
+
+
+.icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.icon img {
+  width: 30px;
+  height: 30px;
 }

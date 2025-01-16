@@ -1,0 +1,246 @@
+<div class="container">
+    <div class="emergency-banner">
+      <!-- In case of emergencies, please dial your local emergency services number -->
+    </div>
+    <div class="min-h-screen bg-zinc-100 flex">
+      <aside class="w-64 bg-white shadow-md">
+        <div class="p-4 text-center">
+          <img src="assets/station10.png" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
+          <div *ngIf="stationDetails; else loading">
+            <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
+          </div>
+          <ng-template #loading>
+            <p>Loading station details...</p>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+        </div>
+        <nav class="mt-7"> 
+           <ul class="list-none p-0">
+            <li>
+              <a [routerLink]="['/station-dashboard']" routerLinkActive="active" class="nav-link">
+                <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                <span>DASHBOARD</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-cases']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/cases.svg"
+                  alt="reports Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>CASES</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-case-queue']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/reports.svg"
+                  alt="Inbox Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>REPORTS</span>
+              </a>
+            </li>   
+            <li>
+              <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
+                <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                <span>CRIME MAP</span>
+              </a>
+            </li>
+            <li>
+              <a 
+              [routerLink]="['/station-list-of-officers']"
+              [ngClass]="{ active: isReportsActive() }" 
+              class="nav-link">
+                <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
+                <span>STATION</span>
+              </a>
+            </li>
+            <!-- <li>
+              <a href="#" class="nav-link">
+                <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
+                <span>CONTACT SUPPORT</span>
+              </a>
+            </li> -->
+          </ul>
+          <div class="logout">
+            <button type="submit" class="button" (click)="logout()">
+              LOG OUT
+            </button>
+          </div>
+        </nav>
+      </aside>
+  
+  
+     <div class="main-content">
+        <div
+        [routerLink]="['/station-list-of-officers']"
+        class="back">
+            <img src="assets/arrow-left.svg">
+            <span>Back to list of station officers</span>
+        </div>
+      <div class="header">
+          <div class="header-title ">
+              <h1>POLICE ARCHIVES</h1>
+              
+          </div>
+          <div class="header-info">
+            <p id="current-date"></p>
+            <p id="current-time"></p>
+            <div class="current">
+              <p><strong>Date:</strong> {{ currentDate }}</p>
+              <p><strong>Time:</strong> {{ currentTime }}</p>
+            </div>  
+            
+          </div>
+      </div>
+      <main class="main-content">
+          <header class="header"></header>
+          <div class="search-container">
+            <input
+            type="text" [(ngModel)]="searchQuery" 
+              placeholder="Search"
+              class="search-input"
+              (ngModelChange)="filterPolice()"
+            />
+  
+            <!-- <div class="archives">
+              <a href="station-police-archives">            
+                POLICE ARCHIVES
+              </a>
+            </div> -->
+  
+          </div>
+          
+          <section class="new-reports">
+            
+              <form>
+                  <table class="reports-table">
+                      <thead>
+                          <tr>
+                              <th>Police ID</th>
+                              <th>Rank</th>
+                              <th>Name</th>
+                              <th>Date Retired</th>
+                              <th>Action</th>
+                          </tr>
+                      </thead>
+                    
+                      <tbody>
+                      <ng-container *ngIf="searchQuery; else allPolice" >
+                        <ng-container
+                          *ngIf="filteredPolice.length > 0; else noResults"
+                        >
+                        <tr
+                          *ngFor="let police of filteredPolice 
+                          | paginate : {
+                                  id: 'police',
+                                  itemsPerPage: pageSize,
+                                  currentPage: currentPage,
+                                  totalItems: totalPolice
+                          }
+                          "
+                          [id]="'police-' + police.police_id"
+                        >
+                      <td>
+                        <span
+  
+                          [class.highlight]="
+                          isFieldMatched(police.police_id, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.police_id)"
+                        ></span>
+                      </td>
+  
+                      <td>
+                        <span
+  
+                          [class.highlight]="
+                          isFieldMatched(police.rank_full, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.rank_full)"
+                        ></span>
+                      </td>
+  
+                      <td>
+  
+                        <span
+                        [class.highlight]="
+                        isFieldMatched(police.lastname, searchQuery)
+                        "
+                        [innerHTML]="highlight(police.lastname)"
+                      ></span>
+  
+  
+                        <span
+                          [class.highlight]="
+                          isFieldMatched(police.firstname, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.firstname)"
+                        ></span>
+                    </td>
+                      <td>
+                        <span
+  
+                          [class.highlight]="
+                          isFieldMatched(police.unit, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.unit)"
+                        ></span>
+                      </td>
+  
+                      <td>
+                        <button class="reinstate">
+                            Reinstate
+                        </button>
+                       </td>
+                      </tr>
+  
+                        </ng-container>
+                        <ng-template #noResults>
+                          <tr>
+                            <td colspan="4" class="no-results">
+                              No results found for "{{ searchQuery }}"
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </ng-container>
+                      
+  
+                      <ng-template #allPolice>
+                        <tr
+                        *ngFor="let police of policeByStation
+                        | paginate : {
+                                id: 'police',
+                                itemsPerPage: pageSize,
+                                currentPage: currentPage,
+                                totalItems: totalPolice
+                        }
+                        "
+    
+                        >
+                        <td>{{ police.police_id }}</td>
+                        <td>{{ police.rank_full }}</td>
+                        <td>{{ police.lastname }}, {{ police.firstname }}</td>
+                        <td>{{ police.unit }}</td>
+                       <td>
+                        <button class="reinstate" (click)="reinstatePolice(police.police_id, police.lastname)">
+                            Reinstate
+                        </button>
+                       </td>
+                      </tr>
+  
+                      </ng-template>
+                      </tbody>
+                  </table>
+  
+                  <pagination-controls 
+                  id="police"
+                  (pageChange)="currentPage = $event">
+                </pagination-controls>
+              </form>
+          </section>
+      </main>
+  </div>
+  

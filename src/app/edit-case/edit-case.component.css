@@ -535,6 +535,12 @@ tbody td a {
     cursor: pointer;
 }
 
+.status-solved {
+  color: green;
+  font-weight: bold;
+}
+
+
 
 
 .prof-pic img {

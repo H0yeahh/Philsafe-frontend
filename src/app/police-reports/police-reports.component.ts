@@ -164,6 +164,77 @@ export class PoliceReportsComponent implements OnInit {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Get the officer's station ID from the logged-in account
+<<<<<<< HEAD
+  getOfficerStationId(): void {
+    // Assuming the officer's details are stored in localStorage after login
+    const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
+    this.stationID = officerDetails.stationId || null;
+    
+    // if (this.stationID) {
+    //   this.fetchReports(this.stationID); // Fetch reports using the station ID
+    // } else {
+    //   this.errorMessage = 'Station ID not found.';
+    // }
+  }
+
+  // // Fetch reports from the backend service
+  // fetchReports(stationId: string): void {
+  //   this.isLoading = true;  // Set loading state to true
+  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         this.reports = response;
+  //         console.log('Fetched reports:', this.reports);
+  //       } else {
+  //         this.errorMessage = 'Unexpected response from server.';
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching reports:', error);
+  //       this.errorMessage = 'Failed to load reports. Please try again.';
+  //       this.isLoading = false;
+  //     }
+  //   );
+  // }
+=======
+  // getOfficerStationId(): void {
+  //   // Assuming the officer's details are stored in localStorage after login
+  //   const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
+  //   this.stationID = officerDetails.stationId || null;
+
+  //   if (this.stationID) {
+  //     this.fetchReports(this.stationID); // Fetch reports using the station ID
+  //   } else {
+  //     this.errorMessage = 'Station ID not found.';
+  //   }
+  // }
+
+  // // Fetch reports from the backend service
+  // fetchReports(stationId: string): void {
+  //   this.isLoading = true;  // Set loading state to true
+  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
+  //     (response) => {
+  //       if (Array.isArray(response)) {
+  //         this.reports = response as IReport[];
+  //         console.log('Fetched reports:', this.reports);
+  //       } else {
+  //         this.errorMessage = 'Unexpected response from server.';
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching reports:', error);
+  //       this.errorMessage = 'Failed to load reports. Please try again.';
+  //       this.isLoading = false;
+  //     }
+  //   );
+  // }
+
+>>>>>>> 63e22e3ba3b93423a6743fa35441efcc52985767
   filterReports() {
     if (!this.searchQuery) {
       this.filteredReports = this.reports;
@@ -255,6 +326,7 @@ export class PoliceReportsComponent implements OnInit {
       }
     );
   }
+>>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 
   // Fetch stations
   fetchStations(): void {

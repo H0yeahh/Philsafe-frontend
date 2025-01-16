@@ -76,6 +76,12 @@ export class CaseQueueService {
       .pipe(catchError(this.handleError));
   }
 
+  getReportsPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> {
+    // const headers = this.getHeaders();
+    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`)
+      .pipe(catchError(this.handleError));
+  }
+
   getReportsAll(stationId: number) {
     // const headers = this.getHeaders();
     return this.http.get(`${this.endpoints.getStationReport}/${stationId}`)
@@ -134,6 +140,11 @@ export class CaseQueueService {
       .pipe(catchError(this.handleError));
   }
 
+  fetchCasesPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> {
+    return this.http.get(`${this.endpoints.getCases}/${stationId}/${pageSize}/${pageNumber}`)
+      .pipe(catchError(this.handleError));
+  }
+
 
   // Error handling function
   private handleError(error: HttpErrorResponse): Observable<never> {
@@ -179,10 +190,10 @@ export class CaseQueueService {
     );
   }
 
-  dismissReport(reportId: number): Observable<any> {
+  spamReport(reportId: number): Observable<any> {
     const headers = this.getHeaders(); // Retrieve headers with the session token
-    const url = `${this.apiUrl}api/report/dismiss/${reportId}`; // Construct the dismiss endpoint
-    return this.http.post<any>(url, {}, { headers }) // POST request with an empty body
+    const url = `${this.apiUrl}api/report/updatespam/${reportId}`; // Construct the dismiss endpoint
+    return this.http.put<any>(url, {}, { headers }) // POST request with an empty body
       .pipe(
         catchError(this.handleError) // Handle errors
       );

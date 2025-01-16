@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { PoliceAccountsService, IRank, ILocation, IAccount, IPolice, IPerson } from '../police-accounts.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
 import { AuthService } from '../auth.service';
-// import { IRank } from '../police-register.service';
+
 @Component({
   selector: 'app-station-police-accounts',
   templateUrl: './station-police-accounts.component.html',

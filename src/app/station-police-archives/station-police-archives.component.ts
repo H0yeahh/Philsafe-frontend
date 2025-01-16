@@ -1,32 +1,21 @@
-
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IStation, ManageStationService } from '../manage-station.service';
-import { Router } from '@angular/router';
-import { JurisdictionService } from '../jurisdiction.service';
-import {
-  IPerson,
-  IRank,
-  PoliceAccountsService,
-} from '../police-accounts.service';
-import { PersonService } from '../person.service';
-import {
-  IPolice,
-  StationListOfOfficersService,
-} from '../station-list-of-officers.service';
-import { PoliceOfficerService } from '../police-officer.service';
+// import { AccountService, IAccount, IPerson, ILocation } from '../account.service'; // Import the service
+import { Router } from '@angular/router'; // Import Router for navigation
+import moment from "moment";
+import { resolve } from 'node:path';
+import { PoliceAccountsService, IRank, ILocation, IAccount, IPolice, IPerson } from '../police-accounts.service';
+import { IStation, JurisdictionService } from '../jurisdiction.service';
 import { AuthService } from '../auth.service';
-import { environment } from '../environment';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environment';
 
 @Component({
-  selector: 'app-station-list-of-officers',
-  templateUrl: './station-list-of-officers.component.html',
-  styleUrl: './station-list-of-officers.component.css',
+  selector: 'app-station-police-archives',
+  templateUrl: './station-police-archives.component.html',
+  styleUrl: './station-police-archives.component.css'
 })
-export class StationListOfOfficersComponent implements OnInit {
- 
+export class StationPoliceArchivesComponent {
 
   isLoading = false;
       successMessage: string | null = null;
@@ -63,12 +52,8 @@ export class StationListOfOfficersComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private managestationService: ManageStationService,
     private jurisdictionService: JurisdictionService,
     private policeAccountsService: PoliceAccountsService,
-    private personService: PersonService,
-    private stationlistofOfficersService: StationListOfOfficersService,
-    private policeofficerService: PoliceOfficerService,
     private router: Router,
     private authService: AuthService,
     private http: HttpClient
@@ -130,7 +115,7 @@ export class StationListOfOfficersComponent implements OnInit {
     
   
     const fetchPage = (pageNumber: number = 1) => {
-      const url = `${environment.ipAddUrl}api/police/collect/some/${stationId}/${pageSize}/${currentPage}`;
+      const url = `${environment.ipAddUrl}api/police/collect/retired/all/${pageSize}/${currentPage}`;
       this.http.get<any[]>(url).subscribe(
         (response) => {
           const police = Array.isArray(response) ? response : response|| [];
@@ -138,7 +123,7 @@ export class StationListOfOfficersComponent implements OnInit {
           if (police.length < pageSize) {
             this.policeByStation = allPolice; 
             console.log(`Fetched all police for Station ${stationId}:`, this.policeByStation);
-            localStorage.setItem('policeSTATION', this.policeByStation)
+            
           } else {
             
             fetchPage(pageNumber + 1);
@@ -201,6 +186,11 @@ export class StationListOfOfficersComponent implements OnInit {
   }
 
 
+  isReportsActive(): boolean {
+    const activeRoutes = ['/station-police-archives', '/station-list-of-officers'];
+    return activeRoutes.some((route) => this.router.url.includes(route));
+  }
+
 
   logout() {
     this.authService.logout().subscribe(
@@ -224,26 +214,24 @@ export class StationListOfOfficersComponent implements OnInit {
     sessionStorage.clear();
   }
 
-  editPolice() {
 
-  }
 
-  deletePolice(policeId: number, policeLastName: string) {
-    const userConfirmed = window.confirm(`Are you sure you want to delete Officer ${policeLastName}?`);
-  
+  reinstatePolice(policeId: number, policeLastName: string) {
+    const userConfirmed = window.confirm(`Are you sure you want to reinstate Officer ${policeLastName}?`);
+    
     if (userConfirmed) {
-      this.policeAccountsService.resignedPolice(policeId).subscribe(
-        () => { 
-          alert(`Officer ${policeLastName} has been successfully deleted.`);
-          window.location.reload(); 
+      this.policeAccountsService.reinstatePolice(policeId).subscribe(
+        () => {
+          alert(`Officer ${policeLastName} has been successfully reinstated.`);
+          this.policeByStation = this.policeByStation.filter(police => police.police_id !== policeId);
         },
-        (err) => {
-          console.error('Error deleting officer', err);
-          alert('An error occurred while deleting the officer. Please try again.');
+        error => {
+          console.error('Failed to reinstate officer:', error);
+          alert('An error occurred while reinstating the officer.');
         }
       );
     } else {
-      console.log('Officer deletion was canceled');
+      console.log('Reinstatement was canceled');
     }
   }
   

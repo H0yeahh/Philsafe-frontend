@@ -77,7 +77,8 @@ export class EditCaseComponent {
     citizenData: any;
     suspectData: any;
     assignedTeam: any;
-  crimeData: any;
+    crimeData: any;
+    currentPage = 1;
   
   
     constructor(
@@ -138,6 +139,13 @@ export class EditCaseComponent {
         console.log('Crime ID:', crimeId);
         this.fetchACrime(crimeId);
         
+        const page = params['page'];
+        if (page) {
+          this.currentPage = +page;
+        } else {
+          const savedPage = localStorage.getItem('currentPage');
+          this.currentPage = savedPage ? +savedPage : 1;
+        }
         // if (reportId) {
         //     this.reportId = Number(reportId);
         //     this.fetchReportedSuspect(this.reportId);
@@ -779,6 +787,19 @@ export class EditCaseComponent {
         data: serializedData, 
       }
       });
+    }
+
+    markSolved(crimeId: number) {
+      this.crimeService.markSolved(crimeId).subscribe(
+        (res) => {
+          console.log('Case Solved',res);
+          alert('Case solved!')
+          this.router.navigate(['/station-dashboard'])
+        },
+        (err) => {
+          console.error('Error solving case',err)
+        }
+      )
     }
     
 }

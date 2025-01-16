@@ -233,10 +233,33 @@ export class PoliceAccountsService {
       catchError(this.handleError)
     );
   }
+
+  getAllPolice(pageNumber: number, pageSize: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/collect/all/${pageSize}/${pageNumber}`).pipe(
+      tap(response => console.log('Get all police response:', response)),
+      catchError(this.handleError)
+    );
+  }
+  
   
 
   deletePolice(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
+      tap(response => console.log(`Delete police ${id} response:`, response)),
+      catchError(this.handleError)
+    );
+  }
+
+
+  resignedPolice(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/resign/${id}`).pipe(
+      tap(response => console.log(`Delete police ${id} response:`, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  reinstatePolice(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/reinstate/${id}`).pipe(
       tap(response => console.log(`Delete police ${id} response:`, response)),
       catchError(this.handleError)
     );

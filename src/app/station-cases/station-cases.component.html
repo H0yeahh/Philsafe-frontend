@@ -49,17 +49,17 @@
               </a>
             </li>
             <li>
-              <a [routerLink]="['/station-list-officers']" routerLinkActive="active" class="nav-link">
+              <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
                 <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
                 <span>STATION</span>
               </a>
             </li>
-            <li>
+            <!-- <li>
               <a href="#" class="nav-link">
                 <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
                 <span>CONTACT SUPPORT</span>
               </a>
-            </li>
+            </li> -->
           </ul>
           <div class="logout">
             <button type="submit" class="button" (click)="logout()">
@@ -142,6 +142,7 @@
 
           </div>
           <section class="new-reports">
+
               <form>
                   <table class="reports-table">
                       <thead>
@@ -179,6 +180,7 @@
                                 totalItems: searchQuery ? filteredCases.length : totalCases 
                               }"
                               [id]="'crime-' + crime.crime_id"
+                              (pageChange)="onPageChange($event)"
                             >
                               <td>
                                 <a>
@@ -206,6 +208,19 @@
                                   [innerHTML]="highlight(crime.incident_type)"
                                 ></span>
                               </td>
+                              <td>
+                                <div class="status-container">
+                                  <div 
+                                    class="progress-bar" 
+                                    [ngStyle]="{
+                                      'width': getStatusProgress(crime.status) + '%',
+                                      'background-color': getStatusColor(crime.status)
+                                    }"
+                                  >
+                                    {{ crime.status }}
+                                  </div>
+                                </div>
+                              </td>
                              
                             </tr>
                           </ng-container>
@@ -230,6 +245,7 @@
                               totalItems: totalCases 
                             }"
                             (click)="editCase(crime.crime_id)"
+                            (onChange)="onPageChange($event)"
                           >
                             <td>
                            
@@ -242,7 +258,18 @@
                             
                             <td>{{ crime.cite_number }}</td>
                             <td>{{ crime.incident_type }}</td>
-                            <td>{{ crime.status}}</td>
+                            <td>
+                              <div class="crime-status">
+                                <span>{{ crime.status }}</span>
+                                <div class="progress-container">
+                                  <div
+                                    class="progress-bar"
+                                    [style.width.%]="getStatusProgress(crime.status)"
+                                    [style.backgroundColor]="getStatusColor(crime.status)"
+                                  ></div>
+                                </div>
+                              </div>
+                            </td>
                           </tr>
                         </ng-template>
                       </tbody>

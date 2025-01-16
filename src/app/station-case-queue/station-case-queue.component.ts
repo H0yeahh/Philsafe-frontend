@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { AccountService } from '../account.service';
 import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
+// import { report } from 'node:process';
 
 @Component({
   selector: 'app-station-case-queue',
@@ -54,6 +55,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
   crimeId: any;currentDate: string = '';
   currentTime: string = '';
   intervalId: any;
+  selectedRemark: string = 'all';
 
 
   constructor(
@@ -99,17 +101,18 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
 
     if (stationData) {
       this.stationDetails = JSON.parse(stationData);
+      this.fetchPageReport(this.stationDetails.station_id)
     }
 
     if (reportsData) {
-      this.reports = JSON.parse(reportsData);
+      // this.reports = JSON.parse(reportsData);
     
      
-      // this.reports = this.reports.filter((report: any) => report.crime_id === null || report.crime_id === undefined);
+      // // this.reports = this.reports.filter((report: any) => report.crime_id === null || report.crime_id === undefined);
     
-      this.reports.sort((b: any, a: any) => {
-        return new Date(a.reported_date).getTime() - new Date(b.reported_date).getTime();
-      });
+      // this.reports.sort((b: any, a: any) => {
+      //   return new Date(a.reported_date).getTime() - new Date(b.reported_date).getTime();
+      // });
     } else {
       console.warn('No reports data found in localStorage');
     }
@@ -162,39 +165,41 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     });
   }
 
-  // Get the officer's station ID from the logged-in account
-  // getOfficerStationId(): void {
-  //   // Assuming the officer's details are stored in localStorage after login
-  //   const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-  //   this.stationID = officerDetails.stationId || null;
 
-  //   if (this.stationID) {
-  //     this.fetchReports(this.stationID); // Fetch reports using the station ID
-  //   } else {
-  //     this.errorMessage = 'Station ID not found.';
-  //   }
-  // }
-
-  // // Fetch reports from the backend service
-  // fetchReports(stationId: string): void {
-  //   this.isLoading = true;  // Set loading state to true
-  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
-  //     (response) => {
-  //       if (Array.isArray(response)) {
-  //         this.reports = response as IReport[];
-  //         console.log('Fetched reports:', this.reports);
-  //       } else {
-  //         this.errorMessage = 'Unexpected response from server.';
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching reports:', error);
-  //       this.errorMessage = 'Failed to load reports. Please try again.';
-  //       this.isLoading = false;
-  //     }
-  //   );
-  // }
+  fetchPageReport(stationId: number): void {
+    this.currentPage = 1;
+    let allReports: any[] = [];
+  
+    const fetchPage = (pageNumber: number) => {
+      this.caseQueueService.getReportsPage(stationId, pageNumber, this.pageSize).subscribe(
+        (response) => {
+          const reports = Array.isArray(response) ? response : response.data || [];
+          allReports = [...allReports, ...reports];
+  
+      
+          if (reports.length < this.pageSize) {
+            this.reports = allReports; 
+            this.reports.sort((b, a) => {
+              return new Date(a.date_committed || a.datetime_committed).getTime() - new Date(b.date_committed || b.datetime_committed).getTime();
+            });
+            console.log(`Fetched all reports for Station ${stationId}:`, this.reports);
+            localStorage.setItem('reports', JSON.stringify(this.reports));
+            this.filterReports();
+          } else {
+            // Otherwise, fetch the next page
+            fetchPage(pageNumber + 1);
+          }
+        },
+        (error) => {
+          console.error('Error fetching reports:', error);
+          this.errorMessage = 'Failed to load all reports. Please try again.';
+        }
+      );
+    };
+  
+    // Start fetching from the first page
+    fetchPage(this.currentPage);
+  }
 
   updateDateTime(): void {
     const now = new Date();
@@ -217,31 +222,67 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     }
   }
   
-  filterReports() {
-    if (!this.searchQuery) {
-      this.filteredReports = this.reports;
-      return;
-    }
+  // filterReports() {
+  //   if (!this.searchQuery) {
+  //     this.filteredReports = this.reports;
+  //     return;
+  //   }
 
-    const query = this.searchQuery.toLowerCase();
+  //   const query = this.searchQuery.toLowerCase();
 
-    this.filteredReports = this.reports.filter((report) => {
-      const reportIdMatch = report.report_id
-        .toString()
-        .toLowerCase()
-        .includes(query);
-        const nameMatch = this.getCitizenName(report.citizen_id)
-        .toLowerCase()
-        .includes(query);
-      const incidentNameMatch = report.subcategory_name
-        .toLowerCase()
-        .includes(query);
+  //   this.filteredReports = this.reports.filter((report) => {
+  //     const reportIdMatch = report.report_id
+  //       .toString()
+  //       .toLowerCase()
+  //       .includes(query);
+  //       const nameMatch = this.getCitizenName(report.citizen_id)
+  //       .toLowerCase()
+  //       .includes(query);
+  //     const incidentNameMatch = report.subcategory_name
+  //       .toLowerCase()
+  //       .includes(query);
      
 
-      return reportIdMatch  || nameMatch || incidentNameMatch;
-    });
+  //     return reportIdMatch  || nameMatch || incidentNameMatch;
+  //   });
+  // }
+
+  filterReportsByRemark() {
+    if (this.selectedRemark === 'disabled') {
+      return;
+    }
+  
+    
+    console.log('Filtering reports by remark:', this.selectedRemark);
+  
+    if (this.selectedRemark === 'all') {
+     
+      this.filteredReports = [...this.reports];
+    } else {
+     
+      this.filteredReports = this.reports.filter(
+        report =>
+          (this.selectedRemark === 'forEndorse' && !report.is_spam) ||
+          (this.selectedRemark === 'markedAsSpam' && report.is_spam)
+      );
+    }
+  }
+  
+
+  filterReports() {
+    this.filteredReports = this.reports.filter(report =>
+      (this.selectedRemark === 'all' || 
+       (this.selectedRemark === 'forEndorse' && !report.is_spam) ||
+       (this.selectedRemark === 'markedAsSpam' && report.is_spam)) &&
+      (
+        this.isFieldMatched(report.report_id, this.searchQuery) ||
+        this.isFieldMatched(this.getCitizenName(report.citizen_id), this.searchQuery) ||
+        this.isFieldMatched(report.subcategory_name, this.searchQuery)
+      )
+    );
   }
 
+  
   isFieldMatched(fieldValue: any, query: string): boolean {
     if (!query) return false;
     const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
@@ -262,32 +303,6 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
       value?.toString().toLowerCase().includes(query)
     );
   }
-
-  // fetchnationwideReports(): void {
-  //   this.isLoading = true;  // Set loading state to true
-  //   this.caseQueueService.getNationwideReports().subscribe(
-  //     (response) => {
-  //       if (Array.isArray(response)) {
-  //       this.reports = response;
-
-  //         console.log('Fetched reports:', response);
-  //         this.reports.forEach((report: { citizen_id: any; }) => {
-  //           // console.log(report.citizen_id);
-  //           this.citizenId = report.citizen_id
-  //         });
-
-  //       } else {
-  //         this.errorMessage = 'Unexpected response from server.';
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching reports:', error);
-  //       this.errorMessage = 'Failed to load reports. Please try again.';
-  //       this.isLoading = false;
-  //     }
-  //   );
-  // }
 
   // Fetch stations
   fetchStations(): void {
@@ -365,63 +380,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     );
   }
 
-  // fetchAccounts(): Observable<any> {
-  //     return this.accountService.getAccount().pipe(
-  //       tap((response) => {
-  //         this.accounts = response;
-  //         console.log('Fetched Accounts', this.accounts)
-  //         localStorage.setItem('accounts', JSON.stringify(response));
-  //         this.tryFetchProfilePics();
-  //       })
-  //     );
-  //   }
-
-  // Submit the form
-  onSubmit(): void {
-    if (this.reportsForm.invalid) {
-      alert('Please fill all required fields correctly.');
-      return;
-    }
-
-    this.isLoading = true;
-    const formData = this.reportsForm.value;
-
-    const report: IReport = {
-      reportBody: formData.reportBody,
-      citizen_id: formData.citizenID,
-      reportSubCategoryID: formData.reportSubCategoryID,
-      locationID: formData.locationID || null, // Handle optional fields
-      stationID: formData.stationID,
-      crimeID: formData.crimeID || null, // Handle optional fields
-      // reportedDate: formData.reportedDate,
-      incidentDate: formData.incidentDate || null, // Handle optional fields
-      blotterNum: formData.blotterNum,
-      hasAccount: formData.hasAccount,
-      eSignature: formData.eSignature,
-      report_id: 0, // This will be set by the server
-      type: formData.type,
-      complainant: formData.complainant,
-      reported_date: formData.reported_date,
-      ReportBody: formData.reportBody, // Use reportBody from form
-      subcategory_name: formData.subcategory_name,
-      reportSubCategory: formData.reportSubCategory,
-      ReportSubCategoryId: formData.reportSubCategoryID.toString(),
-      DateTimeReportedDate: new Date().toISOString(),
-      HasAccount: formData.hasAccount.toString(),
-      status: formData.staus,
-      is_spam: formData.is_spam,
-      color: formData.color,
-    };
-
-    console.log('Submitting report with data:', report);
-
-    // this.submitReportForm(report);
-  }
-
-  //   navigateToReportEndorse(reportIndex: number): void {
-  //     const citizenId = this.reports[reportIndex]?.citizen_id;
-  //     this.router.navigate(['/report-endorse'], { state: { citizenId } });
-  // }
+  
 
   navigateToReportEndorse(reportId: number): void {
     if (reportId) {
@@ -461,5 +420,21 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     );
   }
 
+  
+
+  deleteReport(reportId: number) {
+    const userConfirmed = window.confirm(`Are you sure you want to delete the report?`);
+  
+    if (userConfirmed) {
+      this.caseQueueService.spamReport(reportId).subscribe(
+        () => {
+          alert(`Report ${reportId} has been successfully deleted.`);
+          window.location.reload(); 
+        }
+      );
+    } else {
+      console.log('Officer deletion was canceled');
+    }
+  }
 
 }
