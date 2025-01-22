@@ -9,6 +9,7 @@ import { environment } from './environment';
 })
 export class CrimeService {
   private baseUrl = `${environment.ipAddUrl}api/case`;
+  private modusLists = 'assets/modus';
 
   constructor(private http: HttpClient) {}
 
@@ -23,6 +24,10 @@ export class CrimeService {
 
   getLocalCases(stationId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/retrieve/local/${stationId}`);
+  }
+
+  getModus(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.modusLists}/modus.json`); 
   }
 
   getInvolvedCases(suspectId: number): Observable<any> {

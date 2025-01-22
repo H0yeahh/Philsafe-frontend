@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 
 
-=======
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
@@ -76,7 +73,7 @@ export class PoliceCasesComponent {
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
 
-    this.fetchCases();
+    // this.fetchCases(this.stationID);
   
 
   
@@ -177,26 +174,23 @@ export class PoliceCasesComponent {
     );
   }
 
-<<<<<<< HEAD
-  fetchCases(stationId) {
-    this.caseQueueService.fetchCasesPage(stationId, this.currentPage, this.pageSize).subscribe(
-=======
-  fetchCases() {
-    this.caseService.getAllCases().subscribe(
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
-      (response) => {
+  // fetchCases(stationId) {
+  //   this.caseQueueService.fetchCasesPage(stationId, this.currentPage, this.pageSize).subscribe(
+  // fetchCases() {
+  //   this.caseService.getAllCases().subscribe(
+  //     (response) => {
         
-          this.cases = response;
+  //         this.cases = response;
        
-        console.log(`List of Cases Nationwide`, this.cases);
-        localStorage.setItem('cases', JSON.stringify(this.cases))
-      },
-      (error) => {
-        console.error('Error fetching cases:', error);
-        this.errorMessage = 'Failed to load cases. Please try again.';
-      }
-    );
-  }
+  //       console.log(`List of Cases Nationwide`, this.cases);
+  //       localStorage.setItem('cases', JSON.stringify(this.cases))
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching cases:', error);
+  //       this.errorMessage = 'Failed to load cases. Please try again.';
+  //     }
+  //   );
+  // }
 
 
   pagedCases(): any[] {

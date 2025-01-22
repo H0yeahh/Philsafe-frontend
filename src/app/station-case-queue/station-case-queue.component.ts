@@ -321,7 +321,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         this.citizens = response;
-        // localStorage.setItem('citizens', JSON.stringify(this.citizens));
+        localStorage.setItem('citizens', JSON.stringify(this.citizens));
         console.log('Fetched citizens:', this.citizens);
       },
       (error) => {
@@ -423,13 +423,14 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
   
 
   deleteReport(reportId: number) {
-    const userConfirmed = window.confirm(`Are you sure you want to delete the report?`);
+    const userConfirmed = window.confirm(`Please be informed that this report can no longer be retrieved. Are you sure you want to permanently delete the report?`);
   
     if (userConfirmed) {
       this.caseQueueService.spamReport(reportId).subscribe(
         () => {
           alert(`Report ${reportId} has been successfully deleted.`);
           window.location.reload(); 
+          this.reports = this.reports.filter(report => report.report_id !== reportId);
         }
       );
     } else {

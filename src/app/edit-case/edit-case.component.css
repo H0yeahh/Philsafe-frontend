@@ -426,7 +426,7 @@ body {
 }
 
 .report-left, .report-right {
-    width: 48%;
+   
     color: black;
 }
 
@@ -476,6 +476,8 @@ body {
     background-color: #28a745;
 }
 
+
+
 .dismiss-btn {
     background-color: #dc3545;
 }
@@ -487,6 +489,9 @@ body {
     overflow-x: auto;
     /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
 }
+
+
+
 
 table {
     width: 100%;
@@ -510,6 +515,11 @@ tbody td
 }
 
 
+.reports td{
+
+  padding: 20px
+}
+
 
 tbody tr:last-child td {
     border-bottom: none;
@@ -526,21 +536,44 @@ tbody td a {
 }
 
 .send-blotter-btn {
-    padding: 10px 20px;
-    background-color: #1e40af;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
+  padding: 10px;
+  background-color: #fafafa;
+  color: hsl(0deg 0% 28.14%);
+  border: #cfcfcf solid 0.1px;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
+.send-blotter-btn:hover{
+  padding: 10px 10px;
+  background-color: #848485;
+  color: rgb(255, 255, 255);
+  border: #cfcfcf solid 0.1px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.plot-btn {
+  padding: 10px 10px;
+  background-color: #002bb8;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
 .status-solved {
   color: green;
   font-weight: bold;
+  font-size: 50px;
 }
 
-
+.solved-button {
+  display: flex;
+  justify-content: flex-end;
+}
 
 
 .prof-pic img {
@@ -592,12 +625,14 @@ tbody td a {
   }
   
   .modal-content {
-    background-color: #fff;
+    background-color: #bfdbfe;
     margin: 10% auto;
-    padding: 20px;
+    padding: 40px;
     border: 1px solid #888;
     width: 60%;
     text-align: center;
+    padding-bottom: 60px;
+    position: relative;
   }
   
   .modal-content img {
@@ -683,17 +718,7 @@ tbody td a {
     z-index: 1000;
   }
   
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    max-width: 80%;
-    max-height: 80%;
-    overflow: auto;
-    position: relative;
-    transition: transform 0.3s ease;
-  }
-  
+ 
   .modal-content:hover {
     transform: scale(1.02);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -707,13 +732,17 @@ tbody td a {
     border: none;
     font-size: 20px;
     cursor: pointer;
-    color: #007bff;
+    color: #ffffff;
     transition: color 0.2s ease;
+    background-color: #ff4d4d;
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px;
   }
   
-  .modal-close:hover {
-    color: #ff4d4d; /* Change close button color on hover */
-  }
+  /* .modal-close:hover {
+    color: #000000;
+    background-color: #d1d1d1; ;
+  } */
 
   .complainant-data {
     display: flex;
@@ -749,8 +778,8 @@ tbody td a {
   }
   
   td {
-    padding: 0.5rem; /* Padding for data cells */
-    text-align: left; /* Left align text in data cells */
+    padding: 0.1rem; 
+    text-align: left;
   }
   
   .category-label {
@@ -793,4 +822,254 @@ tbody td a {
     flex: 1;
     /* box-shadow: 0 2px 2px rgba(0.1, 0.1, 0.1, 0.1); */
   }
+
+
+  .report-category {
+    font-weight: bold;
+  }
+
+  .report-category td {
+    width: 100px;
+  }
+
+  .add-sus {
+    cursor: pointer;
+    display: flex;
+    justify-content: end;
+    
+  }
+  .add-sus span{
+
+      padding: 2px;
+      color: #1e40af;
+  }
+
+  .add-sus img{
+    width: 20px;
+    height: 18px;
+  }
+
+
+  .edit-sus {
+   
+    display: inline-block;
+  }
+
+  .edit-sus {
+    display: block;
+    text-align: center;
+  }
   
+
+  
+  .edit-sus td {
+    padding: 10px; 
+    text-align: center;
+
+  }
+
+  .table-sus td {
+    padding-bottom: 10px;
+  }
+
+  .input-sus {
+    text-align: end;
+  }
+
+  .input-sus input, select {
+    padding: 5px 10px 5px 0px;
+    border-radius: 15px;
+    border: #bdbaba solid 0.2px;
+    width: 80%;
+    text-align: end;
+  }
+
+ 
+
+  .save-sus {
+    display: flex;
+    padding-bottom: 30px;
+  }
+  
+  .save-sus button {
+
+    background-color: #28a745;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    border: none;
+    border-radius: 115px;
+    width: 30%;
+    
+  }
+
+.search-sus {
+  padding-bottom: 100px;
+}
+  
+  .search-sus input{
+
+    padding: 15px;
+    border-radius: 15px;
+    border: #bdbaba solid 0.5px;
+    width: 100%;
+    background-color: #bfdbfe;
+  }
+ 
+
+  .upload {
+    text-align: end;
+  }
+
+  .upload input{
+    padding: 15px;
+    border-radius: 15px;
+    border: #bdbaba solid 0.5px;
+    width: 100%;
+    background-color: #bfdbfe;
+  }
+
+  
+  .add-btn {
+    --background: #909193;
+    width: 150px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  label {
+    background-color: #ffffff;
+    color: #000000;
+    margin-top: 7px;
+    
+  }
+  
+  .uploadfile {
+  
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;  
+    flex-direction: column;
+    margin-left: 10px;
+    cursor: pointer;
+    padding-bottom: 30px;
+  }
+
+  .upload-icon {
+    margin: 5px;
+    width: 25px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .icon-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-radius: 3px;
+    border: solid #acacacf1 0.2px;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    width:auto;
+    cursor: pointer;
+  }
+
+  .max-size {
+    color:#909193;
+    font-size: 15px;
+  }
+
+  .add-items {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    margin-left: 10px;
+  }
+
+  .file-name {
+    color: #000000;
+  }
+
+  .img-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; 
+  }
+  
+  .img-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 200px;
+  }
+  
+
+  .img-prev {
+
+    max-width: 200px;
+    max-height: 250px;
+    width: 200px;
+    height: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 10px;
+
+  }
+
+
+  .found-sus {
+    display: flex;
+    justify-content: flex-start;
+    padding-bottom: 40px;
+    flex-direction: column;
+  }
+
+  .found-sus label {
+
+    background-color: #bfdbfe;
+    color: #000000  ;
+    text-align: start;
+  }
+
+  .found-sus ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+  
+  .found-sus ul li {
+    margin-right: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .found-sus ul button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+  }
+  
+  .found-sus ul button.active {
+    background-color: #007bff;
+    color: white;
+  }
+
+
+  
+  .edit {
+    padding-right: 10px;
+    padding-bottom: 15px;
+    text-align: right;
+  }
+
+  .edit span {
+    color: #004AAD;
+    cursor: pointer; 
+    font-weight: bold;
+    text-decoration: underline; 
+  }

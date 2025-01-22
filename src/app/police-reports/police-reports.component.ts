@@ -458,7 +458,6 @@ export class PoliceReportsComponent implements OnInit {
   }
 
   // Get the officer's station ID from the logged-in account
-<<<<<<< HEAD
   getOfficerStationId(): void {
     // Assuming the officer's details are stored in localStorage after login
     const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
@@ -491,7 +490,6 @@ export class PoliceReportsComponent implements OnInit {
   //     }
   //   );
   // }
-=======
   // getOfficerStationId(): void {
   //   // Assuming the officer's details are stored in localStorage after login
   //   const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
@@ -643,7 +641,6 @@ export class PoliceReportsComponent implements OnInit {
       }
     );
   }
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 
   // Fetch stations
   fetchStations(): void {

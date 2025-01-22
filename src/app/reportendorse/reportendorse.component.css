@@ -791,3 +791,68 @@ tbody td a {
     width: 551px;
   }
   
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 100px;
+    border-radius: 5px;
+    text-align: center;
+    border-radius: 20px;
+  }
+
+  .modal-content h3{
+    padding-bottom: 50px;
+  }
+  
+
+  .modal-menu button {
+
+    padding: 20px;
+    margin: 20px;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 12px;
+    border: hsl(242deg 2.99% 79.18%) solid 0.5px;
+  }
+
+
+  .modal-menu button:hover {
+
+    padding: 20px;
+    margin: 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 12px;
+    border: hsl(242deg 2.99% 79.18%) solid 0.5px;
+  }
+
+
+  .input-case {
+
+    padding: 5px;
+    border-radius: 5px;
+    margin: 10px;
+    border: #a99a9a solid 0.5px;
+  }
+
+  .submit-btn {
+    padding: 5px 10px;
+    background-color: #002bb8;
+    color: rgb(255, 255, 255);
+    border: #cfcfcf solid 0.1px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+  }

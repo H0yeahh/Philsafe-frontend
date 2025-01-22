@@ -1,0 +1,253 @@
+[
+    {
+      "vicmethod_id": 1,
+      "method_name": "Akyat Bahay",
+      "method_abbr": "AB"
+    },
+    {
+      "vicmethod_id": 2,
+      "method_name": "Applied as Driver",
+      "method_abbr": "AD"
+    },
+    {
+      "vicmethod_id": 3,
+      "method_name": "Bag/Purse Snatching",
+      "method_abbr": "BPS"
+    },
+    {
+      "vicmethod_id": 4,
+      "method_name": "Baklas Bubong/Dingding",
+      "method_abbr": "BBD"
+    },
+    {
+      "vicmethod_id": 5,
+      "method_name": "Biting",
+      "method_abbr": "BIT"
+    },
+    {
+      "vicmethod_id": 6,
+      "method_name": "Bolt Clutter",
+      "method_abbr": "BC"
+    },
+    {
+      "vicmethod_id": 7,
+      "method_name": "Burner",
+      "method_abbr": "BUR"
+    },
+    {
+      "vicmethod_id": 8,
+      "method_name": "Cable/Electric Meter Theft",
+      "method_abbr": "CEM"
+    },
+    {
+      "vicmethod_id": 9,
+      "method_name": "Cellphone Snatching",
+      "method_abbr": "CS"
+    },
+    {
+      "vicmethod_id": 10,
+      "method_name": "Choking",
+      "method_abbr": "CHK"
+    },
+    {
+      "vicmethod_id": 11,
+      "method_name": "Committed by an Employee (Commercial/Store/Shop)",
+      "method_abbr": "CBE"
+    },
+    {
+      "vicmethod_id": 12,
+      "method_name": "Crowbar/Destroying Property",
+      "method_abbr": "CDP"
+    },
+    {
+      "vicmethod_id": 13,
+      "method_name": "Under Influence of Liquor (Deprived of Reason or Unconscious)",
+      "method_abbr": "UIL"
+    },
+    {
+      "vicmethod_id": 14,
+      "method_name": "Destroying Window",
+      "method_abbr": "DW"
+    },
+    {
+      "vicmethod_id": 15,
+      "method_name": "Economic Abuse",
+      "method_abbr": "EA"
+    },
+    {
+      "vicmethod_id": 16,
+      "method_name": "Failed to Return",
+      "method_abbr": "FTR"
+    },
+    {
+      "vicmethod_id": 17,
+      "method_name": "Force, Threat and Intimidation",
+      "method_abbr": "FTI"
+    },
+    {
+      "vicmethod_id": 18,
+      "method_name": "Forcibly Taken (FT)",
+      "method_abbr": "FT"
+    },
+    {
+      "vicmethod_id": 19,
+      "method_name": "Grave Abuse of Authority",
+      "method_abbr": "GAA"
+    },
+    {
+      "vicmethod_id": 20,
+      "method_name": "Hacking",
+      "method_abbr": "HK"
+    },
+    {
+      "vicmethod_id": 21,
+      "method_name": "Hitting with Hard Object",
+      "method_abbr": "HHO"
+    },
+    {
+      "vicmethod_id": 22,
+      "method_name": "Hold-up w/ Gun",
+      "method_abbr": "HG"
+    },
+    {
+      "vicmethod_id": 23,
+      "method_name": "Hold-up w/ Sharp Object",
+      "method_abbr": "HSO"
+    },
+    {
+      "vicmethod_id": 24,
+      "method_name": "Intentional Mutilation",
+      "method_abbr": "IM"
+    },
+    {
+      "vicmethod_id": 25,
+      "method_name": "Jewelry Snatching",
+      "method_abbr": "JS"
+    },
+    {
+      "vicmethod_id": 26,
+      "method_name": "Mauling",
+      "method_abbr": "MUL"
+    },
+    {
+      "vicmethod_id": 27,
+      "method_name": "Other Acts of Abuse",
+      "method_abbr": "OAA"
+    },
+    {
+      "vicmethod_id": 28,
+      "method_name": "Petnapping",
+      "method_abbr": "PN"
+    },
+    {
+      "vicmethod_id": 29,
+      "method_name": "Physical Injuries",
+      "method_abbr": "PI"
+    },
+    {
+      "vicmethod_id": 30,
+      "method_name": "Physical Violence",
+      "method_abbr": "PV"
+    },
+    {
+      "vicmethod_id": 31,
+      "method_name": "Pick-Pocketing",
+      "method_abbr": "PP"
+    },
+    {
+      "vicmethod_id": 32,
+      "method_name": "Possession",
+      "method_abbr": "POS"
+    },
+    {
+      "vicmethod_id": 33,
+      "method_name": "Psychological Violence",
+      "method_abbr": "PVI"
+    },
+    {
+      "vicmethod_id": 34,
+      "method_name": "Punching",
+      "method_abbr": "PNCH"
+    },
+    {
+      "vicmethod_id": 35,
+      "method_name": "Pushing",
+      "method_abbr": "PSH"
+    },
+    {
+      "vicmethod_id": 36,
+      "method_name": "Salisi",
+      "method_abbr": "SAL"
+    },
+    {
+      "vicmethod_id": 37,
+      "method_name": "Salisi (Akyat Bahay)",
+      "method_abbr": "SAL-AB"
+    },
+    {
+      "vicmethod_id": 38,
+      "method_name": "Salisi (Cellphone/Laptop)",
+      "method_abbr": "SAL-CL"
+    },
+    {
+      "vicmethod_id": 39,
+      "method_name": "Salisi (Establishment)",
+      "method_abbr": "SAL-EST"
+    },
+    {
+      "vicmethod_id": 40,
+      "method_name": "Salisi (Park)",
+      "method_abbr": "SAL-PK"
+    },
+    {
+      "vicmethod_id": 41,
+      "method_name": "Seized At Gunpoint with Intimidation (SAGPI)",
+      "method_abbr": "SAGPI"
+    },
+    {
+      "vicmethod_id": 42,
+      "method_name": "Shooting",
+      "method_abbr": "SHT"
+    },
+    {
+      "vicmethod_id": 43,
+      "method_name": "Shoplifting",
+      "method_abbr": "SL"
+    },
+    {
+      "vicmethod_id": 44,
+      "method_name": "Snatching",
+      "method_abbr": "SN"
+    },
+    {
+      "vicmethod_id": 45,
+      "method_name": "Stabbing",
+      "method_abbr": "STB"
+    },
+    {
+      "vicmethod_id": 46,
+      "method_name": "Stabbing & Hacking",
+      "method_abbr": "STB-HK"
+    },
+    {
+      "vicmethod_id": 47,
+      "method_name": "Stolen While Parked Unattended",
+      "method_abbr": "SWPU"
+    },
+    {
+      "vicmethod_id": 48,
+      "method_name": "Stoning/Thrown Object",
+      "method_abbr": "STO"
+    },
+    {
+      "vicmethod_id": 49,
+      "method_name": "Taken Without Owner's Consent",
+      "method_abbr": "TWOC"
+    },
+    {
+      "vicmethod_id": 50,
+      "method_name": "Using",
+      "method_abbr": "USG"
+    }
+  ]
+  

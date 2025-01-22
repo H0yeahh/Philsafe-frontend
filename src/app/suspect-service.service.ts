@@ -3,6 +3,27 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from './environment';
 
+
+
+export interface SuspectFully {
+
+  personId: number;
+  gang?: string;
+  reward: string;
+  isCaught: boolean;
+  dateCaught?: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  gender: string;
+  birthDate: string;
+  civilStatus: string;
+  motiveShort?: string;
+  motiveLong?: string;
+  deathDate?: string;
+  mugshots?: Uint8Array;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,48 +33,50 @@ export class SuspectServiceService {
   constructor(private http: HttpClient) {}
 
 
-  // Retrieve all suspects
+
   retrieveReportedSus(reportId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/fromreport/${reportId}`);
   }
 
 
-  // Retrieve all suspects
+
   retrieveAllSuspects(): Observable<any> {
     return this.http.get(`${this.baseUrl}/collect/all`);
   }
 
-  // Retrieve all prisoners
+
   retrieveAllPrisoners(): Observable<any> {
     return this.http.get(`${this.baseUrl}/collect/prison`);
   }
 
-  // Retrieve all wanted suspects
+
   retrieveAllWanteds(): Observable<any> {
     return this.http.get(`${this.baseUrl}/collect/freedom`);
   }
 
-  // Identify a specific criminal by ID
   identifyCriminal(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/verify/${id}`);
   }
 
-  // Establish a new criminal record
+
   establishCriminal(suspect: any): Observable<any> {
     return this.http.post(`${this.baseUrl}`, suspect);
   }
 
-  // Connect a suspect to a specific crime
+  establishCriminalFully(suspect: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/identify/suspect/fully`, suspect);
+  }
+
   connectToCrime(request: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/connect/specific`, request);
   }
 
-  // Edit an existing criminal record
+ 
   editCriminal(id: number, suspect: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/edit/${id}`, suspect);
   }
 
-  // Delete a suspect record by ID
+ 
   clearName(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/discard/${id}`);
   }

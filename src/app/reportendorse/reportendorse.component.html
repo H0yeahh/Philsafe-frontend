@@ -283,21 +283,41 @@
                     <button
                       type="button"
                       class="endorse-btn"
-                     (click)="navigateToCase(selectedReport.report_id)"
+                      (click)="showModal = true"
                     >
                       Add Case
                     </button>
                   </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="dismiss-btn"
-                      (click)="onDismiss()"
-                    >
-                      Mark as Spam
-                    </button>
-                  </td>
-                </tr>
+                  <div class="modal" *ngIf="showModal">
+                    
+                    <div class="modal-content">
+                      <button class="modal-close" (click)="showModal = false">x</button>
+                      <div class="modal-menu">
+                        <h3>Would you like to:</h3>
+                        <button type="button" (click)="navigateToCase(selectedReport.report_id)">
+                          Add New Case
+                        </button>
+                        <button type="button" (click)="openSubModal()">
+                          Add Existing Case
+                        </button>
+                      </div>
+                      
+                    </div>
+                  </div>
+                  
+                  <!-- Sub-modal for Add Existing Case -->
+                  <div class="modal" *ngIf="showSubModal">
+                    <div class="modal-content">
+                      <h3>Enter existing case ID:</h3>
+                      <input type="text" class="input-case" [(ngModel)]="existingCaseId" placeholder="Case ID" />
+                      <button type="button" class="submit-btn" (click)="addExistingCase(selectedReport.report_id, existingCaseId)">
+                        Submit
+                      </button>
+                      <button type="button" class="modal-close" (click)="showSubModal = false">
+                        X
+                      </button>
+                    </div>
+                  </div>
               </div>
 
               <!-- <div class="action-buttons">
@@ -745,15 +765,15 @@
 
               
 
-              <div class="submit-blotter">
+              <!-- <div class="submit-blotter">
                 <button
                   type="button"
                   class="send-blotter-btn"
-                  (click)="onSendBlotter()"
+                  (click)="onSendBlotter(selectedReport.report_id, selectedReport.crime_id)"
                 >
                   SEND TICKET BLOTTER
                 </button>
-              </div>
+              </div> -->
             </section>
           </main>
         </div>

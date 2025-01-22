@@ -51,6 +51,10 @@ export class ReportEndorseComponent implements OnInit {
   reportDetails: any = [];
   reportId: any;
 
+  showModal = false;
+  showSubModal = false;
+  existingCaseId: any = '';
+
   
   selectedReport: any = []; 
   isSignatureVisible: boolean = false;
@@ -97,7 +101,7 @@ export class ReportEndorseComponent implements OnInit {
     //   console.log('Citizen ID:', citizenId);
     // });
 
-    this.initializeForm();
+    // this.initializeForm();
     //this.getOfficerStationId();
     this.fetchRanks();
     this.fetchStations();
@@ -142,7 +146,7 @@ export class ReportEndorseComponent implements OnInit {
           this.fetchReportedSuspect(this.reportId);
           this.fetchReportedVictim(this.reportId);
 
-          // Check if the report ID exists in the reports data
+          
           const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
           this.fetchEvidences(matchingReport.report_id)
           localStorage.setItem('report-data', JSON.stringify(matchingReport))
@@ -196,32 +200,32 @@ export class ReportEndorseComponent implements OnInit {
     // }
   }
 
-  initializeForm(): void {
-    this.endorseForm = this.fb.group({
-      reportID: ['', Validators.required],
-      type: ['', Validators.required],
-      complainant: ['', Validators.required],
-      dateReceived: ['', Validators.required],
-      reportBody: ['', Validators.required],
-      citizen_id: ['', Validators.required],
-      reportSubCategoryID: ['', Validators.required],
-      locationID: [''],
-      stationID: ['', Validators.required],
-      crimeID: [''],
-      reportedDate: ['', Validators.required],
-      incidentDate: [''],
-      blotterNum: ['', Validators.required],
-      hasAccount: [true],
-      eSignature: ['', Validators.required],
-      rankID: ['', Validators.required],
-      personID: ['', Validators.required],
-      reportSubCategory: ['', Validators.required],
-      subcategory_name: ['', Validators.required],
-      status: ['', Validators.required],
-      is_spam: [true],
-      color: ['', Validators.required],
-    });
-  }
+  // initializeForm(): void {
+  //   this.endorseForm = this.fb.group({
+  //     reportID: ['', Validators.required],
+  //     type: ['', Validators.required],
+  //     complainant: ['', Validators.required],
+  //     dateReceived: ['', Validators.required],
+  //     reportBody: ['', Validators.required],
+  //     citizen_id: ['', Validators.required],
+  //     reportSubCategoryID: ['', Validators.required],
+  //     locationID: [''],
+  //     stationID: ['', Validators.required],
+  //     crimeID: [''],
+  //     reportedDate: ['', Validators.required],
+  //     incidentDate: [''],
+  //     blotterNum: ['', Validators.required],
+  //     hasAccount: [true],
+  //     eSignature: ['', Validators.required],
+  //     rankID: ['', Validators.required],
+  //     personID: ['', Validators.required],
+  //     reportSubCategory: ['', Validators.required],
+  //     subcategory_name: ['', Validators.required],
+  //     status: ['', Validators.required],
+  //     is_spam: [true],
+  //     color: ['', Validators.required],
+  //   });
+  // }
 
 
   fetchReport(citizenId: number): void {
@@ -364,8 +368,12 @@ export class ReportEndorseComponent implements OnInit {
     this.policeAccountsService.getPoliceByStation(stationId).subscribe(
       (response) => {
         this.polices = response;
+
+        this.polices = response.filter(police => police.unit !== 'Default');
         console.log("Fetched Police in Station", this.polices)
         localStorage.setItem('policeByStation', JSON.stringify(this.polices))
+       
+        
         this.assignedTeam = this.polices.unit
       },
       (error) => {
@@ -445,10 +453,10 @@ export class ReportEndorseComponent implements OnInit {
   }
 
   fetchReportedVictim(reportID: number) {
-    this.victimService.retrieveReportedVictim(this.reportId).subscribe(
+    this.victimService.retrieveReportedVictim(reportID).subscribe(
       (response) => {
         if (Array.isArray(response) && response.length > 0) {
-          this.victims = response[0]; // Extract the first element of the array
+          this.victims = response[0]; 
           let victimData = response
           console.log('Fetched Reported victim', this.victims);
           localStorage.setItem('reported-victim', JSON.stringify(victimData));
@@ -533,34 +541,7 @@ export class ReportEndorseComponent implements OnInit {
   }
   
 
-  onSendBlotter(): void {
-    const blotterNum = this.endorseForm.get('blotterNum')?.value;
-
-    if (!blotterNum) {
-      this.endorseForm.patchValue({
-        blotterNum: this.generateBlotterNumber(),
-      });
-    }
-
-    const updatedBlotterNum = this.endorseForm.get('blotterNum')?.value;
-    console.log(`Sending blotter with number: ${updatedBlotterNum}`);
-
-    this.successMessage = `Blotter with number ${updatedBlotterNum} sent successfully!`;
-
-    const reportData = this.endorseForm.value;
-
-    this.caseQueueService.moveToEndorsedQueue(reportData.report_id).subscribe(
-      (response) => {
-        console.log('Report moved to endorsed queue:', response);
-        this.router.navigate(['/email', updatedBlotterNum]);
-      },
-      (error) => {
-        console.error('Error moving report to endorsed queue:', error);
-        this.errorMessage = 'Failed to move the report. Please try again.';
-      }
-    );
-  }
-
+  
 
   
   getComplainantInfo(citizenId: number) {
@@ -766,6 +747,12 @@ export class ReportEndorseComponent implements OnInit {
     this.isModalOpen = true;
   }
 
+  openSubModal() {
+    this.showModal = false;
+    this.showSubModal = true;
+  }
+  
+
   closeModal() {
     this.isModalOpen = false;
     this.selectedEvidence = null;
@@ -802,8 +789,31 @@ export class ReportEndorseComponent implements OnInit {
     const unit = selectedValue.target.value
     console.log('Selected Police Unit:', unit);
     this.assignedTeam = unit;
+    
+    
   }
   
+  
+  addExistingCase(reportId:number, caseId: number) {
+    if (caseId) {
+      console.log('Existing Case ID:', caseId);
+      
+      this.caseQueueService.existingCase(reportId, caseId).subscribe(
+        (res) => {
+          console.log('Report successfully added to the case', res);
+          this.router.navigate(['/station-dashboard']);
+        },
+        (err) => {
+          console.error('Failed to add the report to existing case', err)
+        }
+      )
+      this.showSubModal = false;
+      this.showModal = false;
+    } else {
+      alert('Please enter a case ID');
+    }
+  }
+
   
 
   navigateToCase(reportId: number) {

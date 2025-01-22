@@ -45,7 +45,7 @@ export class CaseQueueService {
     submitReport: `${this.apiUrl}api/report/submit`,
     citizenReports: `${this.apiUrl}api/report/retrieve/citizen`,
     categorizedReports: (subcategoryId: number) => `${this.apiUrl}api/report/retrieve/category/${subcategoryId}`,
-    crimeReports: (crimeId: number) => `${this.apiUrl}api/report/retrieve/case/${crimeId}`,
+    crimeReports:  `${this.apiUrl}api/report/retrieve/case`,
     moveToEndorsedQueue: (reportId: number) => `${this.apiUrl}api/report/move-to-endorsed-queue/${reportId}`,  // New endpoint for moving report
     getReport: `${this.apiUrl}api/report/retrieve/citizen`,
     getCitizens: `${this.apiUrl}api/citizen/collect/citizens/all`,
@@ -117,9 +117,9 @@ export class CaseQueueService {
   }
 
   // Fetch reports by specific crime ID
-  getCrimeReports(crimeId: number): Observable<IReport[]> {
+  getCrimeReports(crimeId: number): Observable<any[]> {
     const headers = this.getHeaders();
-    return this.http.get<IReport[]>(this.endpoints.crimeReports(crimeId), { headers })
+    return this.http.get<any[]>(`${this.endpoints.crimeReports}/${crimeId}`, { headers })
       .pipe(catchError(this.handleError));
   }
 
@@ -177,29 +177,45 @@ export class CaseQueueService {
 
     return this.http.get(`${this.endpoints.getReport}/${citizenID}`).pipe(
       map((response: any) => {
-        // On success, return the data
-        return { data: response }; // Wrap the response in an object
+        
+        return { data: response }; 
       }),
-      catchError((error) => {  // Use catchError to handle the error
+      catchError((error) => { 
 
-        console.error(this.handleError(error));  // Call handleError with the error
+        console.error(this.handleError(error)); 
 
-        return throwError(error);  // Return the error observable
-
+        return throwError(error); 
       })
     );
   }
 
   spamReport(reportId: number): Observable<any> {
-    const headers = this.getHeaders(); // Retrieve headers with the session token
-    const url = `${this.apiUrl}api/report/updatespam/${reportId}`; // Construct the dismiss endpoint
-    return this.http.put<any>(url, {}, { headers }) // POST request with an empty body
+    const headers = this.getHeaders();
+    const url = `${this.apiUrl}api/report/delete/report/${reportId}`;
+    return this.http.delete<any>(url, {})
       .pipe(
-        catchError(this.handleError) // Handle errors
+        catchError(this.handleError) 
       );
   }
 
-  // Helper function to format validation errors
+  
+  sendBlotter(reportId: number, crimeId: number){
+    const url = `${this.apiUrl}api/smtp/notify/identifiedSuspects/${reportId}/${crimeId}`;
+    return this.http.post<any>(url, {}) 
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+
+  existingCase(reportId: number, crimeId: number){
+    const url = `${this.apiUrl}api/report/connect/dot/${reportId}/${crimeId}`;
+    return this.http.put<any>(url, {}) 
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   private formatValidationErrors(errors: any): string {
     let formattedErrors = 'Validation errors:\n';
     for (const key in errors) {
