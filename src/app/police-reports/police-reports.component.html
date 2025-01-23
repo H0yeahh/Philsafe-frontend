@@ -33,12 +33,18 @@
                       <span>REPORTS</span>
                     </a>
                   </li>
+                  <!-- <li>
+                    <a href="/evidences" class="nav-link">
+                      <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
+                      <span>EVIDENCES</span>
+                    </a>
+                  </li>
                   <li>
                       <a href="/police-cases" class="nav-link">
                         <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
                         <span>CASES</span>
                       </a>
-                    </li>
+                    </li> -->
                   <li>
                       <a routerLink="/manage-users" class="nav-link">
                           <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
@@ -51,12 +57,6 @@
                         <span>SPAMMED USER</span>
                     </a>
                 </li>
-                  <li>
-                      <a routerLink="/ticket-request" class="nav-link">
-                          <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
-                          <span>TICKET REQUESTS</span>
-                      </a>
-                  </li>
                   <li>
                       <a routerLink="/manage-station" class="nav-link">
                           <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
@@ -86,14 +86,33 @@
                 <!-- User Table -->
                 <div class="table-container mt-8">
                   <!-- <div class="table-controls flex justify-between items-center mb-4"> -->
-                    <form [formGroup]="policereportsForm" class="filter" (ngSubmit)="onSubmit()">
+                    <!-- <form [formGroup]="policereportsForm" class="filter" (ngSubmit)="onSubmit()"> -->
                       <!-- <input type="text" placeholder="Search user" formControlName="search" class="search-bar" > -->
                       <!-- <input
                       type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterUsers()"
                         placeholder="Search"
+                        
                         class="search-input"
                       /> -->
-                    </form>
+                      <div class="search-container">
+                        <input
+                          type="text"
+                          [(ngModel)]="searchQuery"
+                          (ngModelChange)="filterReports()"
+                          placeholder="Search"
+                          class="search-input"
+                        />
+              
+                        <div class="filterReports">
+                          <label>Filter Reports</label>
+                          <select [(ngModel)]="selectedRemark" (change)="filterReportsByRemark()">
+                            <option [value]="'all'">All</option>
+                            <option [value]="'forEndorse'">For Endorse</option>
+                            <option [value]="'markedAsSpam'">Marked as Spam</option>
+                          </select>
+                        </div>   
+                      </div>
+                    <!-- </form> -->
                   <table class="user-table w-full border-collapse">
                     <thead>
                       <tr>
@@ -101,10 +120,11 @@
                         <th class="border border-zinc-300 p-2">INCIDENT TYPE</th>
                         <th class="border border-zinc-300 p-2">COMPLAINANT</th>
                         <th class="border border-zinc-300 p-2">DATE RECIEVED</th>
+                        <th class="border border-zinc-300 p-2">REMARKS</th>
                         <th class="border border-zinc-300 p-2">ACTION</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <!-- <tbody>
                       <tr *ngFor="let report of reports | paginate: { 
                         id: 'citizen', 
                         itemsPerPage: pageSize, 
@@ -116,17 +136,157 @@
                             <td  class="border border-zinc-300 p-2">{{ report.subcategory_name }}</td>
                             <td  class="border border-zinc-300 p-2">{{ report.citizen_id }}</td>
                             <td  class="border border-zinc-300 p-2">{{ report.reported_date }}</td>
+                            <div *ngIf="!report.is_spam; else spamReports">
+                              <td style="text-decoration: none; color: #00c900">For Endorse</td>
+                            </div>
+                            <ng-template #spamReports>
+                              <td style="color: red;">Marked as Spam</td>
+                            </ng-template>
                             <td  class="border border-zinc-300 p-2">
-                          <!-- <button (click)="editCitizen(report)" class="action-btn edit">✏️</button> -->
+                              
+                          <button (click)="editCitizen(report)" class="action-btn edit">✏️</button>
                           <button type="button" class="spam-button" (click)="markAsSpam(report.report_id)">
                             SPAM
                          </button>
-                          <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+                          <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button>
                         </td>
                       </tr>
+                    </tbody> -->
+                    <tbody>
+                      <!-- If there is a search query -->
+                      <ng-container *ngIf="searchQuery || selectedRemark !== 'all'; else defaultReports">
+                        <!-- Show filtered reports if results are found -->
+                        <ng-container *ngIf="filteredReports.length > 0; else noResults">
+                          <tr
+                            *ngFor="
+                              let report of filteredReports
+                                | paginate
+                                  : {
+                                      id: 'cases',
+                                      itemsPerPage: pageSize,
+                                      currentPage: currentPage,
+                                      totalItems: totalReports
+                                    }
+                            "
+                            [id]="'report-' + report.report_id"
+                            (click)="navigateToEndorseEvidences(report.report_id)"
+                          >
+                            <td>
+                              <span
+                                [class.highlight]="
+                                  isFieldMatched(getCitizenName(report.citizen_id), searchQuery)
+                                "
+                                [innerHTML]="highlight(getCitizenName(report.citizen_id))"
+                              ></span>
+                            </td>
+                            <td>
+                              <span
+                                [class.highlight]="
+                                  isFieldMatched(report.report_id, searchQuery)
+                                "
+                                [innerHTML]="highlight(report.report_id)"
+                              ></span>
+                            </td>
+                            <td>
+                              <span
+                                [class.highlight]="
+                                  isFieldMatched(report.subcategory_name, searchQuery)
+                                "
+                                [innerHTML]="highlight(report.subcategory_name)"
+                              ></span>
+                            </td>
+                            <td>
+                              <span
+                                [class.highlight]="
+                                  isFieldMatched(report.reported_date, searchQuery)
+                                "
+                                [innerHTML]="highlight(report.reported_date | date)"
+                              ></span>
+                            </td>
+                            <div *ngIf="!report.is_spam; else spamReports">
+                              <td style="text-decoration: none; color: #00c900">For Endorse</td>
+                            </div>
+                            <ng-template #spamReports>
+                              <td style="color: red;">Marked as Spam</td>
+                            </ng-template>
+                            <!-- <td
+                              class="icon"
+                              (click)="deleteReport(report.report_id); $event.stopPropagation()"
+                            >
+                              <img src="assets/delete.svg" />
+                            </td> -->
+                            <td  class="border border-zinc-300 p-2">
+                                  
+                              <!-- <button (click)="editCitizen(report)" class="action-btn edit">✏️</button> -->
+                              <button type="button" class="spam-button" (click)="markAsSpam(report.report_id)">
+                                SPAM
+                             </button>
+                              <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+                            </td>
+                          </tr>
+                        </ng-container>
+                    
+                        <!-- No results found -->
+                        <ng-template #noResults>
+                          <tr>
+                            <td colspan="6" class="no-results">
+                              No results found for "{{ searchQuery }}"
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </ng-container>
+                    
+                      <!-- Default reports -->
+                      <ng-template #defaultReports>
+                        <tr
+                          *ngFor="
+                            let report of reports
+                              | paginate
+                                : {
+                                    id: 'cases',
+                                    itemsPerPage: pageSize,
+                                    currentPage: currentPage,
+                                    totalItems: totalReports
+                                  }
+                          "
+                          (click)="navigateToEndorseEvidences(report.report_id)"
+                        >
+                          <td *ngIf="citizens">
+                            {{ getCitizenName(report.citizen_id) }}
+                          </td>
+                          <td class="border border-zinc-300 p-2">{{ report.report_id }}</td>
+                          <td class="border border-zinc-300 p-2">{{ report.subcategory_name }}</td>
+                          <td class="border border-zinc-300 p-2">{{ report.reported_date | date }}</td>
+                          <!-- <div *ngIf="!report.is_spam; else spamReports"> -->
+                            <td  
+                            *ngIf="!report.is_spam; else spamReports"
+                            class="border border-zinc-300 p-2" 
+                            style="color: #00c900">For Endorse</td>
+                          <!-- </div> -->
+                          <ng-template #spamReports>
+                            <td class="border border-zinc-300 p-2" style="color: red;">Marked as Spam</td>
+                          </ng-template>
+                          <!-- <td
+                            class="icon"
+                            (click)="deleteReport(report.report_id); $event.stopPropagation()"
+                          >
+                            <img src="assets/delete.svg" />
+                          </td> -->
+    
+                          <td  class="border border-zinc-300 p-2">
+                                  
+                            <!-- <button (click)="editCitizen(report)" class="action-btn edit">✏️</button> -->
+                            <button type="button" class="spam-button" (click)="markAsSpam(report.report_id)">
+                              SPAM
+                           </button>
+                            <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+                          </td>
+                        </tr>
+                      </ng-template>
                     </tbody>
+                    
                   </table>
-                  <pagination-controls id="citizen" (pageChange)="currentPage = $event">
+                  <pagination-controls id="cases" (pageChange)="currentPage = $event">
                   </pagination-controls>
                 </div>
               </div>

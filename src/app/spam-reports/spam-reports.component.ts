@@ -39,7 +39,7 @@ export class SpamReportsComponent implements OnInit {
   fetch_Report: any;
   citizens: any;
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   totalReports: number = 0;
   filteredReports: any[] = [];
   searchQuery = '';

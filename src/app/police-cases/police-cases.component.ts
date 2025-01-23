@@ -1,13 +1,4 @@
-<<<<<<< HEAD
 import { Component, OnInit, OnDestroy } from '@angular/core';
-=======
-<<<<<<< HEAD
-
-
-=======
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
-import { Component } from '@angular/core';
->>>>>>> 63e22e3ba3b93423a6743fa35441efcc52985767
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
@@ -48,7 +39,7 @@ export class PoliceCasesComponent implements OnInit, OnDestroy{
   fetch_Report: any;
   citizens: any;
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 8;
   totalReports: number = 0;
   filteredReports: any[] = [];
   searchQuery = '';
@@ -431,7 +422,6 @@ export class PoliceCasesComponent implements OnInit, OnDestroy{
     );
   }
 
-<<<<<<< HEAD
   // fetchAccounts(): Observable<any> {
   //     return this.accountService.getAccount().pipe(
   //       tap((response) => {
@@ -483,27 +473,6 @@ export class PoliceCasesComponent implements OnInit, OnDestroy{
     console.log('Submitting report with data:', report);
 
     // this.submitReportForm(report);
-=======
-<<<<<<< HEAD
-  fetchCases(stationId) {
-    this.caseQueueService.fetchCasesPage(stationId, this.currentPage, this.pageSize).subscribe(
-=======
-  fetchCases() {
-    this.caseService.getAllCases().subscribe(
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
-      (response) => {
-        
-          this.cases = response;
-       
-        console.log(`List of Cases Nationwide`, this.cases);
-        localStorage.setItem('cases', JSON.stringify(this.cases))
-      },
-      (error) => {
-        console.error('Error fetching cases:', error);
-        this.errorMessage = 'Failed to load cases. Please try again.';
-      }
-    );
->>>>>>> 63e22e3ba3b93423a6743fa35441efcc52985767
   }
 
   //   navigateToReportEndorse(reportIndex: number): void {

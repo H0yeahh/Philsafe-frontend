@@ -82,6 +82,11 @@ export class CaseQueueService {
       .pipe(catchError(this.handleError));
   }
 
+  getAllReportsPage(pageNum: number, pageSize): Observable<any>{
+    return this.http.get(`${this.endpoints.nationwideReports}/${pageSize}/${pageNum}`)
+    .pipe(catchError(this.handleError));
+  }
+
   getReportsAll(stationId: number) {
     // const headers = this.getHeaders();
     return this.http.get(`${this.endpoints.getStationReport}/${stationId}`)

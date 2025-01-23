@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { Router } from '@angular/router';
@@ -13,21 +13,22 @@ import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { AccountService } from '../account.service';
-import { catchError, forkJoin, map, Observable, Subscription, tap, throwError } from 'rxjs';
+import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
 import { PoliceDashbordService } from '../police-dashbord.service';
-import { environment } from '../environment';
+// import { report } from 'node:process';
 
 @Component({
-  selector: 'app-police-reports',
-  templateUrl: './police-reports.component.html',
-  styleUrl: './police-reports.component.css'
+  selector: 'app-evidences',
+  templateUrl: './evidences.component.html',
+  styleUrl: './evidences.component.css'
 })
-export class PoliceReportsComponent implements OnInit {
-  policereportsForm!: FormGroup; // Form group for report submission
+export class EvidencesComponent implements OnInit, OnDestroy{
+  evidenceForm!: FormGroup; // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  reports: any[] = [];
+  //reports: IReport[] = [];  // Array to hold fetched reports`3
+  reports: any;
   accounts: any;
   stations: IStation[] = [];
   persons: any = [];
@@ -38,7 +39,7 @@ export class PoliceReportsComponent implements OnInit {
   fetch_Report: any;
   citizens: any;
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 6;
   totalReports: number = 0;
   filteredReports: any[] = [];
   searchQuery = '';
@@ -52,15 +53,13 @@ export class PoliceReportsComponent implements OnInit {
   specificReport: any;
   personId: any;
   profilePicMap: { [key: number]: string } = {};
+  crimeId: any;currentDate: string = '';
+  currentTime: string = '';
+  intervalId: any;
+  selectedRemark: string = 'all';
   adminData: any;
   adminDetails: any;
   policePersonData: any;
-  reportSubscription: Subscription | undefined;
-  // paginatedReports: any[] = [];
-  paginatedReports: IReport [];
-
-  totalPages: number;
-  selectedRemark: string = 'all';
 
 
   constructor(
@@ -73,26 +72,36 @@ export class PoliceReportsComponent implements OnInit {
     private http: HttpClient,
     private authService: AuthService,
     private accountService: AccountService,
-    private caseService: CaseService,
-  private policeDashbordService: PoliceDashbordService,
+    private policeDashbordService: PoliceDashbordService,
+    private caseService: CaseService    
   ) {}
 
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
+
+    this.updateDateTime();
+  setInterval(() => this.updateDateTime(), 60000);
+  this.intervalId = setInterval(() => this.updateDateTime(), 1000);
     this.initializeForm();
+    //this.getOfficerStationId(); // Fetch officer's station ID on init
     this.fetchRanks();
     this.fetchStations();
+ 
+
+    // this.fetchnationwideReports();
+    //this.fetchReport();
     this.fetchCitizens();
     this.fetchPersons();
     this.fetchAccounts();
+    this.fetchAdminData;
     this.fetchAllPageReport();
 
-    
 
     const policeData = localStorage.getItem('policeDetails');
     const stationData = localStorage.getItem('stationDetails');
     const reportsData = localStorage.getItem('reports');
-
+    // const accountData = localStorage.getItem('accounts');
+    // const citizenData = localStorage.getItem('citizens');
 
     // Parse and assign the data if it exists
     if (policeData) {
@@ -101,24 +110,27 @@ export class PoliceReportsComponent implements OnInit {
 
     if (stationData) {
       this.stationDetails = JSON.parse(stationData);
+      this.fetchPageReport(this.stationDetails.station_id)
     }
 
     if (reportsData) {
-      const allReports = JSON.parse(reportsData);
+      // this.reports = JSON.parse(reportsData);
     
-      // Filter out spam reports
-      const nonSpamReports = allReports.filter(report => !report.is_spam);
+     
+      // // this.reports = this.reports.filter((report: any) => report.crime_id === null || report.crime_id === undefined);
     
-      // Assign the filtered reports to this.reports and sort them by reported_date
-      this.reports = nonSpamReports.sort((a, b) => {
-        return new Date(b.reported_date).getTime() - new Date(a.reported_date).getTime();
-      });
-    
-      console.log('Reports with no spam', this.reports);
+      // this.reports.sort((b: any, a: any) => {
+      //   return new Date(a.reported_date).getTime() - new Date(b.reported_date).getTime();
+      // });
     } else {
       console.warn('No reports data found in localStorage');
     }
+    
 
+    // if (citizenData) {
+    //   this.citizens = JSON.parse(citizenData);
+    //   console.log("Citizens:", this.citizens)
+    // }
 
     console.log('Retrieved Police Details:', this.policeDetails);
     console.log('Retrieved Station Details:', this.stationDetails);
@@ -130,17 +142,18 @@ export class PoliceReportsComponent implements OnInit {
     localStorage.removeItem('reported-victim');
     localStorage.removeItem('report-data');
 
+
     const userData = localStorage.getItem('userData');
     this.adminDetails = JSON.parse(userData);
     this.fetchAdminData(this.adminDetails.acc_id)
     console.log('Fetched Admin', this.adminDetails)
     
-   
+
   }
 
   // Define the form controls
   initializeForm(): void {
-    this.policereportsForm = this.fb.group({
+    this.evidenceForm = this.fb.group({
       reportID: ['', Validators.required],
       type: ['', Validators.required],
       complainant: ['', Validators.required],
@@ -164,120 +177,6 @@ export class PoliceReportsComponent implements OnInit {
       is_spam: ['', Validators.required],
       color: ['', Validators.required],
     });
-  }
-
-
-  getOfficerStationId(): void {
-    // Assuming the officer's details are stored in localStorage after login
-    const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-    this.stationID = officerDetails.stationId || null;
-    
-    // if (this.stationID) {
-    //   this.fetchReports(this.stationID); // Fetch reports using the station ID
-    // } else {
-    //   this.errorMessage = 'Station ID not found.';
-    // }
-  }
-
-  // // Fetch reports from the backend service
-  // fetchReports(stationId: string): void {
-  //   this.isLoading = true;  // Set loading state to true
-  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
-  //     (response) => {
-  //       if (Array.isArray(response)) {
-  //         this.reports = response;
-  //         console.log('Fetched reports:', this.reports);
-  //       } else {
-  //         this.errorMessage = 'Unexpected response from server.';
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching reports:', error);
-  //       this.errorMessage = 'Failed to load reports. Please try again.';
-  //       this.isLoading = false;
-  //     }
-  //   );
-  // }
-
-  // getOfficerStationId(): void {
-  //   // Assuming the officer's details are stored in localStorage after login
-  //   const officerDetails = JSON.parse(localStorage.getItem('officer_details') || '{}');
-  //   this.stationID = officerDetails.stationId || null;
-
-  //   if (this.stationID) {
-  //     this.fetchReports(this.stationID); // Fetch reports using the station ID
-  //   } else {
-  //     this.errorMessage = 'Station ID not found.';
-  //   }
-  // }
-
-  // // Fetch reports from the backend service
-  // fetchReports(stationId: string): void {
-  //   this.isLoading = true;  // Set loading state to true
-  //   this.caseQueueService.getReports(Number(stationId)).subscribe(
-  //     (response) => {
-  //       if (Array.isArray(response)) {
-  //         this.reports = response as IReport[];
-  //         console.log('Fetched reports:', this.reports);
-  //       } else {
-  //         this.errorMessage = 'Unexpected response from server.';
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching reports:', error);
-  //       this.errorMessage = 'Failed to load reports. Please try again.';
-  //       this.isLoading = false;
-  //     }
-  //   );
-  // }
-
-
-  // filterReports() {
-  //   if (!this.searchQuery) {
-  //     this.filteredReports = this.reports;
-  //     return;
-  //   }
-
-  //   const query = this.searchQuery.toLowerCase();
-
-  //   this.filteredReports = this.reports.filter((report) => {
-  //     const reportIdMatch = report.report_id
-  //       .toString()
-  //       .toLowerCase()
-  //       .includes(query);
-  //       const nameMatch = this.getCitizenName(report.citizen_id)
-  //       .toLowerCase()
-  //       .includes(query);
-  //     const incidentNameMatch = report.subcategory_name
-  //       .toLowerCase()
-  //       .includes(query);
-     
-
-  //     return reportIdMatch  || nameMatch || incidentNameMatch;
-  //   });
-  // }
-
-  isFieldMatched(fieldValue: any, query: string): boolean {
-    if (!query) return false;
-    const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
-    return fieldStr.includes(query.toLowerCase());
-  }
-
-  highlight(fieldValue: any): string {
-    if (!this.searchQuery) return fieldValue;
-    const fieldStr = fieldValue ? fieldValue.toString() : '';
-    const regex = new RegExp(`(${this.searchQuery})`, 'gi');
-    return fieldStr.replace(regex, '<mark>$1</mark>');
-  }
-
-  isRowMatched(report: any): boolean {
-    if (!this.searchQuery) return false;
-    const query = this.searchQuery.toLowerCase().trim();
-    return Object.values(report).some((value) =>
-      value?.toString().toLowerCase().includes(query)
-    );
   }
 
   loadUserProfile() {
@@ -309,7 +208,7 @@ export class PoliceReportsComponent implements OnInit {
   fetchAdminData(accountID: number) {
     this.policeDashbordService.getAdmin(accountID).subscribe(
       (res) => {
-        const adminData = res.find((p: { acc_id: number; }) => p.acc_id === accountID);
+        const adminData = res.find((p) => p.acc_id === accountID);
         this.adminData = adminData;
         localStorage.setItem('adminDetails', JSON.stringify(adminData));
         if (adminData) {
@@ -327,33 +226,44 @@ export class PoliceReportsComponent implements OnInit {
   }
 
 
-  // Fetch stations
-  fetchStations(): void {
-    this.jurisdictionService.getAll().subscribe(
-      (response: IStation[]) => {
-        this.stations = response;
-      },
-      (error) => {
-        console.error('Error fetching stations:', error);
-        this.errorMessage = 'Failed to load stations. Please try again.';
-      }
-    );
+  fetchPageReport(stationId: number): void {
+    this.currentPage = 1;
+    let allReports: any[] = [];
+  console.log('fetchpagereport functioning')
+    const fetchPage = (pageNumber: number) => {
+      this.caseQueueService.getReportsPage(stationId, pageNumber, this.pageSize).subscribe(
+        (response) => { 
+          console.log('Response from getreportspage', response)
+          const reports = Array.isArray(response) ? response : response.data || [];
+          allReports = [...allReports, ...reports];
+  
+      
+          if (reports.length < this.pageSize) {
+            this.reports = allReports; 
+            this.reports.sort((b, a) => {
+              return new Date(a.date_committed || a.datetime_committed).getTime() - new Date(b.date_committed || b.datetime_committed).getTime();
+            });
+            
+            console.log(`Fetched all reports for Station ${stationId}:`, this.reports);
+            localStorage.setItem('reports', JSON.stringify(this.reports));
+            this.filterReports();
+          } else {
+            // Otherwise, fetch the next page
+            fetchPage(pageNumber + 1);
+          }
+        },
+        (error) => {
+          console.error('Error fetching reports:', error);
+          this.errorMessage = 'Failed to load all reports. Please try again.';
+        }
+      );
+    };
+  
+    // Start fetching from the first page
+    fetchPage(this.currentPage);
   }
 
-  // fetchAllReports(): void {
-  //   this.caseService.getAllReports().subscribe(
-  //     (response: IReport[]) => {
-  //       this.reports = response;
-  //       this.filterReports
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching reports:', error);
-  //       this.errorMessage = 'Failed to load reports. Please try again.';
-  //     }
-  //   );
-  // }
 
-  
   fetchAllPageReport(): void {
     this.currentPage = 1;
     let allReports: any[] = [];
@@ -392,6 +302,52 @@ export class PoliceReportsComponent implements OnInit {
   }
 
 
+  updateDateTime(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.currentTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true // Use 12-hour format
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId); // Clear the interval when the component is destroyed
+    }
+  }
+  
+  // filterReports() {
+  //   if (!this.searchQuery) {
+  //     this.filteredReports = this.reports;
+  //     return;
+  //   }
+
+  //   const query = this.searchQuery.toLowerCase();
+
+  //   this.filteredReports = this.reports.filter((report) => {
+  //     const reportIdMatch = report.report_id
+  //       .toString()
+  //       .toLowerCase()
+  //       .includes(query);
+  //       const nameMatch = this.getCitizenName(report.citizen_id)
+  //       .toLowerCase()
+  //       .includes(query);
+  //     const incidentNameMatch = report.subcategory_name
+  //       .toLowerCase()
+  //       .includes(query);
+     
+
+  //     return reportIdMatch  || nameMatch || incidentNameMatch;
+  //   });
+  // }
+
   filterReportsByRemark() {
     if (this.selectedRemark === 'disabled') {
       return;
@@ -427,13 +383,46 @@ export class PoliceReportsComponent implements OnInit {
     );
   }
 
+  
+  isFieldMatched(fieldValue: any, query: string): boolean {
+    if (!query) return false;
+    const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
+    return fieldStr.includes(query.toLowerCase());
+  }
 
+  highlight(fieldValue: any): string {
+    if (!this.searchQuery) return fieldValue;
+    const fieldStr = fieldValue ? fieldValue.toString() : '';
+    const regex = new RegExp(`(${this.searchQuery})`, 'gi');
+    return fieldStr.replace(regex, '<mark>$1</mark>');
+  }
 
+  isRowMatched(report: any): boolean {
+    if (!this.searchQuery) return false;
+    const query = this.searchQuery.toLowerCase().trim();
+    return Object.values(report).some((value) =>
+      value?.toString().toLowerCase().includes(query)
+    );
+  }
+
+  // Fetch stations
+  fetchStations(): void {
+    this.jurisdictionService.getAll().subscribe(
+      (response: IStation[]) => {
+        this.stations = response;
+      },
+      (error) => {
+        console.error('Error fetching stations:', error);
+        this.errorMessage = 'Failed to load stations. Please try again.';
+      }
+    );
+  }
 
   fetchCitizens(): void {
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         this.citizens = response;
+        // localStorage.setItem('citizens', JSON.stringify(this.citizens));
         console.log('Fetched citizens:', this.citizens);
       },
       (error) => {
@@ -493,69 +482,10 @@ export class PoliceReportsComponent implements OnInit {
   }
 
 
-  // Submit the form
-  onSubmit(): void {
-    if (this.policereportsForm.invalid) {
-      alert('Please fill all required fields correctly.');
-      return;
-    }
-
-    this.isLoading = true;
-    const formData = this.policereportsForm.value;
-
-    const report: IReport = {
-      reportBody: formData.reportBody,
-      citizen_id: formData.citizenID,
-      reportSubCategoryID: formData.reportSubCategoryID,
-      locationID: formData.locationID || null, // Handle optional fields
-      stationID: formData.stationID,
-      crimeID: formData.crimeID || null, // Handle optional fields
-      incidentDate: formData.incidentDate || null, // Handle optional fields
-      blotterNum: formData.blotterNum,
-      hasAccount: formData.hasAccount,
-      eSignature: formData.eSignature,
-      report_id: 0, // This will be set by the server
-      type: formData.type,
-      complainant: formData.complainant,
-      reported_date: formData.reported_date,
-      ReportBody: formData.reportBody, // Use reportBody from form
-      subcategory_name: formData.subcategory_name,
-      reportSubCategory: formData.reportSubCategory,
-      ReportSubCategoryId: formData.reportSubCategoryID.toString(),
-      DateTimeReportedDate: new Date().toISOString(),
-      HasAccount: formData.hasAccount.toString(),
-      status: formData.staus,
-      is_spam: formData.is_spam,
-      color: formData.color,
-    };
-
-    console.log('Submitting report with data:', report);
-  }
-
-  
-  markAsSpam(repId: any): void {
-    if (confirm('Are you sure you want to spam this report?')) {
-      const apiUrl = (`${environment.ipAddUrl}api/report/updatespam/${repId}`);
-
-      this.http.put(apiUrl, {}).subscribe(
-        () => {
-          this.successMessage = 'Report was spammed successfully.';
-          this.reports = this.reports.filter((r) => r.report_id !== repId);
-          this.filteredReports = this.filteredReports.filter((reports) => repId.reportId !== repId);
-        },
-        (error) => {
-          console.error('Error spamming the report:', error);
-          this.errorMessage = 'Failed to spam the report. Please try again.';
-        }
-      );
-    }
-  }
-
-
-  navigateToReportEndorse(reportId: number): void {
+  navigateToEndorseEvidences(reportId: number): void {
     if (reportId) {
       console.log('Navigating with Report ID:', reportId);
-      this.router.navigate(['/report-endorse'], {
+      this.router.navigate(['/endorse-evidences'], {
         queryParams: { reportID: reportId },
       });
     } else {
@@ -565,7 +495,7 @@ export class PoliceReportsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/manage-police']);
+    this.router.navigate(['/dashboard']);
   }
 
   clearSession() {
@@ -590,16 +520,20 @@ export class PoliceReportsComponent implements OnInit {
     );
   }
 
+  
 
-  navigateToEndorseEvidences(reportId: number): void {
-    if (reportId) {
-      console.log('Navigating with Report ID:', reportId);
-      this.router.navigate(['/endorse-evidences'], {
-        queryParams: { reportID: reportId },
-      });
+  deleteReport(reportId: number) {
+    const userConfirmed = window.confirm(`Are you sure you want to delete the report?`);
+  
+    if (userConfirmed) {
+      this.caseQueueService.spamReport(reportId).subscribe(
+        () => {
+          alert(`Report ${reportId} has been successfully deleted.`);
+          window.location.reload(); 
+        }
+      );
     } else {
-      console.error('report ID not found for the selected report.');
-      alert('Invalid report id. Please select a valid report.');
+      console.log('Officer deletion was canceled');
     }
   }
 
