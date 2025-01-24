@@ -41,37 +41,6 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
       (data) => {
         console.log(data);
 
-      //   if (data && data.role) {
-      //     console.log('Role before storing:', data.role); // Debug log
-
-      //     // Check the role
-      //     if (data.role === 'Police') {
-      //       localStorage.setItem('userData', JSON.stringify(data));
-      //       localStorage.setItem('role', data.role);
-      //       console.log('Role stored in login:', localStorage.getItem('role')); 
-      //       console.log('Data stored as userData:', localStorage.getItem('userData'));
-
-      //       alert('Login successful');
-      //       resolve(data);
-      //       this.accountData = data;
-         
-      //     } else if (data.role === 'Admin') {
-      //       localStorage.setItem('userData', JSON.stringify(data));
-      //       localStorage.setItem('role', data.role);
-      //       console.log('Role stored in login:', localStorage.getItem('role')); 
-      //       console.log('Data stored as userData:', localStorage.getItem('userData'));
-
-      //       alert('Login successful');
-      //       resolve(data);
-      //       this.accountData = data;
-      //     }
-            
-      //   } else {
-      //     console.error('Unauthorized: Role is not Police');
-      //     alert('Login data is invalid');
-      //     reject(new Error('Login data is invalid'));
-      //   }
-      // },
       if (data && data.role) {
         const validRoles = ['Police', 'Admin'];
         if (validRoles.includes(data.role)) {
@@ -117,47 +86,16 @@ identifySignInType(input: string): string {
   }
 }
 
-// original code for async onSubmit
-//   async onSubmit() {
-//     if (this.loginForm.valid) {
-//       const{username,password}=this.loginForm.value
-//       const loginReq = await this.submitLogin({email:username, password})
-//       console.log(loginReq)
-//       this.authService.setAuthentication({token:'zdfdfzfdf', role:'admin'})
-//     }
-//   }
-// }
-
-// new code for async onSubmit
-// async onSubmit() {
-//   if (this.loginForm.valid) {
-//     const { username, password } = this.loginForm.value;
-//     const signInType = this.identifySignInType(username); // Identify sign-in type
-//     const loginReq: Account = await this.submitLogin({ email: username, password });
-//     console.log(loginReq);
-//     this.authService.setAuthentication({ token: 'zdfdfzfd', role: 'admin' });
-//     if(loginReq.role==='Admin'){
-//       this.router.navigate(['/manage-station'])
-//     }
-//   }
-// }
-// }
+token: string = 'zdfdfzfdf';
 
 
 async onSubmit() {
   if (this.loginForm.valid) {
     const { username, password } = this.loginForm.value;
     const signInType = this.identifySignInType(username); // Identify sign-in type
-    // const loginReq: Account = await this.submitLogin({ email: username, password });
-    // console.log(loginReq);
     await this.submitLogin({ email: username, password });
-    // this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'admin' });
-    this.authService.setAuthentication({ token: 'zdfdfzfdf', role: 'Admin' });
-    // if(loginReq.role==='Admin'){
-    //   this.router.navigate(['/manage-station'])
-    // } else if(loginReq.role==='Chief'){
-    //   this.router.navigate(['/station-case-queue'])
-    // }
+    this.authService.setAuthentication({ token: this.token, role: 'Admin' });
+   
     if (this.accountData.role === 'Admin') {
       this.router.navigate(['/dashboard']);
       console.log("Admin logs in");
@@ -172,3 +110,5 @@ async onSubmit() {
   }
 }
 }
+
+

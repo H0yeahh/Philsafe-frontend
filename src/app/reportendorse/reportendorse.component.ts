@@ -413,7 +413,7 @@ export class ReportEndorseComponent implements OnInit {
       (response) => {
         this.evidences = response;
         console.log('Fetched Evidences', this.evidences)
-        // console.log('Fetched persons:', this.persons);
+       
       },
       (error) => {
         console.error('Error fetching evidences:', error);

@@ -242,8 +242,7 @@ export class StationPoliceAccountsComponent implements OnInit {
     async onSubmit() {
 
    
-        this.errorMessage = ''; // Clear previous error message
-        // // Log the validity of each form control
+        this.errorMessage = ''; 
         Object.keys(this.addPoliceForm.controls).forEach(key => {
             const controlErrors = this.addPoliceForm.get(key)?.errors;
             if (controlErrors != null) {
@@ -253,7 +252,6 @@ export class StationPoliceAccountsComponent implements OnInit {
 
         if (this.addPoliceForm.valid && this.passwordValid) {
             const accountData = this.addPoliceForm.value; 
-            // accountData.role = 'Admin';
             const ids = {   
                 homeAddressId: 0,
                 workAddressId: 0,
@@ -347,13 +345,6 @@ export class StationPoliceAccountsComponent implements OnInit {
             }
 
 
-
-            // const accountRequest: any = await this.submitAccount(accountReqData);
-            // console.log('Account Request data', accountRequest)
-            // if (accountRequest.code === 200) {
-            //     this.router.navigate(['/login'])
-            // }
-
             const formData = new FormData();
             formData.append('firstName', accountData.firstName);
             formData.append('middleName', accountData.middleName);
@@ -363,20 +354,16 @@ export class StationPoliceAccountsComponent implements OnInit {
             formData.append('contactNum', accountData.contactNum);
             formData.append('civilStatus', accountData.civilStatus);
             formData.append('sex', accountData.gender);
-            // formData.append('role', 'Police');
             formData.append ('role', accountData.role); 
             formData.append('homeAddressId', ids.homeAddressId.toString());
             formData.append('workAddressId', ids.workAddressId.toString());
             formData.append('personId', ids.personId.toString());
- 
             formData.append('unit', policeReqData.unit.toString());
             formData.append('badgeNumber', policeReqData.badgeNumber.toString());
-            // formData.append('badgeNumber', policeReqData.badgeNumber.toString());
             formData.append ('PoliceRole', policeReqData.role);
             formData.append('debutDate',policeReqData.debutDate);
             formData.append('stationId', accountData.stationId);
             formData.append('rankId', accountData.rank_id);
-            // formData.append('pfpId', ids.pfpId.toString());
             formData.append('createdBy', policeReqData.createdBy.toString());
             formData.append('datetimeCreated', policeReqData.datetimeCreated);
             formData.append('personId', ids.personId.toString());
@@ -399,31 +386,6 @@ export class StationPoliceAccountsComponent implements OnInit {
                     if (accountRequest.code === 200) {
                         this.router.navigate(['/login']);
                     }
-
-            // if (this.selectedPhoto) {
-            //     const fileReader = new FileReader();
-            //     fileReader.onload = async () => {
-            //         const binary = fileReader.result as ArrayBuffer;
-                    
-            //         // Ensure selectedPhoto is not null before accessing its properties
-            //         if (this.selectedPhoto) {
-            //             formData.append('profilePic', new Blob([binary], { type: this.selectedPhoto.type }), this.selectedPhoto.name);
-            //         }
-            
-            //         // Submit account with FormData
-            //         const accountRequest: any = await this.submitAccount(formData);
-            //         if (accountRequest.code === 200) {
-            //             this.router.navigate(['/login']);
-            //         }
-            //     };
-            //     fileReader.readAsArrayBuffer(this.selectedPhoto); // Convert to binary
-            // } else {
-            //     // If no profile pic, submit the form directly
-            //     const accountRequest: any = await this.submitAccount(formData);
-            //     if (accountRequest.code === 200) {
-            //         this.router.navigate(['/login']);
-            //     }
-            // }
         } else {
             this.errorMessage = 'Please fill in all required fields correctly.'; // Set error message
             console.log('Form is invalid', this.addPoliceForm.errors); // Log form errors

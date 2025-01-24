@@ -161,6 +161,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       this.createWeeklyChart();
     } else if (timePeriod === 'monthly') {
       this.createMonthlyChart();
+    } else if (timePeriod === 'annual') {
+      this.createAnnualChart();
     }
   }
 
@@ -199,6 +201,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
               // Create a URL for the Blob
               this.avatarUrl = URL.createObjectURL(profilePicBlob);
               console.log('PROFILE PIC URL', this.avatarUrl);
+
           } else {
               console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
               this.avatarUrl = 'assets/user-default.jpg';
@@ -282,6 +285,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     }[] = [];
 
     const monthlyCounts: { [month: string]: number } = {};
+    const annualCounts: { [year: string]: number } = {};
 
     this.reports.forEach((report) => {
       const reportedDate = new Date(report.reported_date);
@@ -308,7 +312,12 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
         month: 'short',
       })}-${reportedDate.getFullYear()}`;
       monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
+
+      const yearKey = reportedDate.getFullYear().toString();
+      annualCounts[yearKey] = (annualCounts[yearKey] || 0) + 1;
     });
+
+    
 
     // Sort weeks by start date
     weekData.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
@@ -321,16 +330,13 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
     console.log('Weekly Report Counts:', weeklyCounts);
     console.log('Monthly Report Counts:', monthlyCounts);
+    console.log('Annual Report Counts:', annualCounts);
 
-    return { weeklyCounts, monthlyCounts };
+    return { weeklyCounts, monthlyCounts, annualCounts };
   }
 
   calculateReportsAverage() {
-    // if (!this.reports || !this.reports.length) {
-    //     console.warn('No reports to calculate averages.');
-    //     return;
-    // }
-
+ 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
 
@@ -462,6 +468,50 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
     this.renderChart(chartConfig);
   }
+
+
+  createAnnualChart() {
+    const counts = this.calculateReportsCount();
+    if (!counts || !counts.annualCounts) {
+      console.warn('No annual data available');
+      return;
+    }
+  
+    const annualData = Object.values(counts.annualCounts);
+    const annualLabels = Object.keys(counts.annualCounts);
+  
+    const chartConfig: ChartConfiguration<'bar', number[], string> = {
+      type: 'bar',
+      data: {
+        labels: annualLabels,
+        datasets: [
+          {
+            label: 'Annual Reports',
+            data: annualData,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            beginAtZero: true,
+          },
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    };
+  
+    this.renderChart(chartConfig);
+    console.log('Annual Chart Generated');
+  }
+  
 
   renderChart(chartConfig: ChartConfiguration) {
     const canvas = document.getElementById('casesGraph') as HTMLCanvasElement;

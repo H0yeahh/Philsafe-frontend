@@ -197,7 +197,6 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
       );
     };
   
-    // Start fetching from the first page
     fetchPage(this.currentPage);
   }
 

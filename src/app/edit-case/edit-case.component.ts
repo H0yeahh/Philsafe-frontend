@@ -390,6 +390,8 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     this.caseQueueService.sendBlotter(reportId, crimeId).subscribe(
       (res) => {
         console.log('Ticket Blotter successfully sent');
+        alert('Ticket Blotter successfully sent');
+        this.router.navigate[('/edit-case')]
       },
       (err) => {
         console.error('Failed to send ticket blotter', err);
