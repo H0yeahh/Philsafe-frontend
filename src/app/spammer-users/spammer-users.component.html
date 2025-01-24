@@ -33,12 +33,18 @@
               <span>REPORTS</span>
             </a>
           </li>
+          <!-- <li>
+            <a href="/evidences" class="nav-link">
+              <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
+              <span>EVIDENCES</span>
+            </a>
+          </li>
           <li>
               <a href="/police-cases" class="nav-link">
                 <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
                 <span>CASES</span>
               </a>
-            </li>
+            </li> -->
           <li>
               <a routerLink="/manage-users" class="nav-link">
                   <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
@@ -51,12 +57,6 @@
                 <span>SPAMMED USER</span>
             </a>
         </li>
-          <li>
-              <a routerLink="/ticket-request" class="nav-link">
-                  <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
-                  <span>TICKET REQUESTS</span>
-              </a>
-          </li>
           <li>
               <a routerLink="/manage-station" class="nav-link">
                   <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
@@ -74,9 +74,7 @@
         <button type="button" class="logout-button mt-auto" (click)="logout()">LOG OUT</button>            
       </aside>
   
-      <!-- Main Content -->
       <div class="main-content">
-        <!-- Top Statistics -->
         <div class="top-stats grid grid-cols-3 gap-4">
           <div class="stat-item bg-blue-100 rounded-lg p-4 text-center">
             <h2 class="text-4xl font-bold text-primary">{{ totalUsers }}</h2>
@@ -86,25 +84,14 @@
   
         <!-- User Table -->
         <div class="table-container mt-8">
-          <!-- <div class="table-controls flex justify-between items-center mb-4"> -->
             <form [formGroup]="spammerUserForm" class="filter" (ngSubmit)="onSubmit()">
               <!-- <input type="text" placeholder="Search user" formControlName="search" class="search-bar" > -->
-              <input
+              <!-- <input
               type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterUsers()"
                 placeholder="Search"
                 class="search-input"
-              />
+              /> -->
             </form>
-            <!-- <div class="pagination flex items-center">
-              <label for="entries">Display</label>
-              <select id="entries" formControlName="entries">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-              </select> -->
-              <!-- <span>/{{ totalUsers }}</span> -->
-            <!-- </div>
-          </div> -->
           <table class="user-table w-full border-collapse">
             <thead>
               <tr>
@@ -116,19 +103,25 @@
               </tr>
             </thead>
             <tbody>
-                  <tr *ngFor="let user of citizen; let i = index">
+              <tr *ngFor="let user of citizen | paginate: { 
+                id: 'citizen', 
+                itemsPerPage: pageSize, 
+                currentPage: currentPage, 
+                totalItems: totalUsers 
+              }; let i = index"
+    [id]="'citizen-' + user.citizen_id">
                     <td  class="border border-zinc-300 p-2">{{ user.citizen_id }}</td>
                     <td  class="border border-zinc-300 p-2">{{ user.firstname }} {{ user.lastname }}</td>
                     <td  class="border border-zinc-300 p-2">{{ user.civil_status }}</td>
                     <td  class="border border-zinc-300 p-2">{{ user.sex }}</td>
                     <td  class="border border-zinc-300 p-2">
-                  <!-- <button (click)="editCitizen(user)" class="action-btn edit">✏️</button> -->
                   <button (click)="reinstateCitizen(+user.citizen_id)" class="action-btn delete">REINSTATE USER</button>
-                  <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
                 </td>
               </tr>
             </tbody>
           </table>
+          <pagination-controls id="citizen" (pageChange)="currentPage = $event">
+          </pagination-controls>
         </div>
       </div>
     </div>

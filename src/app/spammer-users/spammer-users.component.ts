@@ -41,6 +41,8 @@ export class SpammerUsersComponent implements OnInit {
   Users: any;
   totalUsers: number = 0;
   report: IReport[];
+  currentPage: number = 1;
+  pageSize: number = 10;
 
   constructor(
     private fb: FormBuilder,

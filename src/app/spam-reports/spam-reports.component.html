@@ -1,13 +1,15 @@
-<div class="container">
-    <div class="emergency-banner">
-        In case of emergencies, please dial your local emergency services number
-    </div>
-    <div class="flex h-screen">
-        <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-            <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>
-            <div class="p-4 text-center">
-                <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-                <div *ngIf="adminDetails; else loadingTemplate">
+         <div class="container">
+            <div class="emergency-banner">
+              In case of emergencies, please dial your local emergency services number
+            </div>
+            <div class="flex h-screen">
+        
+              <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
+                <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>
+                <div class="p-4 text-center">
+                  <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
+        
+                  <div *ngIf="adminDetails; else loadingTemplate">
                     <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
                       {{ adminDetails?.last_name }} </h2>
                   </div>
@@ -17,109 +19,118 @@
                   </ng-template>
                   <p class="text-sm text-zinc-600">Admin</p>
                 </div>
-            <nav class="mt-4">
-                <ul class="list-none p-0">
+                <nav class="mt-4">
+                  <ul class="list-none p-0">
                     <li>
-                        <a routerLink="/dashboard" class="nav-link">
-                            <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                            <span>DASHBOARD</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/police-reports" class="nav-link">
-                          <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                          <span>REPORTs</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/police-cases" class="nav-link">
-                          <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                          <span>CASES</span>
-                        </a>
-                      </li>
-                    <li>
-                        <a routerLink="/manage-users" class="nav-link">
-                            <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
-                            <span>MANAGE USER</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a routerLink="/spammer-users" class="nav-link">
-                            <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
-                            <span>SPAMMED USER</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a routerLink="/ticket-request" class="nav-link">
-                            <img src="assets/ticket request.svg" alt="Ticket Request Icon" class="w-6 h-6 mr-2">
-                            <span>TICKET REQUESTS</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a routerLink="/manage-station" class="nav-link">
-                            <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
-                            <span>MANAGE STATION</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a routerLink="/station-crime-map" class="nav-link">
-                            <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                            <span>CRIME MAP</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <button type="button" class="logout-button mt-auto" routerLink="/login">LOG OUT</button>
-        </aside>
-
-
-        <div class="main-content">
-            <div class="header">
-                <div class="header-title">
-                    <h1>SPAM REPORTS</h1>
+                      <a routerLink="/dashboard" class="nav-link">
+                          <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                          <span>DASHBOARD</span>
+                      </a>
+                  </li>
+                  <li>
+                    <a href="/police-reports" class="nav-link">
+                      <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                      <span>REPORTS</span>
+                    </a>
+                  </li>
+                  <!-- <li>
+                    <a href="/evidences" class="nav-link">
+                      <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
+                      <span>EVIDENCES</span>
+                    </a>
+                  </li>
+                  <li>
+                      <a href="/police-cases" class="nav-link">
+                        <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+                        <span>CASES</span>
+                      </a>
+                    </li> -->
+                  <li>
+                      <a routerLink="/manage-users" class="nav-link">
+                          <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
+                          <span>MANAGE USER</span>
+                      </a>
+                  </li>
+                  <li>
+                    <a routerLink="/spammer-users" class="nav-link">
+                        <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
+                        <span>SPAMMED USER</span>
+                    </a>
+                </li>
+                  <li>
+                      <a routerLink="/manage-station" class="nav-link">
+                          <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
+                          <span>MANAGE STATION</span>
+                      </a>
+                  </li>
+                  <li>
+                      <a routerLink="/station-crime-map" class="nav-link">
+                          <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                          <span>CRIME MAP</span>
+                      </a>
+                  </li>
+                  </ul>
+                </nav>
+                <button type="button" class="logout-button mt-auto" (click)="logout()">LOG OUT</button>            
+              </aside>
+          
+              <!-- Main Content -->
+              <div class="main-content">
+                <div class="new-reports-container">
+                    <a href="/police-reports" class="new-reports-link">
+                        ALL REPORTS
+                        <span class="new-reports-badge"></span>
+                    </a>
                 </div>
-                <div class="header-info">
-                    <p></p>
-                    <p></p>
-                    <div class="new-reports-container">
-                        <a href="/police-reports" class="new-reports-link">
-                            All REPORTS
-                            <span class="new-reports-badge"></span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <main class="main-content">
-                <header class="header"></header>
-        
-                <section class="new-reports">
-                    <form [formGroup]="spamreportsForm" (ngSubmit)="onSubmit()">
-                        <table class="reports-table">
-                            <thead>
-                                <tr>
-                                    <th>Report ID</th>
-                                    <th>Incident Type</th>
-                                    <th>Complainant</th>
-                                    <th>Date Received</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let report of reports">
-                                    <td>{{ report.report_id }}</td>
-                                    <td>{{ report.subcategory_name }}</td>
-                                    <td>{{ report.citizen_id }}</td>
-                                    <td>{{ report.reported_date }}</td>
-                                    <td>
-                                        <!-- Action Button to Mark as Spam -->
-                                        <button type="button" class="spam-button" (click)="activateReport(report.report_id)">
-                                           ACTIVATE
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+          
+                <!-- User Table -->
+                <div class="table-container mt-8">
+                  <!-- <div class="table-controls flex justify-between items-center mb-4"> -->
+                    <form [formGroup]="spamreportsForm" class="filter" (ngSubmit)="onSubmit()">
+                      <!-- <input type="text" placeholder="Search user" formControlName="search" class="search-bar" > -->
+                      <!-- <input
+                      type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterUsers()"
+                        placeholder="Search"
+                        class="search-input"
+                      /> -->
                     </form>
-                </section>
-            </main>
-        </div>
+                  <table class="user-table w-full border-collapse">
+                    <thead>
+                      <tr>
+                        <th class="border border-zinc-300 p-2">REPORT ID</th>
+                        <th class="border border-zinc-300 p-2">INCIDENT TYPE</th>
+                        <th class="border border-zinc-300 p-2">COMPLAINANT</th>
+                        <th class="border border-zinc-300 p-2">DATE RECIEVED</th>
+                        <th class="border border-zinc-300 p-2">ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let report of reports | paginate: { 
+                        id: 'citizen', 
+                        itemsPerPage: pageSize, 
+                        currentPage: currentPage, 
+                        totalItems: totalReports 
+                      }; let i = index"
+            [id]="'citizen-' + report.report_id">
+                            <td  class="border border-zinc-300 p-2">{{ report.report_id }}</td>
+                            <td  class="border border-zinc-300 p-2">{{ report.subcategory_name }}</td>
+                            <td  class="border border-zinc-300 p-2">{{ report.citizen_id }}</td>
+                            <td  class="border border-zinc-300 p-2">{{ report.reported_date }}</td>
+                            <td  class="border border-zinc-300 p-2">
+                          <!-- <button (click)="editCitizen(report)" class="action-btn edit">✏️</button> -->
+                          <button type="button" class="spam-button" (click)="activateReport(report.report_id)">
+                            ACTIVATE
+                         </button>
+                          <!-- <button (click)="verifyCitizen(user)" class="action-btn reinstate">VERIFY</button> -->
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pagination-controls id="citizen" (pageChange)="currentPage = $event">
+                  </pagination-controls>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        
