@@ -48,6 +48,14 @@ export class EndorsereportService {
     crimeReports: (crimeId: number) => `${this.apiUrl}/api/report/retrieve/case/${crimeId}`,
   };
 
+  private token = localStorage.getItem('token') ?? '';
+
+  private auth = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': this.token
+    });
+ 
+
   constructor(private http: HttpClient) {}
 
   // Helper function to get the session token

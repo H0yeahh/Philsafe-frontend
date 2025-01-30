@@ -1,4 +1,5 @@
 export interface Account {
+    userName: string;
     acc_id: number;
     email: string;
     tel_num: string | null;
@@ -13,4 +14,5 @@ export interface Account {
     birth_date: string;
     profile_pic_url : string;
     role: string;
+    token?: string;
 }

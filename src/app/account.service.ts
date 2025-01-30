@@ -79,6 +79,12 @@ export class AccountService {
  private accountURL = `${this.base}api/account/signup`;
  private personURL = `${this.base}api/person`;
  private locationURL = `${this.base}api/location/create`;
+ private token = localStorage.getItem('token') ?? '';
+
+  private auth = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': this.token
+    });
  
 
   constructor(private http: HttpClient) {
@@ -86,39 +92,40 @@ export class AccountService {
   }
 
   getPersons(): Observable<any> {
-    return this.http.get(`${this.base}/api/person/retrieve/all`).pipe(
+    return this.http.get(`${this.base}/api/person/retrieve/all`, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
   
   getAccount(): Observable<any> {
-    return this.http.get<any>(`${this.base}api/account`).pipe(
+    
+    return this.http.get<any>(`${this.base}api/account`, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
 
 
   postAccount(data: IAccount): Observable<any> {
-    return this.http.post(this.accountURL, data).pipe(
+    return this.http.post(this.accountURL, data , {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
   
   postPerson(data: IPerson): Observable<any> {
-    return this.http.post(this.personURL, data).pipe(
+    return this.http.post(this.personURL, data, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
 
   postLocation(zipCode: number, data: ILocation): Observable<any> {
     const url = `${this.locationURL}${zipCode}`;
-    return this.http.post(url, data, this.options ).pipe(
+    return this.http.post(url, data, {responseType: 'json', headers: this.auth } ).pipe(
       catchError(this.handleError)
     );
   }
 
   createOrRetrievePerson(personData: IPerson): Observable<any> {
-    return this.http.post(this.personURL, personData, { observe: 'response' })
+    return this.http.post(this.personURL, personData, { observe: 'response', headers: this.auth })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -135,7 +142,7 @@ export class AccountService {
   }
 
   createOrRetrieveLocation(locationData: ILocation, zipCode: number): Observable<any> {
-    return this.http.post(`${this.locationURL}${zipCode}`, locationData, { observe: 'response' })
+    return this.http.post(`${this.locationURL}${zipCode}`, locationData, { observe: 'response', headers: this.auth })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -152,7 +159,7 @@ export class AccountService {
   }
 
   getProfPic(accountId: number): Observable<Blob> {
-    return this.http.get(`${this.base}api/account/get/profilepic/${accountId}`, { responseType: 'blob' })
+    return this.http.get(`${this.base}api/account/get/profilepic/${accountId}`, { responseType: 'blob', headers: this.auth })
         .pipe(
             tap((response: any) => {
                 console.log('Response from getProfPic:', response);
@@ -165,14 +172,14 @@ export class AccountService {
 }
   getPersonById(id: number): Observable<IPerson> {
     const url = `${this.personURL}/retrieve/${id}`;
-    return this.http.get<IPerson>(url).pipe(
+    return this.http.get<IPerson>(url, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
 
   getLocationById(id: number): Observable<any> {
     const url = `${this.locationURL}/retrieve/${id}`;
-    return this.http.get<Location>(url).pipe(
+    return this.http.get<Location>(url, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
@@ -188,99 +195,4 @@ export class AccountService {
   }
 
 
-  // register(data: IPolice): Observable<any> {
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       'Content-Type': 'application/json',
-  //       // 'Content-Type': 'text/pain',
-  //     })
-  //   };
-
-  //   return this.http.post<any>(this.apiUrl, data, httpOptions)
-  //     .pipe(
-  //       catchError(this.handleError)
-  //     );
-  // }
-
-  // // Function to get the list of ranks
-  // getRanks(): Observable<IRank[]> {
-  //   return this.http.get<IRank[]>(this.ranksApiUrl)
-  //     .pipe(
-  //       catchError(this.handleError)
-  //     );
-  // }
-
-  // // Upload profile picture
-  // // uploadPicture(file: FormData): Observable<IPictureUploadResponse> {
-  // //   return this.http.post<IPictureUploadResponse>(this.pictureUploadUrl, file).pipe(
-  // //     tap(response => console.log('Picture upload response:', response)),
-  // //     catchError(this.handleError)
-  // //   );
-  // // }
-
-  // // Save police data
-  // savePoliceData(policeData: IPolice): Observable<any> {
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       'Content-Type': 'application/json'
-  //     })
-  //   };
-
-  //   return this.http.post(this.apiUrl, policeData, httpOptions).pipe(
-  //     tap(response => console.log('Save police response:', response)),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // // Update police data
-  // updatePoliceData(id: number, policeData: IPolice): Observable<any> {
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       'Content-Type': 'application/json'
-  //     })
-  //   };
-
-  //   return this.http.put(`${this.apiUrl}/${id}`, policeData, httpOptions).pipe(
-  //     tap(response => console.log(`Update police ${id} response:`, response)),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // // Get all police data
-  // getAllPoliceData(): Observable<IPolice[]> {
-  //   return this.http.get<IPolice[]>(this.apiUrl).pipe(
-  //     tap(response => console.log('Get all police response:', response)),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // // Delete police data
-  // deletePolice(id: number): Observable<any> {
-  //   return this.http.delete(`${this.apiUrl}/${id}`).pipe(
-  //     tap(response => console.log(`Delete police ${id} response:`, response)),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // // Get police by ID
-  // getPoliceById(id: number): Observable<IPolice> {
-  //   return this.http.get<IPolice>(`${this.apiUrl}/${id}`).pipe(
-  //     tap(response => console.log(`Get police ${id} response:`, response)),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // // Error handling function
-  // private handleError(error: HttpErrorResponse) {
-  //   let errorMessage = 'An unknown error occurred!';
-  //   if (error.error instanceof ErrorEvent) {
-  //     // Client-side or network error
-  //     errorMessage = `Error: ${error.error.message}`;
-  //   } else {
-  //     // Backend returned an unsuccessful response code
-  //     errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-  //   }
-  //   console.error(errorMessage);
-  //   return throwError(errorMessage);
-  // }
 }

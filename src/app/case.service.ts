@@ -82,12 +82,16 @@ export class CaseService {
     getAllSpammers: `${this.baseUrl}citizen/collect/spammers/all`,
     getAllSpammedReports: `${this.baseUrl}report/retrieve/archivedReports`,
     getAllReportss: `${this.baseUrl}report/retrieve/nationwide`,
-    
-
-
-    submitReport: `${this.baseUrl}report/submit`, // Add the endpoint for submitting reports
-    
+    submitReport: `${this.baseUrl}report/submit`, // Add the endpoint for submitting report
   };
+
+  private token = localStorage.getItem('token') ?? '';
+
+  private auth = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': this.token
+    });
+ 
 
   constructor(private http: HttpClient) {}
 
@@ -106,9 +110,9 @@ export class CaseService {
 
   // Fetch all citizen reports
   getAll(): Observable<IReport[]> {  // Strongly typed response
-    const headers = this.getHeaders();  // Add headers with session token
     
-    return this.http.get<IReport[]>(this.endpoints.getAll, { headers }).pipe(
+    
+    return this.http.get<IReport[]>(this.endpoints.getAll, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
@@ -124,74 +128,69 @@ export class CaseService {
   // }
 
   getTotalUsers(): Observable<number> {
-    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/citizens/all`).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/citizens/all`, {headers: this.auth}).pipe(
       map(users => users.length)
     );
   }
 
   getTotalSpammers(): Observable<number> {
-    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/spammers/all`).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/spammers/all`, {headers: this.auth}).pipe(
       map(users => users.length)
     );
   }
 
-  getAllCases(): Observable<any> {  // Strongly typed response
-    const headers = this.getHeaders();  // Add headers with session token
-    return this.http.get<any>(this.endpoints.getAllCases, { headers }).pipe(
+  getAllCases(): Observable<any> {  
+    
+    return this.http.get<any>(this.endpoints.getAllCases, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
 
-  getAllCitizens(): Observable<any> {  // Strongly typed response
-    const headers = this.getHeaders();  // Add headers with session token
-    return this.http.get<any>(this.endpoints.getAllCitizen, { headers }).pipe(
+  getAllCitizens(): Observable<any> {  
+    return this.http.get<any>(this.endpoints.getAllCitizen, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
 
-  getAllSpammers(): Observable<any> {  // Strongly typed response
-    const headers = this.getHeaders();  // Add headers with session token
-    return this.http.get<any>(this.endpoints.getAllSpammers, { headers }).pipe(
+  getAllSpammers(): Observable<any> { 
+    return this.http.get<any>(this.endpoints.getAllSpammers, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
 
-  getAllSpamReports(): Observable<any> {  // Strongly typed response
-    const headers = this.getHeaders();  // Add headers with session token
-    return this.http.get<any>(this.endpoints.getAllSpammedReports, { headers }).pipe(
+  getAllSpamReports(): Observable<any> {  
+    return this.http.get<any>(this.endpoints.getAllSpammedReports, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
 
-  getAllReports(): Observable<any> {  // Strongly typed response
-    const headers = this.getHeaders();  // Add headers with session token
-    return this.http.get<any>(this.endpoints.getAllReportss, { headers }).pipe(
+  getAllReports(): Observable<any> {  
+    return this.http.get<any>(this.endpoints.getAllReportss, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
 
   // Submit a new report
-  submitReport(report: IReport): Observable<IReport> {  // Assuming the server returns the submitted report
-    const headers = this.getHeaders();  // Add headers with session token
+  submitReport(report: IReport): Observable<IReport> { 
     
-    return this.http.post<IReport>(this.endpoints.submitReport, report, { headers }).pipe(
+    return this.http.post<IReport>(this.endpoints.submitReport, report, { headers: this.auth }).pipe(
       catchError(this.handleError)
     );
   }
   postCase(caseData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}case`, caseData).pipe(
+    return this.http.post(`${this.baseUrl}case`, caseData, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
 
   connectDot(reportId: number, crimeId: number, caseData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}report/connect/dot/${reportId}/${crimeId}`, caseData).pipe(
+    return this.http.put(`${this.baseUrl}report/connect/dot/${reportId}/${crimeId}`, caseData, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
 
   collectCrimeReports(crimeId: number, caseData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}report/retrieve/case/${crimeId}`, caseData).pipe(
+    return this.http.put(`${this.baseUrl}report/retrieve/case/${crimeId}`, caseData, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }

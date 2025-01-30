@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from './environment';
 
@@ -29,6 +29,10 @@ export interface SuspectFully {
 })
 export class SuspectServiceService {
   private baseUrl = `${environment.ipAddUrl}api/suspect`;
+   private token = localStorage.getItem('token') ?? '';
+    private auth = new HttpHeaders({
+        'Authorization': this.token
+      });
 
   constructor(private http: HttpClient) {}
 

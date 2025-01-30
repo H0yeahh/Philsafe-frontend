@@ -5,6 +5,17 @@ import { AuthService } from '../auth.service'; // Import the service
 import { Router } from '@angular/router';
 import {Account} from '../../data/Account/Account';
 
+
+
+interface LoginResponse {
+  token: string;
+  // Add other properties your API returns
+  userData?: {
+    role?: string;
+    userName?: string;
+  };
+}
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,6 +25,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
   accountData: any;
+  accessToken: string;
 
   constructor(
     private fb: FormBuilder,
@@ -39,16 +51,16 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
   return new Promise((resolve, reject) => {
     this.authService.login({ ...loginData, SignInType: "Email" }).subscribe(
       (data) => {
-        console.log(data);
-
+        
       if (data && data.role) {
         const validRoles = ['Police', 'Admin'];
         if (validRoles.includes(data.role)) {
           localStorage.setItem('userData', JSON.stringify(data));
           localStorage.setItem('role', data.role);
+          localStorage.setItem('token', data.access_token)
           console.log('Role stored in login:', localStorage.getItem('role')); 
           console.log('Data stored as userData:', localStorage.getItem('userData'));
-      
+          console.log('Token Stored', data.access_token)
           alert('Login successful');
           resolve(data);
           this.accountData = data;
@@ -86,29 +98,62 @@ identifySignInType(input: string): string {
   }
 }
 
-token: string = 'zdfdfzfdf';
+token: string = '';
 
+
+// async onSubmit() {
+//   if (this.loginForm.valid) {
+//     const { username, password } = this.loginForm.value;
+//     const signInType = this.identifySignInType(username); // Identify sign-in type
+//     await this.submitLogin({ email: username, password });
+//     this.authService.setAuthentication({ token: this.token, role: 'Admin' });
+   
+//     if (this.accountData.role === 'Admin') {
+//       this.router.navigate(['/dashboard']);
+//       console.log("Admin logs in");
+//     } else if (this.accountData.role === 'Chief') {
+//       this.router.navigate(['/station-case-queue']);
+//     } else if (this.accountData
+//       .role === 'Police') {
+//       this.router.navigate(['/station-dashboard']);
+//       console.log("Police logs in")
+//     }
+    
+//   }
+// }
 
 async onSubmit() {
   if (this.loginForm.valid) {
     const { username, password } = this.loginForm.value;
-    const signInType = this.identifySignInType(username); // Identify sign-in type
-    await this.submitLogin({ email: username, password });
-    this.authService.setAuthentication({ token: this.token, role: 'Admin' });
-   
-    if (this.accountData.role === 'Admin') {
-      this.router.navigate(['/dashboard']);
-      console.log("Admin logs in");
-    } else if (this.accountData.role === 'Chief') {
-      this.router.navigate(['/station-case-queue']);
-    } else if (this.accountData
-      .role === 'Police') {
-      this.router.navigate(['/station-dashboard']);
-      console.log("Police logs in")
+    const signInType = this.identifySignInType(username);
+    try {
+      const account = await this.submitLogin({ email: username, password });
+      if (account && account.role) {
+        localStorage.setItem('userData', JSON.stringify(account));
+        localStorage.setItem('role', account.role);
+       
+        this.accountData = account;
+        this.router.navigate([this.getRedirectUrl(account.role)]);
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      this.errorMessage = 'Login failed. Please try again.';
     }
-    
   }
 }
+
+private getRedirectUrl(role: string): string {
+  switch (role) {
+    case 'Admin':
+      return '/dashboard';
+    case 'Chief':
+      return '/station-case-queue';
+    case 'Police':
+      return '/station-dashboard';
+    default:
+      return '/';
+  }
 }
 
 
+}

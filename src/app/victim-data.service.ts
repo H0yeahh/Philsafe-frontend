@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from './environment';
 
@@ -9,6 +9,10 @@ import { environment } from './environment';
 export class VictimDataService {
 
   private apiUrl = `${environment.ipAddUrl}`;
+   private token = localStorage.getItem('token') ?? '';
+    private auth = new HttpHeaders({
+        'Authorization': this.token
+      });
 
   constructor(private http: HttpClient) { }
 

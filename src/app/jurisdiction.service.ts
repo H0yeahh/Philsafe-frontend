@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from './environment';
@@ -38,44 +38,19 @@ export interface IPerson {
   bioStatus: boolean;
 }
 
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class JurisdictionService {
-//   private base = 'https://localhost:7108';
-
-//   constructor(private http: HttpClient) { }
-
-//   create(data: ICreateParam): Observable<any> {
-//     const url = `${this.base}api/jurisdiction`;
-//     return this.http.post(url, data).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-
-//   getAll(): Observable<any> {
-//     const url = `${this.base}api/jurisdiction/collect`;
-//     return this.http.get(url).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-
-//   private handleError(error: HttpErrorResponse) {
-//     let errorMessage = 'Unknown error!';
-//     if (error.error instanceof ErrorEvent) {
-//       errorMessage = `Error: ${error.error.message}`;
-//     } else {
-//       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-//     }
-//     return throwError(errorMessage);
-//   }
-// }
 
 @Injectable({
   providedIn: 'root'
 })
 export class JurisdictionService {
   private base = `${environment.ipAddUrl}`;
+  private token = localStorage.getItem('token') ?? '';
+  
+    private auth = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.token
+      });
+   
 
   constructor(private http: HttpClient) { }
 
@@ -88,14 +63,14 @@ export class JurisdictionService {
 
   getAll(): Observable<any> {
     const url = `${this.base}api/jurisdiction/collect`;
-    return this.http.get(url).pipe(
+    return this.http.get(url, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
 
   getStation(stationId: number): Observable<any> {
     const url = `${this.base}api/jurisdiction/retrieve/${stationId}`;
-    return this.http.get(url).pipe(
+    return this.http.get(url, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }
@@ -104,7 +79,7 @@ export class JurisdictionService {
   // Delete station method
   delete(stationId: number): Observable<any> {
     const url = `${this.base}api/jurisdiction/discard/{StationId}`;
-    return this.http.delete(url).pipe(
+    return this.http.delete(url, {headers: this.auth}).pipe(
       catchError(this.handleError)
     );
   }

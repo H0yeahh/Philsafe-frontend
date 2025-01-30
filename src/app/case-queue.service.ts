@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { StringDecoder } from 'string_decoder';
 import { environment } from './environment';
+import { AuthService } from './auth.service';
 
 export interface IReport {
   reportBody?: StringDecoder;
@@ -53,8 +54,18 @@ export class CaseQueueService {
     getStationReport: `${this.apiUrl}api/report/retrieve/local`,
     getUnconnectedReport: `${this.apiUrl}api/report/retrieve/local/unconnected`
   };
+  private token = localStorage.getItem('token') ?? '';
 
-  constructor(private http: HttpClient) {}
+  private auth = new HttpHeaders({
+      'Authorization': this.token
+    });
+
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  
+  ) {}
 
   // Helper function to get the session token
   private getSessionToken(): string | null {
@@ -69,84 +80,138 @@ export class CaseQueueService {
     });
   }
 
+  private getAuthorizationToken(): string | null {
+    const authState = localStorage.getItem('auth_state');
+    if (authState) {
+      try {
+        const parsedAuthState = JSON.parse(authState);
+        return parsedAuthState.token || null;
+      } catch (error) {
+        console.error('Error parsing auth_state:', error);
+        return null;
+      }
+    }
+    return null;
+  }
+
   // Fetch reports for a specific station
   getReports(stationId: number) {
-    // const headers = this.getHeaders();
-    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}`)
+    // 
+    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}` , { headers: this.auth })
       .pipe(catchError(this.handleError));
   }
 
-  getReportsPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> {
-    // const headers = this.getHeaders();
-    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`)
-      .pipe(catchError(this.handleError));
-  }
+  // getReportsPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> {
+
+  //   return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`)
+  //     .pipe(catchError(this.handleError)
+  //     );
+  // }
+
+
+  getReportsPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> { 
+    // const token = localStorage.getItem('token');
+
+    // const headers = new HttpHeaders({
+    //   'Content-Type': 'application/json',
+    //   'Authorization': token
+    // });
+
+    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`, { headers: this.auth })
+      .pipe(
+        catchError(this.handleError)
+      );
+}
+
+  // getReportsPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> {
+  //   const authCookie = this.authService.getAuthCookie(); 
+  
+  //   const headers = new HttpHeaders({
+  //     'Content-Type': 'application/json',
+  //     Cookie: authCookie || '', 
+  //   });
+  
+  //   console.log('Auth Cookie:', authCookie);
+  
+  //   return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`, {
+  //     headers,
+  //     withCredentials: true, // Ensure cookies are sent
+  //   }).pipe(
+  //     tap(response => console.log('Response:', response)),
+  //     catchError(error => {
+  //       console.error('Error fetching reports:', error);
+  //       return throwError(() => new Error('Error fetching reports'));
+  //     })
+  //   );
+  // }
+  
 
   getAllReportsPage(pageNum: number, pageSize): Observable<any>{
-    return this.http.get(`${this.endpoints.nationwideReports}/${pageSize}/${pageNum}`)
+    return this.http.get(`${this.endpoints.nationwideReports}/${pageSize}/${pageNum}`, {headers: this.auth})
     .pipe(catchError(this.handleError));
   }
 
   getReportsAll(stationId: number) {
-    // const headers = this.getHeaders();
-    return this.http.get(`${this.endpoints.getStationReport}/${stationId}`)
+    
+    return this.http.get(`${this.endpoints.getStationReport}/${stationId}`, {headers: this.auth})
       .pipe(catchError(this.handleError));
   }
 
   // Fetch all nationwide reports
   getNationwideReports(): Observable<IReport[]> {
-    const headers = this.getHeaders();
-    return this.http.get<IReport[]>(this.endpoints.nationwideReports, { headers })
+    
+    return this.http.get<IReport[]>(this.endpoints.nationwideReports, { headers: this.auth })
       .pipe(catchError(this.handleError));
   }
 
-  // Submit a new report
-  submitReport(report: IReport): Observable<IReport> {
-    const headers = this.getHeaders();
-    return this.http.post<IReport>(this.endpoints.submitReport, report, { headers })
-      .pipe(catchError(this.handleError));
-  }
 
   // Fetch reports specific to a citizen
   getCitizenReports(): Observable<IReport[]> {
-    const headers = this.getHeaders();
-    return this.http.get<IReport[]>(this.endpoints.citizenReports, { headers })
+    
+    return this.http.get<IReport[]>(this.endpoints.citizenReports, { headers: this.auth })
       .pipe(catchError(this.handleError));
   }
 
   // Fetch categorized reports
   getCategorizedReports(subcategoryId: number): Observable<IReport[]> {
-    const headers = this.getHeaders();
-    return this.http.get<IReport[]>(this.endpoints.categorizedReports(subcategoryId), { headers })
+    
+    return this.http.get<IReport[]>(this.endpoints.categorizedReports(subcategoryId), { headers: this.auth })
       .pipe(catchError(this.handleError));
   }
 
   // Fetch reports by specific crime ID
   getCrimeReports(crimeId: number): Observable<any[]> {
-    const headers = this.getHeaders();
-    return this.http.get<any[]>(`${this.endpoints.crimeReports}/${crimeId}`, { headers })
+    
+    return this.http.get<any[]>(`${this.endpoints.crimeReports}/${crimeId}`, { headers: this.auth })
       .pipe(catchError(this.handleError));
   }
 
   // New method for moving a report to the endorsed queue
   moveToEndorsedQueue(reportId: number): Observable<any> {
-    const headers = this.getHeaders();
-    return this.http.post<any>(this.endpoints.moveToEndorsedQueue(reportId), {}, { headers })
+    
+    return this.http.post<any>(this.endpoints.moveToEndorsedQueue(reportId), {}, { headers: this.auth })
       .pipe(catchError(this.handleError));
   }
 
   getCitizens(): Observable<any> {
-    return this.http.get<any>(this.endpoints.getCitizens)
+    return this.http.get<any>(this.endpoints.getCitizens, {headers: this.auth})
       .pipe(catchError(this.handleError));
   }
 
   fetchCases(stationId: number): Observable<any> {
-    return this.http.get(`${this.endpoints.getCases}/${stationId}`)
+    return this.http.get(`${this.endpoints.getCases}/${stationId}`, {headers: this.auth})
       .pipe(catchError(this.handleError));
   }
 
   fetchCasesPage(stationId: number, pageNumber: number, pageSize: number): Observable<any> {
-    return this.http.get(`${this.endpoints.getCases}/${stationId}/${pageSize}/${pageNumber}`)
+    // const token = localStorage.getItem('token');
+
+    // const headers = new HttpHeaders({
+    //   'Content-Type': 'application/json',
+    //   'Authorization': token
+    // });
+
+    return this.http.get(`${this.endpoints.getCases}/${stationId}/${pageSize}/${pageNumber}`, {headers: this.auth})
       .pipe(catchError(this.handleError));
   }
 
@@ -180,7 +245,7 @@ export class CaseQueueService {
 
   fetchReport(citizenID: number): Observable<{ data?: any; error?: string }> { 
 
-    return this.http.get(`${this.endpoints.getReport}/${citizenID}`).pipe(
+    return this.http.get(`${this.endpoints.getReport}/${citizenID}` , { headers: this.auth }).pipe(
       map((response: any) => {
         
         return { data: response }; 
@@ -195,9 +260,9 @@ export class CaseQueueService {
   }
 
   spamReport(reportId: number): Observable<any> {
-    const headers = this.getHeaders();
+    
     const url = `${this.apiUrl}api/report/delete/report/${reportId}`;
-    return this.http.delete<any>(url, {})
+    return this.http.delete<any>(url, {headers: this.auth})
       .pipe(
         catchError(this.handleError) 
       );
@@ -206,7 +271,7 @@ export class CaseQueueService {
   
   sendBlotter(reportId: number, crimeId: number){
     const url = `${this.apiUrl}api/smtp/notify/identifiedSuspects/${reportId}/${crimeId}`;
-    return this.http.post<any>(url, {}) 
+    return this.http.post<any>(url, {headers: this.auth}) 
       .pipe(
         catchError(this.handleError)
       );
@@ -215,7 +280,7 @@ export class CaseQueueService {
 
   existingCase(reportId: number, crimeId: number){
     const url = `${this.apiUrl}api/report/connect/dot/${reportId}/${crimeId}`;
-    return this.http.put<any>(url, {}) 
+    return this.http.put<any>(url, {headers: this.auth}) 
       .pipe(
         catchError(this.handleError)
       );

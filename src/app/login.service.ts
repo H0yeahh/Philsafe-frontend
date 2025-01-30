@@ -21,8 +21,24 @@ export class LoginService {
     private http: HttpClient
   ) { }
 
+  // login(data: ILogin): Observable<any> {
+
+    
+  //   return this.http.post(this.loginURL, data, this.options).pipe(
+  //     catchError(this.handleError)
+  //   );
+  // }
+
+
   login(data: ILogin): Observable<any> {
-    return this.http.post(this.loginURL, data, this.options).pipe(
+    return this.http.post(this.loginURL, data, { observe: 'response' }).pipe(
+      map(response => {
+        const authCookie = response.headers.get('set-cookie');
+        if (authCookie) {
+          localStorage.setItem('authCookie', authCookie);
+        }
+        return response.body;
+      }),
       catchError(this.handleError)
     );
   }

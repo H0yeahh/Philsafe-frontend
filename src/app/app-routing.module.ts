@@ -44,16 +44,15 @@ import { PoliceReportsComponent } from './police-reports/police-reports.componen
 import { PoliceCasesComponent } from './police-cases/police-cases.component';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
-<<<<<<< HEAD
+
 import { EditCaseComponent } from './edit-case/edit-case.component';
 import { StationPoliceArchivesComponent } from './station-police-archives/station-police-archives.component';
-=======
+
 import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
 import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
 
 
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 // station-edit-officers
 // , canActivate: [roleGuard], data: { roles: ['chief'] }
 
@@ -71,7 +70,7 @@ const routes: Routes = [
   { path: 'station-police-accounts', component: StationPoliceAccountsComponent }, 
   //{ path: 'dashboard', component: PoliceDashboardComponent }, // Route for login
   // Route for login
-<<<<<<< HEAD
+
    // Route for login
   { path: 'reporting-person', component: ReportingPersonComponent, 
     canActivate: [roleGuard], data: { roles: ['User'] } },
@@ -153,7 +152,6 @@ const routes: Routes = [
   { path: 'station-police-archives', component: StationPoliceArchivesComponent, 
       canActivate: [roleGuard], data: { roles: ['Police'] } },
  
-=======
   // Route for login
   {
     path: 'dashboard',
@@ -422,7 +420,6 @@ const routes: Routes = [
   // { path: 'dashboard', component: PoliceDashboardComponent,
   //   canActivate: [roleGuard], data: { roles: ['Admin'] }
   //  },
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
 
   // { path: '', redirectTo: '/home-page', pathMatch: 'full' },
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirect to registration by default

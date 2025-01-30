@@ -72,6 +72,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   currentTime: string = '';
   intervalId: any;
   avatarUrl: string = 'assets/ccpo_logo.jpg';
+  token: string;
 
   constructor(
     @Inject(StationDashboardService)
@@ -111,6 +112,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.updateDateTime();
   setInterval(() => this.updateDateTime(), 60000);
   this.intervalId = setInterval(() => this.updateDateTime(), 1000);
+  const tokenData = localStorage.getItem('AuthCookie')
+  localStorage.setItem('AuthCookie', this.token);
 
     this.timePeriodControl = new FormControl('weekly');
 
@@ -122,7 +125,12 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.onSelect();
     console.log('Initial form value:', this.timePeriodControl.value);
     console.log('Form valid:', this.dashboardForm.valid);
+
+
+    const authState = localStorage.getItem('auth_state');
+    console.log('Auth Cookie', authState)
   }
+
 
 
   updateDateTime(): void {

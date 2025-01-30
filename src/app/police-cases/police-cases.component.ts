@@ -77,7 +77,7 @@ export class PoliceCasesComponent implements OnInit, OnDestroy{
   // Initialize the form and fetch reports, stations, and ranks
   ngOnInit(): void {
 
-    this.fetchCases();
+    // this.fetchCases();
   
 
   
@@ -365,26 +365,21 @@ export class PoliceCasesComponent implements OnInit, OnDestroy{
     );
   }
 
-<<<<<<< HEAD
-  fetchCases(stationId) {
-    this.caseQueueService.fetchCasesPage(stationId, this.currentPage, this.pageSize).subscribe(
-=======
-  fetchCases() {
-    this.caseService.getAllCases().subscribe(
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
-      (response) => {
+  // fetchCases(stationId) {
+  //   this.caseQueueService.fetchCasesPage(stationId, this.currentPage, this.pageSize).subscribe(
+  //     (response) => {
         
-          this.cases = response;
+  //         this.cases = response;
        
-        console.log(`List of Cases Nationwide`, this.cases);
-        localStorage.setItem('cases', JSON.stringify(this.cases))
-      },
-      (error) => {
-        console.error('Error fetching cases:', error);
-        this.errorMessage = 'Failed to load cases. Please try again.';
-      }
-    );
-  }
+  //       console.log(`List of Cases Nationwide`, this.cases);
+  //       localStorage.setItem('cases', JSON.stringify(this.cases))
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching cases:', error);
+  //       this.errorMessage = 'Failed to load cases. Please try again.';
+  //     }
+  //   );
+  // }
 
 
   //   navigateToReportEndorse(reportIndex: number): void {

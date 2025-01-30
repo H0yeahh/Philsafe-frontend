@@ -57,6 +57,12 @@ export class PersonService {
   private locationUrl = `${this.apiUrl}/location/retrieve/all`;
 
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  
+  private token = localStorage.getItem('token') ?? '';
+  private auth = new HttpHeaders({
+      'Authorization': this.token
+    });
+ 
 
   private mediaHeaders = new HttpHeaders({
     'Accept': 'application/json',

@@ -53,14 +53,16 @@ import { CasesComponent } from './cases/cases.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { StationCasesComponent } from './station-cases/station-cases.component';
 import { AddCaseComponent } from './add-case/add-case.component';
-<<<<<<< HEAD
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { EditCaseComponent } from './edit-case/edit-case.component';
 import { StationPoliceArchivesComponent } from './station-police-archives/station-police-archives.component';
-=======
+
 import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
 import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
+import { AuthInterceptor } from './auth.interceptor';
+
+
 
 
 @NgModule({
@@ -112,15 +114,12 @@ import { SpamReportsComponent } from './spam-reports/spam-reports.component';
     CasesComponent,
     StationCasesComponent,
     AddCaseComponent,
-<<<<<<< HEAD
     EditCaseComponent,
     StationPoliceArchivesComponent,
-  ],
-=======
     PoliceMapComponent,
     SpammerUsersComponent,
     SpamReportsComponent],
->>>>>>> bfb0cd8c1589b2f7fbfcf71e73a92c17c66b37cc
+
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -132,7 +131,13 @@ import { SpamReportsComponent } from './spam-reports/spam-reports.component';
   providers: [
     MapboxService,
     DataSuspectService,
-    provideHttpClient(withFetch()) // Enable fetch API
+    provideHttpClient(withFetch()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+   
   ], 
   bootstrap: [AppComponent]
 })

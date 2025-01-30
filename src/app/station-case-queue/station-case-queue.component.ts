@@ -134,6 +134,8 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     localStorage.removeItem('report-data');
 
 
+    
+
    
   }
 
@@ -373,7 +375,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
        
       },
       (error) => {
-        console.error('Error fetching persons:', error);
+        console.error('Error fetching Accounts:', error);
         this.errorMessage = 'Failed to load persons. Please try again.';
       }
     );

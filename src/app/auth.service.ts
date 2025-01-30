@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { environment } from './environment';
@@ -28,14 +28,70 @@ export class AuthService {
 
      private loginURL = `${environment.ipAddUrl}api/account/login`;
      private logoutURL = `${environment.ipAddUrl}api/account/signout`;
+     private authCookie: string | null = null;
      
 
   constructor(private http: HttpClient) { }
-  login(data: ILogin): Observable<any> {
-    return this.http.post(this.loginURL, data, this.options).pipe(
-    catchError(this.handleError)
-    );
-  }
+ 
+ 
+  // login(data: ILogin): Observable<any> {
+  //   return this.http.post(this.loginURL, data, this.options).pipe(
+  //   catchError(this.handleError)
+  //   );
+  // }
+
+   login(data: ILogin): Observable<any> {
+      return this.http.post(this.loginURL, data, { 
+        observe: 'response'
+      }).pipe(
+        map(response => {
+         console.log('Response', response)
+          return response.body;
+        }),
+        catchError(this.handleError)
+      );
+    }
+
+  // login(data: ILogin): Observable<any> {
+  //   return this.http.post(this.loginURL, data, {
+  //     observe: 'response', // Get full response, including headers
+  //     // withCredentials: true, // Allow cookies to be stored
+  //   }).pipe(
+  //     tap(response => {
+  //       const cookies = response.headers.get('Set-Cookie');
+  //       if (cookies) {
+  //         console.log('Set-Cookie header:', cookies);
+  //         this.authCookie = cookies.split(';')[0]; // Store only the cookie value
+  //       }
+  //     }),
+  //     catchError(this.handleError)
+  //   );
+  // }
+
+
+    // login(data: ILogin): Observable<any> {
+    //   return this.http.post(this.loginURL, data, {
+    //     observe: 'response', // Get full response, including headers
+    //     withCredentials: true, // Allow cookies to be stored
+    //   }).pipe(
+    //     tap(response => {
+    //       const cookies = response.headers.get('Set-Cookie');
+    //       if (cookies) {
+    //         console.log('Set-Cookie header:', cookies);
+    //         this.authCookie = cookies.split(';')[0]; // Store only the cookie value
+    //       }
+    //     }),
+    //     catchError(this.handleError)
+    //   );
+    // }
+  
+  
+    // private presentAlert(message: string): void {
+    //   alert(message);
+    // }
+    
+
+
 
   logout(): Observable<any> {
     return this.http.post(this.logoutURL, this.options).pipe(
@@ -89,4 +145,10 @@ export class AuthService {
     return !!authenticated ? of(true) : of(false);
   }
 
+
+  getAuthCookie(): string | null {
+    return localStorage.getItem('authCookie');
+  }
+
 }
+
