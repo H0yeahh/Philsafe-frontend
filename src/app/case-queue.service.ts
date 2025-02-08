@@ -117,7 +117,7 @@ export class CaseQueueService {
     //   'Authorization': token
     // });
 
-    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`, { headers: this.auth })
+    return this.http.get(`${this.endpoints.getUnconnectedReport}/${stationId}/${pageSize}/${pageNumber}`, {withCredentials: true})
       .pipe(
         catchError(this.handleError)
       );
@@ -147,13 +147,13 @@ export class CaseQueueService {
   
 
   getAllReportsPage(pageNum: number, pageSize): Observable<any>{
-    return this.http.get(`${this.endpoints.nationwideReports}/${pageSize}/${pageNum}`, {headers: this.auth})
+    return this.http.get(`${this.endpoints.nationwideReports}/${pageSize}/${pageNum}`, {withCredentials: true})
     .pipe(catchError(this.handleError));
   }
 
   getReportsAll(stationId: number) {
     
-    return this.http.get(`${this.endpoints.getStationReport}/${stationId}`, {headers: this.auth})
+    return this.http.get(`${this.endpoints.getStationReport}/${stationId}`, {withCredentials: true})
       .pipe(catchError(this.handleError));
   }
 
@@ -194,12 +194,12 @@ export class CaseQueueService {
   }
 
   getCitizens(): Observable<any> {
-    return this.http.get<any>(this.endpoints.getCitizens, {headers: this.auth})
+    return this.http.get<any>(this.endpoints.getCitizens, {withCredentials: true})
       .pipe(catchError(this.handleError));
   }
 
   fetchCases(stationId: number): Observable<any> {
-    return this.http.get(`${this.endpoints.getCases}/${stationId}`, {headers: this.auth})
+    return this.http.get(`${this.endpoints.getCases}/${stationId}`, {withCredentials: true})
       .pipe(catchError(this.handleError));
   }
 
@@ -211,7 +211,7 @@ export class CaseQueueService {
     //   'Authorization': token
     // });
 
-    return this.http.get(`${this.endpoints.getCases}/${stationId}/${pageSize}/${pageNumber}`, {headers: this.auth})
+    return this.http.get(`${this.endpoints.getCases}/${stationId}/${pageSize}/${pageNumber}`, {withCredentials: true})
       .pipe(catchError(this.handleError));
   }
 
@@ -245,7 +245,7 @@ export class CaseQueueService {
 
   fetchReport(citizenID: number): Observable<{ data?: any; error?: string }> { 
 
-    return this.http.get(`${this.endpoints.getReport}/${citizenID}` , { headers: this.auth }).pipe(
+    return this.http.get(`${this.endpoints.getReport}/${citizenID}`, {withCredentials: true}).pipe(
       map((response: any) => {
         
         return { data: response }; 
@@ -262,7 +262,7 @@ export class CaseQueueService {
   spamReport(reportId: number): Observable<any> {
     
     const url = `${this.apiUrl}api/report/delete/report/${reportId}`;
-    return this.http.delete<any>(url, {headers: this.auth})
+    return this.http.delete<any>(url, {withCredentials: true})
       .pipe(
         catchError(this.handleError) 
       );
@@ -271,7 +271,7 @@ export class CaseQueueService {
   
   sendBlotter(reportId: number, crimeId: number){
     const url = `${this.apiUrl}api/smtp/notify/identifiedSuspects/${reportId}/${crimeId}`;
-    return this.http.post<any>(url, {headers: this.auth}) 
+    return this.http.post<any>(url, {withCredentials: true}) 
       .pipe(
         catchError(this.handleError)
       );
@@ -280,7 +280,7 @@ export class CaseQueueService {
 
   existingCase(reportId: number, crimeId: number){
     const url = `${this.apiUrl}api/report/connect/dot/${reportId}/${crimeId}`;
-    return this.http.put<any>(url, {headers: this.auth}) 
+    return this.http.put<any>(url, {withCredentials: true}) 
       .pipe(
         catchError(this.handleError)
       );

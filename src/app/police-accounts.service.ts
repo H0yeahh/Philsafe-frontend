@@ -126,7 +126,7 @@ export class PoliceAccountsService {
   constructor(private http: HttpClient) {}
 
   create(policeData: IPolice): Observable<any> {
-    return this.http.post(this.apiUrl, policeData, { headers: this.headers }).pipe(catchError(this.handleError));
+    return this.http.post(this.apiUrl, policeData, {withCredentials: true}).pipe(catchError(this.handleError));
   }
 
   getPersons(): Observable<any> {
@@ -147,7 +147,7 @@ export class PoliceAccountsService {
 
   postLocation(zipCode: number, data: ILocation): Observable<any> {
     const url = `${this.locationURL}${zipCode}`;
-    return this.http.post(url, data, { headers: this.headers }).pipe(catchError(this.handleError));
+    return this.http.post(url, data, {withCredentials: true}).pipe(catchError(this.handleError));
   }
 
   createOrRetrievePerson(personData: IPerson): Observable<any> {
@@ -206,7 +206,7 @@ export class PoliceAccountsService {
   }
 
   register(data: IPolice): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data, { headers: this.headers }).pipe(catchError(this.handleError));
+    return this.http.post<any>(this.apiUrl, data, {withCredentials: true}).pipe(catchError(this.handleError));
   }
 
   getRanks(): Observable<IRank[]> {
@@ -214,14 +214,14 @@ export class PoliceAccountsService {
   }
 
   savePoliceData(policeData: IPolice): Observable<any> {
-    return this.http.post(this.apiUrl, policeData, { headers: this.headers }).pipe(
+    return this.http.post(this.apiUrl, policeData, {withCredentials: true}).pipe(
       tap(response => console.log('Save police response:', response)),
       catchError(this.handleError)
     );
   }
 
   updatePoliceData(id: number, policeData: IPolice): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, policeData, { headers: this.headers }).pipe(
+    return this.http.put(`${this.apiUrl}/${id}`, policeData, {withCredentials: true}).pipe(
       tap(response => console.log(`Update police ${id} response:`, response)),
       catchError(this.handleError)
     );
@@ -273,7 +273,7 @@ export class PoliceAccountsService {
   }
 
   getPoliceById(data: { id: number; badgeNumber: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/retrieval/${data.id}`, data, { headers: this.headers }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/retrieval/${data.id}`, data, {withCredentials: true}).pipe(
       tap(response => console.log(`Get police by ID response:`, response)),
       catchError(this.handleError)
     );
