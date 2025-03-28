@@ -12,7 +12,7 @@ export class CrimeService {
   private modusLists = 'assets/modus';
   private token = localStorage.getItem('token') ?? '';
 
-  private auth = new HttpHeaders({
+  private auth_token = new HttpHeaders({
       'Authorization': this.token
     });
  
@@ -22,15 +22,15 @@ export class CrimeService {
 
   // GET Methods
   getNationwideCases(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/nationwide`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/nationwide`, {headers: this.auth_token});
   }
 
   getIncidentTypes(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/load/incidenttypes`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/load/incidenttypes`, {headers: this.auth_token});
   }
 
   getLocalCases(stationId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/local/${stationId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/local/${stationId}`, {headers: this.auth_token});
   }
 
   getModus(): Observable<any[]> {
@@ -38,57 +38,57 @@ export class CrimeService {
   }
 
   getInvolvedCases(suspectId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/suspect/${suspectId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/suspect/${suspectId}`, {headers: this.auth_token});
   }
 
   getSpecificCase(crimeId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/specific/${crimeId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/specific/${crimeId}`, {headers: this.auth_token});
   }
 
   getFurtherCase(crimeId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/further/${crimeId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/further/${crimeId}`, {headers: this.auth_token});
   }
 
   getOngoingCases(stationId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/ongoing/${stationId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/ongoing/${stationId}`, {headers: this.auth_token});
   }
 
   getOngoingCasesCount(stationId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/ongoing/count/${stationId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/ongoing/count/${stationId}`, {headers: this.auth_token});
   }
 
   getSolvedCases(stationId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/retrieve/solved/${stationId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/retrieve/solved/${stationId}`, {headers: this.auth_token});
   }
 
   getAssignedTeam(crimeId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/collect/assignedteam/${crimeId}`, {withCredentials: true});
+    return this.http.get(`${this.baseUrl}/collect/assignedteam/${crimeId}`, {headers: this.auth_token});
   }
 
   // POST Method
   establishCase(crimeData: any): Observable<any> {
-    return this.http.post(this.baseUrl, crimeData, {withCredentials: true});
+    return this.http.post(this.baseUrl, crimeData, {headers: this.auth_token});
   }
 
   // PUT Methods
   endorseCase(crimeId: number, policeId: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/endorse/case/${crimeId}/${policeId}`, {withCredentials: true});
+    return this.http.put(`${this.baseUrl}/endorse/case/${crimeId}/${policeId}`, {headers: this.auth_token});
   }
 
   endorseCaseMany(crimeId: number, policeIds: number[]): Observable<any> {
-    return this.http.put(`${this.baseUrl}/endorse/case/many/${crimeId}`, policeIds, {withCredentials: true});
+    return this.http.put(`${this.baseUrl}/endorse/case/many/${crimeId}`, policeIds, {headers: this.auth_token});
   }
 
   connectVictim(crimeId: number, victimId: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/establish/victim/${crimeId}/${victimId}`, {withCredentials: true});
+    return this.http.put(`${this.baseUrl}/establish/victim/${crimeId}/${victimId}`, {headers: this.auth_token});
   }
 
   markSolved(crimeId: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/mark/solved/${crimeId}`, {withCredentials: true});
+    return this.http.put(`${this.baseUrl}/mark/solved/${crimeId}`, {headers: this.auth_token});
   }
 
   updateCase(crimeId: number, crimeData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/up/${crimeId}`, crimeData, {withCredentials: true});
+    return this.http.put(`${this.baseUrl}/up/${crimeId}`, crimeData, {headers: this.auth_token});
   }
 
 

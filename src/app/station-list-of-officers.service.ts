@@ -200,6 +200,14 @@ export class StationListOfOfficersService {
     // searchStation: (query: string) => `${this.apiUrl}api/jurisdiction/search?query=${query}`
   };
 
+  private token = localStorage.getItem('token') ?? '';
+
+  
+  
+  private auth_token = new HttpHeaders({
+      'Authorization': this.token
+  })
+
   constructor(private http: HttpClient) {}
 
   private getSessionToken(): string | null {
@@ -217,28 +225,28 @@ export class StationListOfOfficersService {
   // Fetch all stations
   getPolice(): Observable<IPolice[]> {
     const headers = this.getHeaders();
-    return this.http.get<IPolice[]>(this.endpoints.police, { headers })
+    return this.http.get<IPolice[]>(this.endpoints.police, {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
   // Fetch a specific station by station ID
   getLocalPolice(policeID: number): Observable<IPolice[]> {
     const headers = this.getHeaders();
-    return this.http.get<IPolice[]>(this.endpoints.localPolice(policeID), { headers })
+    return this.http.get<IPolice[]>(this.endpoints.localPolice(policeID), {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
   // Submit a new station
   submitPolice(police: IPolice): Observable<IPolice> {
     const headers = this.getHeaders();
-    return this.http.post<IPolice>(this.endpoints.submitPolice, police, { headers })
+    return this.http.post<IPolice>(this.endpoints.submitPolice, {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
   // Update an existing station
   editPolice(policeID: number, updatedPolice: IPolice): Observable<IPolice> {
     const headers = this.getHeaders();
-    return this.http.put<IPolice>(this.endpoints.updatePolice(policeID), updatedPolice, { headers })
+    return this.http.put<IPolice>(this.endpoints.updatePolice(policeID), updatedPolice , {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
@@ -257,7 +265,7 @@ export class StationListOfOfficersService {
     }
   
     const headers = this.getHeaders();
-    return this.http.delete<void>(this.endpoints.deletePolice(policeID), { headers })
+    return this.http.delete<void>(this.endpoints.deletePolice(policeID), {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
   

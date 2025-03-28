@@ -168,23 +168,90 @@
       </div>
 
       <section class="stats">
-        <div class="stat-box solved-cases">
+        <div class="stat-box solved-cases" (click)="openModal('weekly')">
           <h3>Weekly Reports</h3>
-          <p>{{ weeklyAvg }}</p>
+          <p>{{ weeklyReports }}</p>
         </div>
-        <div class="stat-box reported-cases">
+        <div class="stat-box reported-cases" (click)="openModal('monthly')">
           <h3>Monthly Reports</h3>
-          <p>{{ monthlyAvg }}</p>
+          <p>{{ monthlyReports }}</p>
         </div>
-        <div class="stat-box under-investigation">
+        <div class="stat-box under-investigation" (click)="openModal('annual')">
           <h3>Annual Reports</h3>
-          <p>{{ annualAvg}}</p>
+          <p>{{ annualReports }}</p>
         </div>
       </section>
 
       <section class="graph-section">
         <canvas id="casesGraph"></canvas>
       </section>
+
+   <div class="parent-modal" *ngIf="isModalOpen">
+    <div class="modal" *ngIf="isModalOpen">
+      <button class="modal-close" (click)="closeModal()">X</button>
+      <div class="modal-content">
+        <h3 *ngIf="modalType === 'weekly'">THIS WEEK'S REPORT</h3>
+        <h3 *ngIf="modalType === 'monthly'">THIS MONTH'S REPORT</h3>
+        <h3 *ngIf="modalType === 'annual'">THIS YEAR'S REPORT</h3>
+    
+        <div class="modal-table">
+          <table >
+            <thead>
+              <tr>
+                <th>Report ID</th>
+                <th>Incident Name</th>
+                <th>Date</th>
+                <th>Category Name</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="modalType === 'weekly'">
+              <tr *ngIf="filteredWeekly.length>0; else noReports">
+              <tr *ngFor="let report of filteredWeekly"
+              (click)="navigateToReportEndorse(report.report_id)">
+                <td>{{ report.report_id }}</td>
+                <td>{{ report.subcategory_name }}</td>
+                <td>{{ report.reported_date.slice(0, 10) + ' ' + report.reported_date.slice(11, 16) }}</td>
+                <td>{{ report.category_name }}</td>
+              </tr>
+            </tbody>
+
+            <tbody *ngIf="modalType === 'monthly'">
+              <tr *ngIf="filteredMonthly.length>0; else noReports"></tr>
+              <tr *ngFor="let report of filteredMonthly"
+              (click)="navigateToReportEndorse(report.report_id)">
+                <td>{{ report.report_id }}</td>
+                <td>{{ report.subcategory_name }}</td>
+                <td>{{ report.reported_date.slice(0, 10) + ' ' + report.reported_date.slice(11, 16) }}</td>
+                <td>{{ report.category_name }}</td>
+              </tr>
+            </tbody>
+
+            <tbody *ngIf="modalType === 'annual'">
+              <tr *ngIf="filteredAnnually.length>0; else noReports"></tr>
+              <tr *ngFor="let report of filteredAnnually"
+              (click)="navigateToReportEndorse(report.report_id)">
+                <td>{{ report.report_id }}</td>
+                <td>{{ report.subcategory_name }}</td>
+                <td>{{ report.reported_date.slice(0, 10) + ' ' + report.reported_date.slice(11, 16) }}</td>
+                <td>{{ report.category_name }}</td>
+              </tr>
+            </tbody>
+
+            <ng-template #noReports>
+              <tr>
+                <td colspan="4" style="text-align: center; font-weight: bold;">
+                  No reports found for {{ modalType }}.
+                </td>
+              </tr>
+            </ng-template>
+
+          </table>
+        </div>
+        
+      </div>
+    </div>
+   </div>
+      
       
     </main>
   </div>

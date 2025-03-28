@@ -14,6 +14,14 @@ code: number;
 export class StationReportsService {
   private apiUrl = `${environment.ipAddUrl}`;  // Backend API endpoint
   private reportsApiUrl = `${this.apiUrl}api/report/retrieve/citizen`;  // Backend API endpoint
+
+  private token = localStorage.getItem('token') ?? '';
+
+  
+  
+  private auth_token = new HttpHeaders({
+      'Authorization': this.token
+  })
   
   constructor(private http: HttpClient) { }
 

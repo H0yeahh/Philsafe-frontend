@@ -74,38 +74,42 @@ export interface IPolice {
        private personURL = `${this.base}api/person`;
        private locationURL = `${this.base}api/location/create`;
        private policeURL = `${this.base}api/police/upgrade`;
-    
+
+       private token = localStorage.getItem('token') ?? '';
+       private auth_token = new HttpHeaders({
+        'Authorization': this.token
+    })
 
     constructor(private http: HttpClient) {
     }
 
     getPersons(): Observable<any> {
-      return this.http.get(`${this.base}/api/person/retrieve/all`).pipe(
+      return this.http.get(`${this.base}/api/person/retrieve/all`, {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }
 
     
     getPolice(): Observable<any> {
-      return this.http.get(`${this.base}/api/police/upgrade`).pipe(
+      return this.http.get(`${this.base}/api/police/upgrade`, {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }
 
     postPolice(data: IPolice): Observable<any> {
-      return this.http.post(this.accountURL, data).pipe(
+      return this.http.post(this.accountURL, data, {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }
 
     postAccount(data: IAccount): Observable<any> {
-      return this.http.post(this.accountURL, data).pipe(
+      return this.http.post(this.accountURL, data , {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }
     
     postPerson(data: IPerson): Observable<any> {
-      return this.http.post(this.personURL, data).pipe(
+      return this.http.post(this.personURL, data , {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }
@@ -128,7 +132,7 @@ export interface IPolice {
     }
 
     createOrRetrievePolice(policeData: IPolice): Observable<any> {
-      return this.http.post(this.policeURL, policeData, { observe: 'response' })
+      return this.http.post(this.policeURL, policeData, { observe: 'response', headers: this.auth_token })
         .pipe(
           map((response: HttpResponse<any>) => {
             if (response.status === 200) {
@@ -146,15 +150,15 @@ export interface IPolice {
 
 
     getPersonById(id: number): Observable<IPerson> {
-      const url = `${this.personURL}/retrieve/${id}`;
-      return this.http.get<IPerson>(url).pipe(
+      const url = `${this.personURL}/retrieve/${id}` ;
+      return this.http.get<IPerson>(url , {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }
 
     getPoliceById(id: number): Observable<IPolice> {
       const url = `${this.policeURL}/retrieve/${id}`;
-      return this.http.get<IPolice>(url).pipe(
+      return this.http.get<IPolice>(url , {headers: this.auth_token}).pipe(
         catchError(this.handleError)
       );
     }

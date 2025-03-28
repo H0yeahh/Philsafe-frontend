@@ -25,8 +25,8 @@ export class LocationsService {
   private apiUrl = `${environment.ipAddUrl}api`;
   private token = localStorage.getItem('token') ?? '';
 
-  private auth = new HttpHeaders({
-      'Content-Type': 'application/json',
+  private auth_token = new HttpHeaders({
+    
       'Authorization': this.token
     });
  

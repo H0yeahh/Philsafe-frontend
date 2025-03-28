@@ -35,7 +35,7 @@ export class StationCasesComponent implements OnDestroy{
     stationID: number = 0;
     citizenId: number = 0;
     fetch_Report: any;
-    citizens: any;
+    citizens: any = [];
     policeDetails: any;
     stationDetails: any;
     personData: any = {};
@@ -66,7 +66,11 @@ export class StationCasesComponent implements OnDestroy{
   
     // Initialize the form and fetch reports, stations, and ranks
     ngOnInit(): void {
-      
+
+      this.fetchCitizens();
+
+      localStorage.removeItem('sessionData');
+
       const storedStationDetails = localStorage.getItem('stationDetails');
       if (storedStationDetails) {
         try {
@@ -161,6 +165,83 @@ export class StationCasesComponent implements OnDestroy{
       );
     }
 
+    
+  // fetchCitizens(): void {
+  //   this.caseQueueService.getCitizens().subscribe(
+  //     (response) => {
+  //       this.citizens = response;
+  //       localStorage.setItem('citizens', JSON.stringify(response));
+  //       console.log('citizens length', JSON.stringify(localStorage.getItem('citizens')).length)
+
+      
+  //       // console.log('Fetched citizens:', this.citizens);
+   
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching citizens:', error);
+  //       this.errorMessage = 'Failed to load citizens. Please try again.';
+  //     }
+  //   );
+  // }
+
+  fetchCitizens(): void {
+    this.caseQueueService.getCitizens().subscribe(
+      (response) => {
+        // Limit the number of citizens stored
+        const limitedCitizens = response.slice(0, 50); // Limit to 50 most recent citizens
+  
+        this.citizens = limitedCitizens;
+        
+        try {
+          // Store only essential, compact information
+          const compactCitizens = limitedCitizens.map(citizen => ({
+            citizen_id: citizen.citizen_id,
+            name: citizen.name || `${citizen.firstname} ${citizen.lastname}`,
+            // Add other critical, compact fields
+            timestamp: Date.now() // Add timestamp for potential cleanup
+          }));
+  
+          localStorage.setItem('citizens', JSON.stringify(compactCitizens));
+          
+          // Log the size of stored data
+          console.log('Citizens length', JSON.stringify(localStorage.getItem('citizens')).length);
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+            this.handleStorageOverflow();
+          } else {
+            console.error('Error storing citizens:', error);
+          }
+        }
+      },
+      (error) => {
+        console.error('Error fetching citizens:', error);
+        this.errorMessage = 'Failed to load citizens. Please try again.';
+      }
+    );
+  }
+  
+  // Optional: Add a method to handle storage overflow
+  private handleStorageOverflow() {
+    console.warn('Local storage quota exceeded. Clearing oldest citizens.');
+    
+    try {
+      // Retrieve existing citizens
+      const storedCitizens = JSON.parse(localStorage.getItem('citizens') || '[]');
+      
+      // Sort by timestamp and keep only the most recent
+      const sortedCitizens = storedCitizens
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .slice(0, 30); // Keep only 30 most recent
+  
+      localStorage.setItem('citizens', JSON.stringify(sortedCitizens));
+    } catch (error) {
+      console.error('Error handling storage overflow:', error);
+      localStorage.removeItem('citizens'); // Last resort
+    }
+  }
+
+
+  
 
     fetchCases(stationId: number): void {
       this.currentPage = 1;
@@ -178,8 +259,8 @@ export class StationCasesComponent implements OnDestroy{
               this.cases.sort((b, a) => {
                 return new Date(a.date_committed || a.datetime_committed).getTime() - new Date(b.date_committed || b.datetime_committed).getTime();
               });
-              console.log(`Fetched all cases for Station ${stationId}:`, this.cases);
-              localStorage.setItem('cases', JSON.stringify(this.cases));
+              // console.log(`Fetched all cases for Station ${stationId}:`, this.cases);
+              // localStorage.setItem('cases', JSON.stringify(this.cases));
             } else {
               // Otherwise, fetch the next page
               fetchPage(pageNumber + 1);

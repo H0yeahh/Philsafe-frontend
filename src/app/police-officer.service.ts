@@ -27,6 +27,7 @@ export interface IPolice {
 })
 export class PoliceOfficerService {
   private base = `${environment.ipAddUrl}`;
+  
 
   constructor(private http: HttpClient) { }
 

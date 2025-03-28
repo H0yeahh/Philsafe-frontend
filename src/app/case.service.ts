@@ -89,9 +89,13 @@ export class CaseService {
 
   private auth = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': this.token
+    
     });
  
+    private auth_token = new HttpHeaders({
+    
+      'Authorization': this.token
+    });
 
   constructor(private http: HttpClient) {}
 
@@ -111,7 +115,7 @@ export class CaseService {
   getAll(): Observable<IReport[]> {  // Strongly typed response
     
     
-    return this.http.get<IReport[]>(this.endpoints.getAll, {withCredentials: true}).pipe(
+    return this.http.get<IReport[]>(this.endpoints.getAll, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
@@ -127,44 +131,44 @@ export class CaseService {
   // }
 
   getTotalUsers(): Observable<number> {
-    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/citizens/all`, {withCredentials: true}).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/citizens/all`, {headers: this.auth_token}).pipe(
       map(users => users.length)
     );
   }
 
   getTotalSpammers(): Observable<number> {
-    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/spammers/all`, {withCredentials: true}).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}citizen/collect/spammers/all`, {headers: this.auth_token}).pipe(
       map(users => users.length)
     );
   }
 
   getAllCases(): Observable<any> {  
     
-    return this.http.get<any>(this.endpoints.getAllCases, {withCredentials: true}).pipe(
+    return this.http.get<any>(this.endpoints.getAllCases, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   getAllCitizens(): Observable<any> {  
-    return this.http.get<any>(this.endpoints.getAllCitizen, {withCredentials: true}).pipe(
+    return this.http.get<any>(this.endpoints.getAllCitizen, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   getAllSpammers(): Observable<any> { 
-    return this.http.get<any>(this.endpoints.getAllSpammers, {withCredentials: true}).pipe(
+    return this.http.get<any>(this.endpoints.getAllSpammers, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   getAllSpamReports(): Observable<any> {  
-    return this.http.get<any>(this.endpoints.getAllSpammedReports, {withCredentials: true}).pipe(
+    return this.http.get<any>(this.endpoints.getAllSpammedReports, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   getAllReports(): Observable<any> {  
-    return this.http.get<any>(this.endpoints.getAllReportss, {withCredentials: true}).pipe(
+    return this.http.get<any>(this.endpoints.getAllReportss, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
@@ -172,24 +176,24 @@ export class CaseService {
   // Submit a new report
   submitReport(report: IReport): Observable<IReport> { 
     
-    return this.http.post<IReport>(this.endpoints.submitReport, report, {withCredentials: true}).pipe(
+    return this.http.post<IReport>(this.endpoints.submitReport, report, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
   postCase(caseData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}case`, caseData, {withCredentials: true}).pipe(
+    return this.http.post(`${this.baseUrl}case`, caseData, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   connectDot(reportId: number, crimeId: number, caseData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}report/connect/dot/${reportId}/${crimeId}`, caseData, {withCredentials: true}).pipe(
+    return this.http.put(`${this.baseUrl}report/connect/dot/${reportId}/${crimeId}`, caseData, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   collectCrimeReports(crimeId: number, caseData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}report/retrieve/case/${crimeId}`, caseData, {withCredentials: true}).pipe(
+    return this.http.put(`${this.baseUrl}report/retrieve/case/${crimeId}`, caseData, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }

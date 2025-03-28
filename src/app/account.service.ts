@@ -81,51 +81,55 @@ export class AccountService {
  private locationURL = `${this.base}api/location/create`;
  private token = localStorage.getItem('token') ?? '';
 
-  private auth = new HttpHeaders({
-      'Content-Type': 'application/json',
+  
+  
+  private auth_token = new HttpHeaders({
       'Authorization': this.token
-    });
- 
+  })
+  private auth = new HttpHeaders({
+    'Content-Type': 'application/json',
+    
+  });
 
   constructor(private http: HttpClient) {
 
   }
 
   getPersons(): Observable<any> {
-    return this.http.get(`${this.base}/api/person/retrieve/all`, {headers: this.auth}).pipe(
+    return this.http.get(`${this.base}/api/person/retrieve/all`, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
   
   getAccount(): Observable<any> {
     
-    return this.http.get<any>(`${this.base}api/account`, {headers: this.auth}).pipe(
+    return this.http.get<any>(`${this.base}api/account`, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
 
   postAccount(data: IAccount): Observable<any> {
-    return this.http.post(this.accountURL, data , {headers: this.auth}).pipe(
+    return this.http.post(this.accountURL, data , {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
   
   postPerson(data: IPerson): Observable<any> {
-    return this.http.post(this.personURL, data, {headers: this.auth}).pipe(
+    return this.http.post(this.personURL, data, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   postLocation(zipCode: number, data: ILocation): Observable<any> {
     const url = `${this.locationURL}${zipCode}`;
-    return this.http.post(url, data, {responseType: 'json', headers: this.auth } ).pipe(
+    return this.http.post(url, data, {responseType: 'json', headers: this.auth_token } ).pipe(
       catchError(this.handleError)
     );
   }
 
   createOrRetrievePerson(personData: IPerson): Observable<any> {
-    return this.http.post(this.personURL, personData, { observe: 'response', headers: this.auth })
+    return this.http.post(this.personURL, personData, { observe: 'response', headers: this.auth_token })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -142,7 +146,7 @@ export class AccountService {
   }
 
   createOrRetrieveLocation(locationData: ILocation, zipCode: number): Observable<any> {
-    return this.http.post(`${this.locationURL}${zipCode}`, locationData, { observe: 'response', headers: this.auth })
+    return this.http.post(`${this.locationURL}${zipCode}`, locationData, { observe: 'response', headers: this.auth_token })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -159,7 +163,7 @@ export class AccountService {
   }
 
   getProfPic(accountId: number): Observable<Blob> {
-    return this.http.get(`${this.base}api/account/get/profilepic/${accountId}`, { responseType: 'blob', headers: this.auth })
+    return this.http.get(`${this.base}api/account/get/profilepic/${accountId}`, { responseType: 'blob', headers: this.auth_token })
         .pipe(
             tap((response: any) => {
                 console.log('Response from getProfPic:', response);
@@ -172,14 +176,14 @@ export class AccountService {
 }
   getPersonById(id: number): Observable<IPerson> {
     const url = `${this.personURL}/retrieve/${id}`;
-    return this.http.get<IPerson>(url, {headers: this.auth}).pipe(
+    return this.http.get<IPerson>(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   getLocationById(id: number): Observable<any> {
     const url = `${this.locationURL}/retrieve/${id}`;
-    return this.http.get<Location>(url, {headers: this.auth}).pipe(
+    return this.http.get<Location>(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }

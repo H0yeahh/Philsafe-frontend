@@ -527,9 +527,8 @@
                     {{ item.report.report_id }}
                   </td>
                   <td>
-                    {{ item.complainant?.firstname }}
-                    {{ item.complainant?.middlename }}
-                    {{ item.complainant?.lastname }}
+                    {{ item.complainant?.name}}
+
                   </td>
                   <td>
                     {{ item.report.reported_date | date }}

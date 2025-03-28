@@ -56,10 +56,11 @@ export class PersonService {
   private policeUrl = `${this.apiUrl}/police`;
   private locationUrl = `${this.apiUrl}/location/retrieve/all`;
 
-  private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  
   private token = localStorage.getItem('token') ?? '';
-  private auth = new HttpHeaders({
+  private headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': this.token });
+  
+ 
+  private auth_token = new HttpHeaders({
       'Authorization': this.token
     });
  
@@ -74,21 +75,20 @@ export class PersonService {
 
   create(policeData: IPolice): Observable<any> {
     return this.http
-      .post(this.policeUrl, policeData, { headers: this.headers })
+      .post(this.policeUrl, policeData, { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getPersons(): Observable<any> {
     return this.http
-      .get<any>(`${this.personUrl}/retrieve/all`)
+      .get<any>(`${this.personUrl}/retrieve/all` , {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
 
   getEvidences(reportId: number): Observable<any> {
     return this.http
-      .get<any>(`${this.apiUrl}/media/collect/items/${reportId}`,
-       { headers: this.mediaHeaders }  
+      .get<any>(`${this.apiUrl}/media/collect/items/${reportId}`, { headers: this.auth_token }  
       )
       .pipe(catchError(this.handleError));
   }
@@ -96,32 +96,32 @@ export class PersonService {
 
   getLocations(): Observable<any> {
     return this.http
-      .get<any>(this.locationUrl)
+      .get<any>(this.locationUrl, {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
 
   getALocation(locationId: number): Observable<any> {
     return this.http
-      .get<any>(`${this.apiUrl}/location/retrieve/${locationId}`)
+      .get<any>(`${this.apiUrl}/location/retrieve/${locationId}`, {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
   postAccount(data: IAccount): Observable<any> {
     return this.http
-      .post(this.accountUrl, data, { headers: this.headers })
+      .post(this.accountUrl, data, { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   postPerson(data: IPerson): Observable<any> {
     return this.http
-      .post(this.personUrl, data, { headers: this.headers })
+      .post(this.personUrl, data, { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   createOrRetrievePolice(policeData: IPolice): Observable<any> {
     return this.http
-      .post(this.policeUrl, policeData, { headers: this.headers, observe: 'response' })
+      .post(this.policeUrl, policeData, { headers: this.auth_token, observe: 'response' })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200 && response.body && response.body.id) {
@@ -136,27 +136,28 @@ export class PersonService {
 
   registerPolice(policeData: IPolice): Observable<any> {
     return this.http
-      .post(this.policeUrl, policeData, { headers: this.headers })
+      .post(this.policeUrl, policeData, { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getPersonById(id: number): Observable<IPerson> {
     return this.http
-      .get<IPerson>(`${this.personUrl}/retrieve/${id}`)
+      .get<IPerson>(`${this.personUrl}/retrieve/${id}` , {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
   getLocationById(id: number): Observable<any> {
     return this.http
-      .get(`${this.locationUrl}/retrieve/${id}`)
+      .get(`${this.locationUrl}/retrieve/${id}` , {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
 
   getAll() {
     return this.http
-      .get(`${this.personUrl}/retrieve/all`)
+      .get(`${this.personUrl}/retrieve/all` , {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
+
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Unknown error!';

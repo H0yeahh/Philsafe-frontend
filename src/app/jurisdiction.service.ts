@@ -46,8 +46,8 @@ export class JurisdictionService {
   private base = `${environment.ipAddUrl}`;
   private token = localStorage.getItem('token') ?? '';
   
-    private auth = new HttpHeaders({
-        'Content-Type': 'application/json',
+    private auth_token = new HttpHeaders({
+  
         'Authorization': this.token
       });
    
@@ -63,14 +63,14 @@ export class JurisdictionService {
 
   getAll(): Observable<any> {
     const url = `${this.base}api/jurisdiction/collect`;
-    return this.http.get(url, {headers: this.auth}).pipe(
+    return this.http.get(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
 
   getStation(stationId: number): Observable<any> {
     const url = `${this.base}api/jurisdiction/retrieve/${stationId}`;
-    return this.http.get(url, {headers: this.auth}).pipe(
+    return this.http.get(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
@@ -79,7 +79,7 @@ export class JurisdictionService {
   // Delete station method
   delete(stationId: number): Observable<any> {
     const url = `${this.base}api/jurisdiction/discard/{StationId}`;
-    return this.http.delete(url, {headers: this.auth}).pipe(
+    return this.http.delete(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }

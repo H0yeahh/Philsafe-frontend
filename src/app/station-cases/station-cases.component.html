@@ -122,7 +122,7 @@
             <div class="current">
               <p><strong>Date:</strong> {{ currentDate }}</p>
               <p><strong>Time:</strong> {{ currentTime }}</p>
-            </div>  
+            </div>   
           </div>
       </div>
       <main class="main-content">
@@ -181,6 +181,7 @@
                               }"
                               [id]="'crime-' + crime.crime_id"
                               (pageChange)="onPageChange($event)"
+                              (click)="editCase(crime.crime_id)"
                             >
                               <td>
                                 <a>
@@ -209,18 +210,21 @@
                                 ></span>
                               </td>
                               <td>
-                                <div class="status-container">
-                                  <div 
-                                    class="progress-bar" 
-                                    [ngStyle]="{
-                                      'width': getStatusProgress(crime.status) + '%',
-                                      'background-color': getStatusColor(crime.status)
-                                    }"
-                                  >
-                                    {{ crime.status }}
+                                <div class="crime-status">
+                                  <span
+                                    [class.highlight]="isFieldMatched(crime.status, searchQuery)"
+                                    [innerHTML]="highlight(crime.status)">
+                                  </span>
+                                  <div class="progress-container">
+                                    <div
+                                      class="progress-bar"
+                                      [style.width.%]="getStatusProgress(crime.status)"
+                                      [style.backgroundColor]="getStatusColor(crime.status)">
+                                    </div>
                                   </div>
                                 </div>
                               </td>
+                              
                              
                             </tr>
                           </ng-container>

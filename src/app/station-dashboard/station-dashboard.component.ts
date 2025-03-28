@@ -48,6 +48,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   stations: IStation[] = [];
   persons: IPerson[] = [];
   cases: any = [];
+  accounts: any = [];
   currentPage: number = 1; 
   pageSize: number = 10; 
 
@@ -73,6 +74,17 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   intervalId: any;
   avatarUrl: string = 'assets/ccpo_logo.jpg';
   token: string;
+
+  showModal = false;
+  showSubModal = false;
+  modalType: 'weekly' | 'monthly' | 'annual' | null = null;
+  selectedReports: any[] = [];
+  isModalOpen: boolean;
+  filteredWeekly: any[]  = [];
+  filteredMonthly: any[]  = [];
+  filteredAnnually: any[]  = [];
+  citizens: any = [];
+
 
   constructor(
     @Inject(StationDashboardService)
@@ -107,13 +119,17 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
  
     this.loadUserProfile();
     this.fetchReportStation(this.stationId);
-    this.calculateReportsAverage();
+    this.fetchCases();
+    this.fetchAccounts();
+  //  this.fetchCitizens();
+    // this.calculateReportsAverage();
+    this.calculateReports()
     this.calculateReportsCount();
     this.updateDateTime();
   setInterval(() => this.updateDateTime(), 60000);
   this.intervalId = setInterval(() => this.updateDateTime(), 1000);
   const tokenData = localStorage.getItem('AuthCookie')
-  localStorage.setItem('AuthCookie', this.token);
+  // localStorage.setItem('AuthCookie', this.token);
 
     this.timePeriodControl = new FormControl('weekly');
 
@@ -219,6 +235,25 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  // fetchCitizens(): void {
+  //   this.caseQueueService.getCitizens().subscribe(
+  //     (response) => {
+  //       this.citizens = response;
+  //       localStorage.setItem('citizens', JSON.stringify(response));
+  //       console.log('citizens length', JSON.stringify(localStorage.getItem('citizens')).length)
+
+      
+  //       // console.log('Fetched citizens:', this.citizens);
+   
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching citizens:', error);
+  //       this.errorMessage = 'Failed to load citizens. Please try again.';
+  //     }
+  //   );
+  // }
+
+
   fetchPoliceData(policeId: number) {
     this.policeAccountsService.getAllPoliceData().subscribe(
       (allPoliceData) => {
@@ -256,6 +291,22 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+  
+
+  fetchCases(){
+
+    this.caseService.getAllCases().subscribe(
+      (response) => {
+        this.cases = response;
+        // console.log('Fetched Cases:', this.cases);
+        localStorage.setItem('cases', JSON.stringify(this.cases));
+      },
+      (error) => {
+        console.error('Error Fetching Cases:', error);
+      });
+
+  }
+
 
   
   fetchReportStation(stationId: number) {
@@ -263,9 +314,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       (response) => {
         this.reports = response;
         localStorage.setItem('reports', JSON.stringify(this.reports));
-        console.log('Fetched Reports', this.reports);
+        // console.log('Fetched Reports', this.reports);
         if (this.reports && this.reports.length) {
-          this.calculateReportsAverage();
+          // this.calculateReportsAverage();
+          this.calculateReports()
           this.calculateReportsCount();
           this.onSelect();
           // this.createChart();
@@ -274,10 +326,35 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
         }
       },
       (error) => {
-        console.error('Error Fetching Reports in Station ', error);
+        // console.error('Error Fetching Reports in Station ', error);
       }
     );
   }
+
+
+  fetchAccounts(): void {
+    this.accountService.getAccount().subscribe(
+      (response) => {
+        this.accounts = response;
+        localStorage.setItem('accounts', JSON.stringify(response));
+        // console.log('Fetched Accounts', this.accounts);
+       
+      },
+      (error) => {
+        console.error('Error fetching Accounts:', error);
+        this.errorMessage = 'Failed to load persons. Please try again.';
+      }
+    );
+  }
+
+
+
+
+
+  
+
+
+
 
   calculateReportsCount() {
     if (!this.reports || !this.reports.length) {
@@ -343,57 +420,98 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     return { weeklyCounts, monthlyCounts, annualCounts };
   }
 
-  calculateReportsAverage() {
+  // calculateReportsAverage() {
  
+  //   const currentDate = new Date();
+  //   const currentYear = currentDate.getFullYear();
+
+  //   // Group reports by week, month, and year
+  //   const weeklyReports: { [week: string]: number } = {};
+  //   const monthlyReports: { [month: string]: number } = {};
+  //   const annualReports: { [year: string]: number } = {};
+
+  //   this.reports.forEach((report) => {
+  //     const reportedDate = new Date(report.reported_date);
+  //     const weekKey = `Week${Math.ceil(reportedDate.getDate() / 7)}-${
+  //       reportedDate.getMonth() + 1
+  //     }-${reportedDate.getFullYear()}`;
+  //     const monthKey = `${reportedDate.toLocaleString('default', {
+  //       month: 'short',
+  //     })}-${reportedDate.getFullYear()}`;
+  //     const yearKey = `${reportedDate.getFullYear()}`;
+
+  //     weeklyReports[weekKey] = (weeklyReports[weekKey] || 0) + 1;
+  //     monthlyReports[monthKey] = (monthlyReports[monthKey] || 0) + 1;
+  //     annualReports[yearKey] = (annualReports[yearKey] || 0) + 1;
+  //   });
+
+  //   // Calculate weekly and monthly averages
+  //   const totalWeeks = Object.keys(weeklyReports).length;
+  //   const totalMonths = Object.keys(monthlyReports).length;
+  //   const totalAnnualReports = Object.keys(annualReports).length;
+
+  //   const weeklyAverage = totalWeeks
+  //     ? Math.round(this.reports.length / totalWeeks)
+  //     : 0;
+  //   const monthlyAverage = totalMonths
+  //     ? Math.round(this.reports.length / totalMonths)
+  //     : 0;
+  //   const annualAverage = totalAnnualReports
+  //     ? Math.round(
+  //         Object.values(annualReports).reduce((a, b) => a + b, 0) /
+  //           totalAnnualReports
+  //       )
+  //     : 0;
+
+  //   this.weeklyAvg = weeklyAverage;
+  //   this.monthlyAvg = monthlyAverage;
+  //   this.annualAvg = annualAverage;
+
+  //   console.log('Weekly Average:', this.weeklyAvg);
+  //   console.log('Monthly Average:', this.monthlyAvg);
+  //   console.log('Annual Average:', this.annualAvg);
+  // }
+
+
+  calculateReports() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-
-    // Group reports by week, month, and year
-    const weeklyReports: { [week: string]: number } = {};
-    const monthlyReports: { [month: string]: number } = {};
-    const annualReports: { [year: string]: number } = {};
-
+    const currentMonth = currentDate.getMonth(); // 0-indexed (0 = Jan, 11 = Dec)
+    const currentWeekStart = new Date(currentDate);
+    currentWeekStart.setDate(currentDate.getDate() - currentDate.getDay()); // Start of the current week (Sunday)
+  
+    let weeklyCount = 0;
+    let monthlyCount = 0;
+    let annualCount = 0;
+  
     this.reports.forEach((report) => {
       const reportedDate = new Date(report.reported_date);
-      const weekKey = `Week${Math.ceil(reportedDate.getDate() / 7)}-${
-        reportedDate.getMonth() + 1
-      }-${reportedDate.getFullYear()}`;
-      const monthKey = `${reportedDate.toLocaleString('default', {
-        month: 'short',
-      })}-${reportedDate.getFullYear()}`;
-      const yearKey = `${reportedDate.getFullYear()}`;
-
-      weeklyReports[weekKey] = (weeklyReports[weekKey] || 0) + 1;
-      monthlyReports[monthKey] = (monthlyReports[monthKey] || 0) + 1;
-      annualReports[yearKey] = (annualReports[yearKey] || 0) + 1;
+   
+      if (reportedDate.getFullYear() === currentYear) {
+        annualCount++
+        this.filteredAnnually.push(report);
+  
+        if (reportedDate.getMonth() === currentMonth) {
+          monthlyCount++
+          this.filteredMonthly.push(report);
+  
+          if (reportedDate >= currentWeekStart) {
+            weeklyCount++
+            this.filteredWeekly.push(report);
+          }
+        }
+      }
     });
-
-    // Calculate weekly and monthly averages
-    const totalWeeks = Object.keys(weeklyReports).length;
-    const totalMonths = Object.keys(monthlyReports).length;
-    const totalAnnualReports = Object.keys(annualReports).length;
-
-    const weeklyAverage = totalWeeks
-      ? Math.round(this.reports.length / totalWeeks)
-      : 0;
-    const monthlyAverage = totalMonths
-      ? Math.round(this.reports.length / totalMonths)
-      : 0;
-    const annualAverage = totalAnnualReports
-      ? Math.round(
-          Object.values(annualReports).reduce((a, b) => a + b, 0) /
-            totalAnnualReports
-        )
-      : 0;
-
-    this.weeklyAvg = weeklyAverage;
-    this.monthlyAvg = monthlyAverage;
-    this.annualAvg = annualAverage;
-
-    console.log('Weekly Average:', this.weeklyAvg);
-    console.log('Monthly Average:', this.monthlyAvg);
-    console.log('Annual Average:', this.annualAvg);
+  
+    this.weeklyReports = weeklyCount;
+    this.monthlyReports = monthlyCount;
+    this.annualReports = annualCount;
+  
+    console.log("Weekly Reports:", this.weeklyReports);
+    console.log("Monthly Reports:", this.monthlyReports);
+    console.log("Annual Reports:", this.annualReports);
   }
+  
 
   createWeeklyChart() {
     const counts = this.calculateReportsCount();
@@ -569,4 +687,41 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       clearInterval(this.intervalId); // Clear the interval when the component is destroyed
     }
   }
+
+
+  openModal(type: 'weekly' | 'monthly' | 'annual') {
+    this.modalType = type
+    this.isModalOpen = true
+
+    if(type === 'weekly') {      
+      this.filteredWeekly;
+      console.log('Filtered Weekly', this.filteredWeekly);
+    } else if (type== 'monthly') {        
+      this.filteredMonthly;
+      console.log('Filtered Monthly', this.filteredMonthly);
+    } else if (type== 'annual') {
+      this.filteredAnnually;
+      console.log('Filtered Annually', this.filteredAnnually);
+
+    }
+  }
+
+  closeModal() {
+    this.isModalOpen = false
+    this.modalType = null;
+    // this.reports = [];
+  }
+
+  navigateToReportEndorse(reportId: number): void {
+    if (reportId) {
+      console.log('Navigating with Report ID:', reportId);
+      this.router.navigate(['/report-endorse'], {
+        queryParams: { reportID: reportId },
+      });
+    } else {
+      console.error('report ID not found for the selected report.');
+      alert('Invalid report id. Please select a valid report.');
+    }
+  }
+
 }

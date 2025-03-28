@@ -61,6 +61,8 @@ import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
 import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
 import { AuthInterceptor } from './auth.interceptor';
+import { StatDetailsModalComponent } from './stats/stat-details-modal/stat-details-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -118,7 +120,8 @@ import { AuthInterceptor } from './auth.interceptor';
     StationPoliceArchivesComponent,
     PoliceMapComponent,
     SpammerUsersComponent,
-    SpamReportsComponent],
+    SpamReportsComponent,
+    StatDetailsModalComponent],
 
   imports: [
     BrowserModule,
@@ -127,6 +130,7 @@ import { AuthInterceptor } from './auth.interceptor';
     HttpClientModule,
     FormsModule,
     NgxPaginationModule,
+    BrowserAnimationsModule
   ],
   providers: [
     MapboxService,

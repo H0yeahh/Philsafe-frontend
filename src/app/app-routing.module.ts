@@ -291,12 +291,12 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  {
-    path: 'dashboard',
-    component: PoliceDashboardComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
+  // {
+  //   path: 'dashboard',
+  //   component: PoliceDashboardComponent,
+  //   canActivate: [roleGuard],
+  //   data: { roles: ['Police'] },
+  // },
   {
     path: 'crime-map',
     component: CrimeMapComponent,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,13 +16,18 @@ import { forkJoin, Observable, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { SuspectServiceService } from '../suspect-service.service';
 import { VictimDataService } from '../victim-data.service';
+import { expandCollapse } from '../animations/expand';
+
 
 @Component({
   selector: 'app-reportendorse',
   templateUrl: './reportendorse.component.html',
   styleUrls: ['./reportendorse.component.css'],
+  animations: [expandCollapse],
 })
 export class ReportEndorseComponent implements OnInit {
+
+  
     endorseForm!: FormGroup; // Form group for report submission
   isLoading = false;
   successMessage: string | null = null;
@@ -49,6 +54,7 @@ export class ReportEndorseComponent implements OnInit {
   policeDetails: any = {};
   stationDetails: any = {};
   reportDetails: any = [];
+  cases: any = [];
   reportId: any;
 
   showModal = false;
@@ -67,8 +73,6 @@ export class ReportEndorseComponent implements OnInit {
   currentID: string | null = null;
   isCaught: any;
   
-
-
   
   personData: any;
   accountData: any;
@@ -76,7 +80,15 @@ export class ReportEndorseComponent implements OnInit {
   citizenData: any;
   suspectData: any;
   assignedTeam: any;
+  showCasesModal = false;
 
+
+  currentPage: number = 1; 
+  pageSize: number = 10; 
+  totalCases: number = 0; 
+  filteredCases: any[] = [];
+  searchQuery = '';
+  activeTab: string = 'suspect';
 
   constructor(
     private fb: FormBuilder,
@@ -90,7 +102,8 @@ export class ReportEndorseComponent implements OnInit {
     private accountService: AccountService,
     private authService: AuthService,
     private suspectService: SuspectServiceService,
-    private victimService: VictimDataService
+    private victimService: VictimDataService,
+   
 
   ) {}
 
@@ -115,6 +128,8 @@ export class ReportEndorseComponent implements OnInit {
     const stationData = localStorage.getItem('stationDetails');
     const reportsData = localStorage.getItem('reports');
     const accountsData = localStorage.getItem('accounts');
+    const caseDetails = localStorage.getItem('cases');
+    const personDetails = localStorage.getItem('persons');
 
     // Parse and assign the data if it exists
     if (policeData) {
@@ -132,6 +147,13 @@ export class ReportEndorseComponent implements OnInit {
     if (accountsData) {
       this.accounts = JSON.parse(accountsData);
     }
+    if (caseDetails) {
+      this.cases = JSON.parse(caseDetails);
+    }
+
+    if (personDetails) {
+      this.persons = JSON.parse(personDetails);
+    }
 
     console.log('Retrieved Police Details:', this.policeDetails);
     console.log('Retrieved Station Details:', this.stationDetails);
@@ -143,11 +165,13 @@ export class ReportEndorseComponent implements OnInit {
 
       if (reportId) {
           this.reportId = Number(reportId);
-          this.fetchReportedSuspect(this.reportId);
-          this.fetchReportedVictim(this.reportId);
+          
 
           
           const matchingReport = this.reports.find((report: any) => report.report_id === this.reportId);
+
+          this.fetchReportedSuspect(matchingReport.report_id);
+          this.fetchReportedVictim(matchingReport.report_id);
           this.fetchEvidences(matchingReport.report_id)
           localStorage.setItem('report-data', JSON.stringify(matchingReport))
 
@@ -200,32 +224,11 @@ export class ReportEndorseComponent implements OnInit {
     // }
   }
 
-  // initializeForm(): void {
-  //   this.endorseForm = this.fb.group({
-  //     reportID: ['', Validators.required],
-  //     type: ['', Validators.required],
-  //     complainant: ['', Validators.required],
-  //     dateReceived: ['', Validators.required],
-  //     reportBody: ['', Validators.required],
-  //     citizen_id: ['', Validators.required],
-  //     reportSubCategoryID: ['', Validators.required],
-  //     locationID: [''],
-  //     stationID: ['', Validators.required],
-  //     crimeID: [''],
-  //     reportedDate: ['', Validators.required],
-  //     incidentDate: [''],
-  //     blotterNum: ['', Validators.required],
-  //     hasAccount: [true],
-  //     eSignature: ['', Validators.required],
-  //     rankID: ['', Validators.required],
-  //     personID: ['', Validators.required],
-  //     reportSubCategory: ['', Validators.required],
-  //     subcategory_name: ['', Validators.required],
-  //     status: ['', Validators.required],
-  //     is_spam: [true],
-  //     color: ['', Validators.required],
-  //   });
-  // }
+  fetchPerson(){
+    
+  }
+
+
 
 
   fetchReport(citizenId: number): void {
@@ -433,14 +436,19 @@ export class ReportEndorseComponent implements OnInit {
   }
 
   fetchReportedSuspect(reportID: number) {
-    this.suspectService.retrieveReportedSus(this.reportId).subscribe(
+    this.suspectService.retrieveReportedSus(reportID).subscribe(
       (response) => {
+        console.log('Raw Suspect Response:', response);
         if (Array.isArray(response) && response.length > 0) {
-          this.suspects = response[0]; // Extract the first element of the array
+          this.suspects = response;
           let suspectData = response;
           console.log('Fetched Reported suspect', this.suspects);
           localStorage.setItem('reported-suspect', JSON.stringify(suspectData));
-          this.isSuspectCaught(this.suspects.is_caught);
+          this.suspects.forEach((suspect) => {
+            this.isSuspectCaught(suspect.is_caught); 
+            this.fetchDescription(suspect.suspect_id); 
+          });
+        
         } else {
           console.error('No suspect data found');
         }
@@ -449,7 +457,7 @@ export class ReportEndorseComponent implements OnInit {
         console.error('Error fetching reported suspect:', error);
         this.errorMessage = 'Failed to load suspect. Please try again.';
       }
-    );
+    ); 
   }
 
   fetchReportedVictim(reportID: number) {
@@ -501,6 +509,20 @@ export class ReportEndorseComponent implements OnInit {
       }
     )
   }
+
+  fetchDescription(suspectId: number){
+    
+    this.suspectService.getDescription(suspectId).subscribe({
+      next: (response) => {
+        console.log('Fetched Description:', response);
+        console.log('Suspect ID in description', suspectId)
+      },
+      error: (error) => {
+        console.error('Error fetching description:', error);
+        this.errorMessage = 'Failed to load description. Please try again.';
+      }
+    });
+  }
   
   isSuspectCaught(isCaught: boolean){
     if(isCaught) {
@@ -510,7 +532,12 @@ export class ReportEndorseComponent implements OnInit {
     }
   }
 
-
+  getCivilStatus(personId: number): string {
+ 
+   
+    const person = this.persons.find((p) => p.person_id === personId);
+    return person ? person.civil_status : 'Unknown';
+  }
 
 
   getGenderName(gender: string): string {
@@ -814,6 +841,10 @@ export class ReportEndorseComponent implements OnInit {
     }
   }
 
+  selectCase(caseId: string) {
+    this.existingCaseId = caseId;
+    this.showCasesModal = false; // Close the modal after selecting
+  }
   
 
   navigateToCase(reportId: number) {
@@ -838,4 +869,54 @@ export class ReportEndorseComponent implements OnInit {
       }
     }
   }
+
+  filterCases() {
+    if (!this.searchQuery) {
+      this.filteredCases = this.cases;
+      return;
+    }
+  
+    const query = this.searchQuery.toLowerCase();
+  
+    this.filteredCases = this.cases.filter((crime) => {
+      const crimeIdMatch = crime.crime_id?.toString().toLowerCase().includes(query);
+      const citeNumMatch = crime.cite_number?.toString().toLowerCase().includes(query);
+      const incidentNameMatch = crime.incident_type 
+        ? crime.incident_type.toString().toLowerCase().includes(query) 
+        : false;
+      const statusMatch = crime.status?.toLowerCase().includes(query);
+  
+      return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
+    });
+  }
+  
+
+  isFieldMatched(fieldValue: any, query: string): boolean {
+    if (!query) return false;
+    const fieldStr = fieldValue ? fieldValue.toString().toLowerCase() : '';
+    return fieldStr.includes(query.toLowerCase());
+  }
+  
+  highlight(fieldValue: any): string {
+    if (!this.searchQuery) return fieldValue || '';
+    const fieldStr = fieldValue ? fieldValue.toString() : '';
+    const regex = new RegExp(`(${this.searchQuery})`, 'gi');
+    return fieldStr.replace(regex, '<mark>$1</mark>');
+  }
+  
+
+  isRowMatched(report: any): boolean {
+    if (!this.searchQuery) return false;
+    const query = this.searchQuery.toLowerCase().trim();
+    return Object.values(report).some((value) => 
+      value?.toString().toLowerCase().includes(query)
+    );
+  }
+
+  setActiveTab(tab: string): void {
+    this.activeTab = tab;
+  }
+
+  @HostBinding('@expandCollapse') pageTransitions = true;
+ 
 }

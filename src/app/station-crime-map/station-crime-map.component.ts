@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MapboxService } from '../mapbox.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environment';
 
 export interface crimeDetail {
@@ -37,6 +37,8 @@ export class StationCrimeMapComponent implements OnInit, OnDestroy {
   currentDate: string = '';
   currentTime: string = '';
   intervalId: any;
+
+  private token = localStorage.getItem('token') ?? '';
 
   crimes = [
     { name: 'ROBBERY', icon: 'assets/robbery.png' },
@@ -95,6 +97,9 @@ export class StationCrimeMapComponent implements OnInit, OnDestroy {
       this.stationDetails = JSON.parse(stationData);
     }
 
+    const auth_token = localStorage.getItem('token') ?? '';
+    this.token = auth_token;
+
     
   }
 
@@ -148,11 +153,17 @@ export class StationCrimeMapComponent implements OnInit, OnDestroy {
   }
 
   fetchCrimeDetails() {
-    this.http.get<crimeDetail[]>(`${environment.ipAddUrl}api/case/retrieve/nationwide`).subscribe((data) => {
+
+    const auth_token = new HttpHeaders({
+      'Authorization': this.token
+    })
+
+    this.http.get<crimeDetail[]>(`${environment.ipAddUrl}api/case/retrieve/nationwide`, {headers: auth_token}).subscribe((data) => {
       this.crimeDetails = data || [];
       this.filteredCrimes = data || [];
       console.log('Fetched Crimes:', this.crimeDetails)
     }, error => {
+      console.log('Tokeeeen!!!', auth_token.get('Authorization'));
       console.error('Error fetching crime details:', error);
     });
   }

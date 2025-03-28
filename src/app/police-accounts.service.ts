@@ -117,41 +117,46 @@ export class PoliceAccountsService {
   private accountURL = `${this.base}api/account/signup`;
   private personURL = `${this.base}api/person`;
   private locationURL = `${this.base}api/location/create/`;
+  private location = `${this.base}api/location/retrieve`;
   private ranksApiUrl = `${this.base}api/police/load/ranks`;
   private apiUrl = `${this.base}api/police`;
   // private base = 'https://localhost';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   // private headers = new HttpHeaders({ 'Content-Type': 'multipart/form-data' });
+  private token = localStorage.getItem('token') ?? '';
+  private auth_token = new HttpHeaders ({
+    'Authorization': this.token
+  })
 
   constructor(private http: HttpClient) {}
 
   create(policeData: IPolice): Observable<any> {
-    return this.http.post(this.apiUrl, policeData, {withCredentials: true}).pipe(catchError(this.handleError));
+    return this.http.post(this.apiUrl, policeData, {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   getPersons(): Observable<any> {
-    return this.http.get(`${this.base}/api/person/retrieve/all`).pipe(catchError(this.handleError));
+    return this.http.get(`${this.base}/api/person/retrieve/all` , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   getPoliceByStation(stationId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/collect/some/${stationId}`).pipe(catchError(this.handleError));
+    return this.http.get(`${this.apiUrl}/collect/some/${stationId}` , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   postAccount(data: IAccount): Observable<any> {
-    return this.http.post(this.accountURL, data).pipe(catchError(this.handleError));
+    return this.http.post(this.accountURL, data , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   postPerson(data: IPerson): Observable<any> {
-    return this.http.post(this.personURL, data).pipe(catchError(this.handleError));
+    return this.http.post(this.personURL, data , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   postLocation(zipCode: number, data: ILocation): Observable<any> {
     const url = `${this.locationURL}${zipCode}`;
-    return this.http.post(url, data, {withCredentials: true}).pipe(catchError(this.handleError));
+    return this.http.post(url, data, {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   createOrRetrievePerson(personData: IPerson): Observable<any> {
-    return this.http.post(this.personURL, personData, { observe: 'response' }).pipe(
+    return this.http.post(this.personURL, personData, { observe: 'response', headers: this.auth_token }).pipe(
       map((response: HttpResponse<any>) => {
         if (response.status === 200) {
           return { personFound: true, personId: response.body.id };
@@ -166,7 +171,7 @@ export class PoliceAccountsService {
   }
 
   createOrRetrieveLocation(locationData: ILocation, zipCode: number): Observable<any> {
-    return this.http.post(`${this.locationURL}${zipCode}`, locationData, { observe: 'response' }).pipe(
+    return this.http.post(`${this.locationURL}${zipCode}`, locationData, { observe: 'response', headers: this.auth_token }).pipe(
       map((response: HttpResponse<any>) => {
         if (response.status === 200) {
           return { locationFound: true, locationId: response.body.id };
@@ -180,8 +185,13 @@ export class PoliceAccountsService {
     );
   }
 
+
+  getLocation(locationId: number): Observable<any> {
+    return this.http.get(`${this.location}/${locationId}`,  {  headers: this.auth_token })
+  }
+
   createOrRetrieveAccount(accountData: IAccount, email: string): Observable<any> {
-    return this.http.post(`${this.accountURL}${email}`, accountData, { observe: 'response' }).pipe(
+    return this.http.post(`${this.accountURL}${email}`, accountData, { observe: 'response', headers: this.auth_token }).pipe(
       map((response: HttpResponse<any>) => {
         if (response.status === 200) {
           return { accountFound: true, accountId: response.body.id };
@@ -197,45 +207,45 @@ export class PoliceAccountsService {
 
   getPersonById(id: number): Observable<IPerson> {
     const url = `${this.personURL}/retrieve/${id}`;
-    return this.http.get<IPerson>(url).pipe(catchError(this.handleError));
+    return this.http.get<IPerson>(url, {headers: this.auth_token} ).pipe(catchError(this.handleError));
   }
 
   getLocationById(id: number): Observable<any> {
     const url = `${this.locationURL}/retrieve/${id}`;
-    return this.http.get<Location>(url).pipe(catchError(this.handleError));
+    return this.http.get<Location>(url , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   register(data: IPolice): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data, {withCredentials: true}).pipe(catchError(this.handleError));
+    return this.http.post<any>(this.apiUrl, data, {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   getRanks(): Observable<IRank[]> {
-    return this.http.get<IRank[]>(this.ranksApiUrl).pipe(catchError(this.handleError));
+    return this.http.get<IRank[]>(this.ranksApiUrl , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   savePoliceData(policeData: IPolice): Observable<any> {
-    return this.http.post(this.apiUrl, policeData, {withCredentials: true}).pipe(
+    return this.http.post(this.apiUrl, policeData, {headers: this.auth_token}).pipe(
       tap(response => console.log('Save police response:', response)),
       catchError(this.handleError)
     );
   }
 
   updatePoliceData(id: number, policeData: IPolice): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, policeData, {withCredentials: true}).pipe(
+    return this.http.put(`${this.apiUrl}/${id}`, policeData, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Update police ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
 
   getAllPoliceData(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/collect/all`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/collect/all`, {headers: this.auth_token}).pipe(
       tap(response => console.log('Get all police response:', response)),
       catchError(this.handleError)
     );
   }
 
   getAllPolice(pageNumber: number, pageSize: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/collect/all/${pageSize}/${pageNumber}`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/collect/all/${pageSize}/${pageNumber}`, {headers: this.auth_token}).pipe(
       tap(response => console.log('Get all police response:', response)),
       catchError(this.handleError)
     );
@@ -244,7 +254,7 @@ export class PoliceAccountsService {
   
 
   deletePolice(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete(`${this.apiUrl}/${id}` , {headers: this.auth_token}).pipe(
       tap(response => console.log(`Delete police ${id} response:`, response)),
       catchError(this.handleError)
     );
@@ -252,28 +262,28 @@ export class PoliceAccountsService {
 
 
   resignedPolice(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/resign/${id}`).pipe(
+    return this.http.delete(`${this.apiUrl}/resign/${id}`, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Delete police ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
 
   reinstatePolice(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/reinstate/${id}`).pipe(
+    return this.http.delete(`${this.apiUrl}/reinstate/${id}`, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Delete police ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
 
   getPoliceByPersonId(id: number){
-    return this.http.get(`${this.apiUrl}/check/${id}`).pipe(
+    return this.http.get(`${this.apiUrl}/check/${id}`, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Get police ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
 
   getPoliceById(data: { id: number; badgeNumber: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/retrieval/${data.id}`, data, {withCredentials: true}).pipe(
+    return this.http.post<any>(`${this.apiUrl}/retrieval/${data.id}`, data, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Get police by ID response:`, response)),
       catchError(this.handleError)
     );
@@ -282,35 +292,35 @@ export class PoliceAccountsService {
 
 
   saveStationData(stationData: any): Observable<any> {
-    return this.http.post(this.stationURL, stationData).pipe(
+    return this.http.post(this.stationURL, stationData, {headers: this.auth_token}).pipe(
       tap(response => console.log('Save station response:', response)),
       catchError(this.handleError)
     );
   }
 
   getAllStations(): Observable<any[]> {
-    return this.http.get<any[]>(this.stationURL).pipe(
+    return this.http.get<any[]>(this.stationURL, {headers: this.auth_token}).pipe(
       tap(response => console.log('Get all stations response:', response)),
       catchError(this.handleError)
     );
   }
 
   getStationById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.stationURL}/${id}`).pipe(
+    return this.http.get<any>(`${this.stationURL}/${id}`, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Get station ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
 
   updateStationData(id: number, stationData: any): Observable<any> {
-    return this.http.put(`${this.stationURL}/${id}`, stationData).pipe(
+    return this.http.put(`${this.stationURL}/${id}`, stationData, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Update station ${id} response:`, response)),
       catchError(this.handleError)
     );
   }
 
   deleteStation(id: number): Observable<any> {
-    return this.http.delete(`${this.stationURL}/${id}`).pipe(
+    return this.http.delete(`${this.stationURL}/${id}`, {headers: this.auth_token}).pipe(
       tap(response => console.log(`Delete station ${id} response:`, response)),
       catchError(this.handleError)
     );

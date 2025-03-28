@@ -1,0 +1,21 @@
+<div class="modal-overlay" *ngIf="isVisible">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Incident Details</h2>
+        <button class="close-button" (click)="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="selectedReport; else noData">
+          <p><strong>Blotter Number:</strong> {{ selectedReport.blotter_num }}</p>
+          <p><strong>Category:</strong> {{ selectedReport.category_name }}</p>
+          <p><strong>Subcategory:</strong> {{ selectedReport.subcategory_name }}</p>
+          <p><strong>Date Reported:</strong> {{ selectedReport.reported_date | date:'medium' }}</p>
+          <p><strong>Location:</strong> {{ barangayName || 'Loading...' }}</p>
+          <p><strong>Description:</strong> {{ selectedReport.description }}</p>
+        </div>
+        <ng-template #noData>
+          <p>No data available.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>

@@ -59,6 +59,13 @@ export class StationDashboardService {
     });
   }
 
+  private token = localStorage.getItem('token') ?? '';
+
+  private auth_token = new HttpHeaders({
+    'Authorization': this.token
+})
+
+
   getReportData(
     stationId: number
   ): Observable<{
@@ -76,51 +83,49 @@ export class StationDashboardService {
         monthlyReports: number;
         annualReports: number;
         chartData: any;
-      }>(this.endpoints.localReports(stationId), { headers })
+      }>(this.endpoints.localReports(stationId), { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getReports(stationId: number): Observable<IReport[]> {
     const headers = this.getHeaders();
     return this.http
-      .get<IReport[]>(this.endpoints.localReports(stationId), { headers })
+      .get<IReport[]>(this.endpoints.localReports(stationId), { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getNationwideReports(): Observable<IReport[]> {
     const headers = this.getHeaders();
     return this.http
-      .get<IReport[]>(this.endpoints.nationwideReports, { headers })
+      .get<IReport[]>(this.endpoints.nationwideReports, { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   submitReport(report: IReport): Observable<IReport> {
     const headers = this.getHeaders();
     return this.http
-      .post<IReport>(this.endpoints.submitReport, report, { headers })
+      .post<IReport>(this.endpoints.submitReport, report , { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getCitizenReports(): Observable<{ reports: IReport[]; total: number }> {
     const headers = this.getHeaders();
     return this.http
-      .get<{ reports: IReport[]; total: number }>(this.endpoints.citizenReports, {
-        headers,
-      })
+      .get<{ reports: IReport[]; total: number }>(this.endpoints.citizenReports, { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getCategorizedReports(subcategoryId: number): Observable<IReport[]> {
     const headers = this.getHeaders();
     return this.http
-      .get<IReport[]>(this.endpoints.categorizedReports(subcategoryId), { headers })
+      .get<IReport[]>(this.endpoints.categorizedReports(subcategoryId), { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
   getCrimeReports(crimeId: number): Observable<IReport[]> {
     const headers = this.getHeaders();
     return this.http
-      .get<IReport[]>(this.endpoints.crimeReports(crimeId), { headers })
+      .get<IReport[]>(this.endpoints.crimeReports(crimeId), { headers: this.auth_token })
       .pipe(catchError(this.handleError));
   }
 
