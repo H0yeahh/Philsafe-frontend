@@ -18,7 +18,7 @@ import {
 import { PoliceOfficerService } from '../police-officer.service';
 import { AuthService } from '../auth.service';
 import { environment } from '../environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-station-list-of-officers',
@@ -59,7 +59,12 @@ export class StationListOfOfficersComponent implements OnInit {
       currentTime: string = '';
       intervalId: any;
       policeByStation: any = [];
+      private token = localStorage.getItem('token') ?? '';
 
+      private auth_token = new HttpHeaders({
+          'Authorization': this.token
+        });
+ 
 
   constructor(
     private fb: FormBuilder,
@@ -131,7 +136,7 @@ export class StationListOfOfficersComponent implements OnInit {
   
     const fetchPage = (pageNumber: number = 1) => {
       const url = `${environment.ipAddUrl}api/police/collect/some/${stationId}/${pageSize}/${currentPage}`;
-      this.http.get<any[]>(url).subscribe(
+      this.http.get<any[]>(url, {headers: this.auth_token}).subscribe(
         (response) => {
           const police = Array.isArray(response) ? response : response|| [];
           allPolice = [...allPolice, ...police]; 

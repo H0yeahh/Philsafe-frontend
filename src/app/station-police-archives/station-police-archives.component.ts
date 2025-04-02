@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { PoliceAccountsService, IRank, ILocation, IAccount, IPolice, IPerson } from '../police-accounts.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
 import { AuthService } from '../auth.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environment';
 
 @Component({
@@ -48,6 +48,12 @@ export class StationPoliceArchivesComponent {
       currentTime: string = '';
       intervalId: any;
       policeByStation: any = [];
+
+       private token = localStorage.getItem('token') ?? '';
+      
+            private auth_token = new HttpHeaders({
+                'Authorization': this.token
+              });
 
 
   constructor(
@@ -116,7 +122,7 @@ export class StationPoliceArchivesComponent {
   
     const fetchPage = (pageNumber: number = 1) => {
       const url = `${environment.ipAddUrl}api/police/collect/retired/all/${pageSize}/${currentPage}`;
-      this.http.get<any[]>(url).subscribe(
+      this.http.get<any[]>(url, {headers: this.auth_token}).subscribe(
         (response) => {
           const police = Array.isArray(response) ? response : response|| [];
           allPolice = [...allPolice, ...police]; 

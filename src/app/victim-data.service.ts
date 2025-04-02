@@ -50,6 +50,12 @@ export class VictimDataService {
     return this.http.put<any>(`${this.apiUrl}api/victim/edit/${id}`, victimData , {headers: this.auth_token});
   }
 
+  getDescription(id: number): Observable<any> {
+
+    const url = `${environment.ipAddUrl}api/description/person/${id}`;
+    return this.http.get( url , {headers: this.auth_token});
+  }
+
   // Discard a victim
   deleteVictim(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/discard/${id}` , {headers: this.auth_token});

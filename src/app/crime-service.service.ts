@@ -84,7 +84,7 @@ export class CrimeService {
   }
 
   markSolved(crimeId: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/mark/solved/${crimeId}`, {headers: this.auth_token});
+    return this.http.put(`${this.baseUrl}/mark/solved/${crimeId}`, {}, {headers: this.auth_token});
   }
 
   updateCase(crimeId: number, crimeData: any): Observable<any> {

@@ -51,6 +51,7 @@ import { StationPoliceArchivesComponent } from './station-police-archives/statio
 import { PoliceMapComponent } from './police-map/police-map.component';
 import { SpammerUsersComponent } from './spammer-users/spammer-users.component';
 import { SpamReportsComponent } from './spam-reports/spam-reports.component'; 
+import { StationGeoanalysisComponent } from './station-geoanalysis/station-geoanalysis.component';
 
 
 // station-edit-officers
@@ -249,12 +250,12 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  {
-    path: 'station-dashboard',
-    component: StationDashboardComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
+  // {
+  //   path: 'station-dashboard',
+  //   component: StationDashboardComponent,
+  //   canActivate: [roleGuard],
+  //   data: { roles: ['Police'] },
+  // },
   {
     path: 'station-list-of-officers',
     component: StationListOfOfficersComponent,
@@ -327,12 +328,12 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  {
-    path: 'station-case-queue',
-    component: StationCaseQueueComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
+  // {
+  //   path: 'station-case-queue',
+  //   component: StationCaseQueueComponent,
+  //   canActivate: [roleGuard],
+  //   data: { roles: ['Police'] },
+  // },
   {
     path: 'manage-users',
     component: ManageUsersComponent,
@@ -369,12 +370,12 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  {
-    path: 'report-endorse',
-    component: ReportEndorseComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
+  // {
+  //   path: 'report-endorse',
+  //   component: ReportEndorseComponent,
+  //   canActivate: [roleGuard],
+  //   data: { roles: ['Police'] },
+  // },
   {
     path: 'station-police-accounts',
     component: StationPoliceAccountsComponent,
@@ -405,18 +406,27 @@ const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
-  {
-    path: 'station-cases',
-    component: StationCasesComponent,
-    canActivate: [roleGuard],
-    data: { roles: ['Police'] },
-  },
+  // {
+  //   path: 'station-cases',
+  //   component: StationCasesComponent,
+  //   canActivate: [roleGuard],
+  //   data: { roles: ['Police'] },
+  // },
   {
     path: 'add-case',
     component: AddCaseComponent,
     canActivate: [roleGuard],
     data: { roles: ['Police'] },
   },
+
+  {
+    path: 'map',
+    component: StationGeoanalysisComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Police'] },
+  },
+
+
   // { path: 'dashboard', component: PoliceDashboardComponent,
   //   canActivate: [roleGuard], data: { roles: ['Admin'] }
   //  },

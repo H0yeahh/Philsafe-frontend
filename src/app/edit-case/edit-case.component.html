@@ -9,14 +9,14 @@
           <img src="assets/station10.png" alt="CCPO Logo" />
         </div>
 
-        <!-- <div *ngIf="stationDetails; else loadingTemplate">
+        <div *ngIf="stationDetails; else loadingTemplate">
                 <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
               </div>
       
               <ng-template #loadingTemplate>
                 <div id="loading">Loading Station Details...</div>
-              </ng-template> -->
-        <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
+              </ng-template>
+       
         <p class="text-sm text-zinc-600">Cebu City Police Office</p>
       </div>
       <nav class="mt-7">
@@ -24,7 +24,7 @@
           <li>
             <a
               [routerLink]="['/station-dashboard']"
-              routerLinkActive="active"
+              
               class="nav-link"
             >
               <img
@@ -37,9 +37,9 @@
           </li>
           <li>
             <a
-              [routerLink]="['/station-cases']"
+            (click)="navigateToCases()" 
               class="nav-link"
-              [ngClass]="{ active: isActive }"
+              routerLinkActive="active"
             >
               <img
                 src="assets/cases.svg"
@@ -62,7 +62,7 @@
           <li>
             <a
               [routerLink]="['/station-crime-map']"
-              routerLinkActive="active"
+              
               class="nav-link"
             >
               <img
@@ -108,6 +108,12 @@
 
     <main class="content">
       <div class="container">
+        <!-- <div
+        [routerLink]="['/station-cases']"
+        class="back">
+            <img src="assets/arrow-left.svg">
+            <span>Back to list of Cases</span>
+        </div> -->
         <main class="main-content">
           <h2 style="padding-bottom: 30px">
             <span *ngIf="incidentName">{{ incidentName.name }}</span>
@@ -205,8 +211,12 @@
                   </td>
                 </tr>
 
-                <tr>
-                  <td>Assigned To:</td>
+                <tr *ngFor="let police of polices">
+                  <td colspan="4">
+                    <span style="padding-right: 68px; font-weight: bold">Assigned To:</span>
+                    <span >{{ police.firstname }}, {{ police.lastname }} of {{police.unit}}</span>
+                  </td>
+                
                 </tr>
 
                 <tr (click)="openModal()">
@@ -241,11 +251,17 @@
                             Suspect {{ i + 1 }}
                           </button>
                         </li>
-                        <button (click)="addSuspect()">+ Add Suspect</button>
+                        <button  (click)="addSuspect(crimeData.status)"
+
+                        >+ Add Suspect</button>
                       </ul>
                     </div>
                     <div class="save-sus">
-                      <button (click)="saveSuspect()">Save</button>
+                      <div *ngIf="loading" class="loading-overlay">
+                        <div class="spinner"></div>
+                        <p>Saving suspect...</p>
+                      </div>
+                      <button (click)="saveSuspect(crimeData.status)" >{{ loading ? 'Saving...' : 'Save' }}</button>
                     </div>
 
                     <section class="main-content">
@@ -264,16 +280,19 @@
                           </label>
 
                           <table class="table-sus" style="text-align: center">
-                            
-                              <tr>
-                                <td colspan="2" class="edit">
-                                  <span (click)="editSuspect(i)">Edit</span>
-                                  <span *ngIf="suspect.isNew"> (New Suspect)</span>
-                                  <span *ngIf="suspect.isModified"> (Modified)</span>
-                                </td>
-                              </tr>
-                          
-                            
+                            <tr>
+                              <td colspan="2" class="edit">
+                                <span (click)="editSuspect(i, crimeData.status)">Edit</span>
+                                <span *ngIf="suspect.isNew">
+                                  (New Suspect)</span
+                                >
+                                <span *ngIf="suspect.isModified">
+                                  (Modified)</span
+                                >
+                              </td>
+                            </tr>
+
+
                             <tr>
                               <td>
                                 <span
@@ -340,7 +359,6 @@
                                   <option value="">No gender selected</option>
                                 </select>
                               </td>
-                              
                             </tr>
 
                             <tr>
@@ -384,26 +402,25 @@
                                   >Motive</span
                                 >
                               </td>
-                            
-                                <td class="input-sus">
-                                  <select [(ngModel)]="selectedmodus" name="modus" (change)="onModusChange($event)">
-                                    <option *ngFor="let method of modus" [ngValue]="method">
-                                      {{ method.method_name }}
-                                    </option>
-                                  </select>
-                                </td>
-          
+
+                              <td class="input-sus">
+                                <select
+                                  [(ngModel)]="selectedmodus"
+                                  name="modus"
+                                  (change)="onModusChange($event)"
+                                  [disabled]="!isEditing"
+                                >
+                                  <option
+                                    *ngFor="let method of modus"
+                                    [ngValue]="method"
+                                  >
+                                    {{ method.method_name }}
+                                  </option>
+                                </select>
+                              </td>
                             </tr>
 
-                            <!-- <tr>
-                              <td>
-                                <span
-                                  style="margin-left: 10px; font-weight: bold"
-                                  >Date of Death (if applicable)</span
-                                >
-                              </td>
-                              <td class="input-sus"><input type="text" /></td>
-                            </tr> -->
+                            
 
                             <tr>
                               <td>
@@ -412,7 +429,13 @@
                                   >Gang Affiliation</span
                                 >
                               </td>
-                              <td class="input-sus"><input type="text" [(ngModel)]="suspectModel.gang"/></td>
+                              <td class="input-sus">
+                                <input
+                                  type="text"
+                                  [(ngModel)]="suspect.affliated_gang"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
                             </tr>
 
                             <tr>
@@ -422,7 +445,13 @@
                                   >Reward</span
                                 >
                               </td>
-                              <td class="input-sus"><input type="text" [(ngModel)]="suspectModel.reward"/></td>
+                              <td class="input-sus">
+                                <input
+                                  type="text"
+                                  [(ngModel)]="suspect.reward"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
                             </tr>
 
                             <tr>
@@ -433,12 +462,14 @@
                                 >
                               </td>
                               <td class="input-sus">
-                                <select [(ngModel)]="isCaught">
+                                <select
+                                  [(ngModel)]="suspect.is_caught"
+                                  [disabled]="!isEditing"
+                                >
                                   <option [ngValue]="true">Yes</option>
                                   <option [ngValue]="false">No</option>
                                 </select>
                               </td>
-                              
                             </tr>
 
                             <tr>
@@ -449,19 +480,50 @@
                                 >
                               </td>
                               <td class="input-sus">
-                                <input 
-                                type="date" [(ngModel)]="dateCaught"/></td>
+                                <input
+                                  type="date"
+                                  [(ngModel)]="suspect.datetime_of_caught"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
                             </tr>
-
                             <tr>
                               <td>
                                 <span
                                   style="margin-left: 10px; font-weight: bold"
-                                  >Mugshots:
-                                </span>
+                                  >Deceased</span
+                                >
                               </td>
+                              <td class="input-sus">
+                                <select
+                                  [(ngModel)]="suspect.bio_status"
+                                  [disabled]="!isEditing"
+                                >
+                                  <option [ngValue]="false">Yes</option>
+                                  <option [ngValue]="true">No</option>
+                                </select>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Date of Death (if applicable)</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="date"
+                                  [(ngModel)]="suspect.deathDate"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
+                            </tr>
+                          </table>
 
-                              <div id="uploadfile" class="uploadfile">
+                            
+
+                              <!-- <div id="uploadfile" class="uploadfile">
                                 <input
                                   type="file"
                                   class="file"
@@ -478,30 +540,241 @@
                                   />
                                   <label for="actual-btn">Upload file/s</label>
                                 </div>
+                              </div> -->
+                              <div id=uploadfile class="uploadfile">
+                                <tr>
+                                  <td>
+                                    <span
+                                      style="margin-left: 10px; font-weight: bold; margin-bottom: 30px"
+                                      >Mugshots:
+                                    </span>
+                                  </td>
+                                <input
+                                type="file"
+                                (change)="
+                                  onFilesSelected($event, suspect, 'full_front')
+                                "
+                                id="full-front-img"
+                                hidden
+                              />
+                              <div class="icon-label">
+                                <img
+                                  src="assets/upload.svg"
+                                  class="upload-icon"
+                                />
+                                <label style="cursor: pointer;" for="full-front-img">Upload full front image</label>
+                              </div>
+
+
+                                <input
+                                type="file"
+                                (change)="
+                                  onFilesSelected($event, suspect, 'front_part')
+                                "
+                                id="front-img"
+                                hidden
+                              />
+                              <div class="icon-label">
+                                <img
+                                  src="assets/upload.svg"
+                                  class="upload-icon"
+                                />
+                                <label style="cursor: pointer;" for="front-img">Upload front image</label>
+                              </div>
+
+                              <input
+                              id="left-img"
+                                type="file"
+                                (change)="
+                                  onFilesSelected($event, suspect, 'left')
+                                "
+                                hidden
+                              />
+                              <div class="icon-label">
+                                <img
+                                  src="assets/upload.svg"
+                                  class="upload-icon"
+                                />
+                                <label style="cursor: pointer;" for="left-img">Upload left image</label>
+                              </div>
+
+                              <input
+                              id="right-img"
+                                type="file"
+                                (change)="
+                                  onFilesSelected($event, suspect, 'right')
+                                "
+                                hidden
+                              />
+                              <div class="icon-label">
+                                <img
+                                  src="assets/upload.svg"
+                                  class="upload-icon"
+                                />
+                                <label style="cursor: pointer;" for="right-img">Upload right image</label>
                               </div>
                             </tr>
-
-                            <tr>
-                              <td colspan="2">
-                                <div
-                                  *ngIf="uploadedFiles[i]?.length > 0"
-                                  class="img-container"
-                                >
-                                  <div
-                                    *ngFor="let file of uploadedFiles[i]"
-                                    class="img-wrapper"
-                                  >
-                                    <img
-                                      [src]="file.preview"
-                                      alt="Mugshot Preview"
-                                      class="img-prev"
-                                    />
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
+                              </div>
+                             
                             
-                          </table>
+                            
+
+                           <table>
+                            <tr>
+                              <!-- <div class="mugshot-label">
+                                <td *ngIf="suspect.mugshots?.fullfrontal?.preview" ><strong>Full Front</strong></td>
+                                <td *ngIf="suspect.mugshots?.front?.preview" ><strong>Front</strong></td>
+                                <td *ngIf="suspect.mugshots?.left?.preview" ><strong>Left</strong></td>
+                                <td *ngIf="suspect.mugshots?.right?.preview" ><strong>Right</strong></td>
+                              </div> -->
+                            </tr>
+                           </table>
+                              
+
+                              <table>
+                              <tr>
+                             
+                                  <div
+                                  
+                                    class="img-container"
+                                  >
+                                    <div
+                                     
+                                      class="img-wrapper"
+                                    >
+                                    <div class="mugshot-label">
+                                      <!-- If the Full Front mugshot exists in the current data (Base64) -->
+                                      <td *ngIf="getMugshotImage(suspect.mugshots, 'FullFrontal.jpg')">
+                                        <label><strong>Full Front</strong></label>
+                                      </td>
+                                      
+                                      <!-- Display the Full Front mugshot if it's available -->
+                                      <td>
+                                        <img
+                                          alt="Mugshot Full Front Preview"
+                                          class="img-prev"
+                                          *ngIf="getMugshotImage(suspect.mugshots, 'FullFrontal.jpg')"
+                                          [src]="getMugshotImage(suspect.mugshots, 'FullFrontal.jpg')"
+                                        />
+                                      </td>
+                                    </div>
+                                    <div class="mugshot-label">
+                                    <td *ngIf="suspect.mugshots?.full_front
+                                    ?.preview"><label><strong>Full Front</strong></label> </td>
+                                     <td>
+                                      <img
+                                        alt="Mugshot Full Front Preview"
+                                        class="img-prev"
+                                        *ngIf="suspect.mugshots?.full_front
+                                        ?.preview" 
+                                        [src]="suspect.mugshots.full_front
+                                        .preview"
+                                      /></td>
+                                    </div>
+
+
+                                    <div class="mugshot-label">
+                           
+                                      <td *ngIf="getMugshotImage(suspect.mugshots, 'Front.jpg')">
+                                        <label><strong>Front</strong></label>
+                                      </td>
+                                 
+                                      <td>
+                                        <img
+                                          alt="Mugshot Front Preview"
+                                          class="img-prev"
+                                          *ngIf="getMugshotImage(suspect.mugshots, 'Front.jpg')"
+                                          [src]="getMugshotImage(suspect.mugshots, 'Front.jpg')"
+                                        />
+                                      </td>
+                                    </div>
+                    
+                                    <div class="mugshot-label">
+                                      <td *ngIf="suspect.mugshots?.front_part?.preview"><label><strong>Front</strong></label> </td>
+                                       <td>
+                                        <img
+                                          alt="Mugshot Front Preview"
+                                          class="img-prev"
+                                          *ngIf="suspect.mugshots?.front_part?.preview" 
+                                          [src]="suspect.mugshots.front_part.preview"
+                                        /></td>
+                                      </div>
+
+
+
+                                      <div class="mugshot-label">
+                                
+                                        <td *ngIf="getMugshotImage(suspect.mugshots, 'LeftSide.jpg')">
+                                          <label><strong>Left</strong></label>
+                                        </td>
+                                        
+                                    
+                                        <td>
+                                          <img
+                                            alt="Mugshot Left Front Preview"
+                                            class="img-prev"
+                                            *ngIf="getMugshotImage(suspect.mugshots, 'LeftSide.jpg')"
+                                            [src]="getMugshotImage(suspect.mugshots, 'LeftSide.jpg')"
+                                          />
+                                        </td>
+                                      </div>
+
+                                      <div class="mugshot-label">
+                                        <td *ngIf="suspect.mugshots?.left?.preview"><label><strong>Left</strong></label> </td>
+                                         <td>
+                                          <img
+                                            alt="Mugshot Left Preview"
+                                            class="img-prev"
+                                            *ngIf="suspect.mugshots?.left?.preview" 
+                                            [src]="suspect.mugshots.left.preview"
+                                          /></td>
+                                        </div>
+
+
+
+                                        <div class="mugshot-label">
+                                          <td *ngIf="getMugshotImage(suspect.mugshots, 'RightSide.jpg')">
+                                            <label><strong>Right</strong></label>
+                                          </td>
+                                        
+                                          <td>
+                                            <img
+                                              alt="Mugshot Right Preview"
+                                              class="img-prev"
+                                              *ngIf="getMugshotImage(suspect.mugshots, 'RightSide.jpg')"
+                                              [src]="getMugshotImage(suspect.mugshots, 'RightSide.jpg')"
+                                            />
+                                          </td>
+                                        </div>
+
+                                        <div class="mugshot-label">
+                                          <td *ngIf="suspect.mugshots?.right?.preview"><label><strong>Right</strong></label> </td>
+                                           <td>
+                                            <img
+                                              alt="Mugshot Right Preview"
+                                              class="img-prev"
+                                              *ngIf="suspect.mugshots?.right?.preview" 
+                                              [src]="suspect.mugshots.right.preview"
+                                            /></td>
+                                          </div>
+
+                                    </div>
+                                  </div>
+                              </tr>
+
+                              <div class="delete-sus-parent" (click)="deleteSuspect(suspect.suspect_id)">
+                                <div class="delete-sus">
+                                  <tr>
+                                    
+                                      <td style="text-align: center;">Delete Suspect</td>
+                                    </tr>
+                                    </div>
+                              </div>
+                             
+                              
+
+                            </table>
+                         
                         </div>
                       </div>
                     </section>
@@ -522,13 +795,12 @@
                   <td style="text-align: center">Action</td>
                 </tr>
 
-                <tr *ngFor="let item of complainants">
-                  <td>
-                    {{ item.report.report_id }}
+                <tr *ngFor="let item of complainants" >
+                  <td (click)="item.report?.report_id ? openReport(item.report.report_id) : null">
+                    <span style="color:blue; cursor: pointer">{{ item.report.report_id }}</span>
                   </td>
                   <td>
-                    {{ item.complainant?.name}}
-
+                    {{ item.complainant?.firstname }} {{ item.complainant?.lastname }}
                   </td>
                   <td>
                     {{ item.report.reported_date | date }}
@@ -540,7 +812,13 @@
                     {{ item.report.incident_date | date }}
                   </td>
 
+          
+            
                   <td style="text-align: center">
+                    <div *ngIf="loading" class="loading-overlay">
+                      <div class="spinner"></div>
+                      <p>Sending Ticket Blotter...</p>
+                    </div>
                     <button
                       type="button"
                       class="send-blotter-btn"
@@ -551,11 +829,418 @@
                         )
                       "
                     >
-                      Send Ticket Blotter
+                    {{ loading ? 'Sending...' : 'Send Ticket Blotter' }}
                     </button>
                   </td>
                 </tr>
               </table>
+              
+              <div *ngIf="isReportOpen" class="modal">
+                <div class="modal-content">
+                  <button class="modal-close" (click)="closeReport()">X</button>
+                  <div class="modal-table">
+                    <div class="container">
+                      <main class="main-content">
+                        <h2 style="padding-bottom: 30px">
+                          <span>{{ selectedReport.report.subcategory_name }}</span>
+                        </h2>
+                        <section class="report-details">
+                          
+                     
+          
+                          <div class="table-container">
+                            <table>
+                
+                        <thead>
+                          <tr>
+                            <th colspan="2" class="category-label">REPORT DATA</th>
+                          </tr>
+                        </thead>
+                        <tr>
+                          <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
+                          <td style="text-align: end; padding-bottom: 2rem">
+                            <span>{{ selectedReport.report.report_id }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                        <tr>
+                          <td style="padding-bottom: 2rem"><h3>Reported Date</h3></td>
+                          <td style="text-align: end; padding-bottom: 2rem">
+                            <span>{{ selectedReport.report.reported_date | date }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding-bottom: 2rem"><h3>Incident Name</h3></td>
+                          <td style="text-align: end; padding-bottom: 2rem">
+                            <span>{{ selectedReport.report.subcategory_name }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding-bottom: 2rem"><h3>Category Name</h3></td>
+                          <td style="text-align: end; padding-bottom: 2rem">
+                            <span>{{ selectedReport.report.category_name }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding-bottom: 2rem"><h3>Incident Date</h3></td>
+                          <td style="text-align: end; padding-bottom: 2rem">
+                            <span>{{ selectedReport.report.incident_date | date }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding-bottom: 2rem; vertical-align: top;"><h3>Narrative</h3></td>
+                          <td style="text-align: end; padding-bottom: 2rem">
+                            <div class="narrative">
+                              <textarea
+                              style="width: 99%; height:150px; text-align: justify; justify-content: flex-start; resize: none;"
+                                [(ngModel)]="selectedReport.report.report_body"
+                                placeholder="Description"
+                                readonly
+                              ></textarea>
+                            </div>
+                            
+                          </td>
+                        </tr>
+                  
+                             
+                              <tr>
+                                <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
+                                <td style="text-align: end; padding-bottom: 2rem">
+                                  <a
+                                    style="color: blue; text-decoration: underline; cursor: pointer"
+                                    (click)="viewID(selectedReport.complainant.citizen_proof)"
+                                    >View Complainant ID</a
+                                  >
+                                </td>
+                              </tr>
+                            </table>
+                             
+            
+                                
+                             
+                                  <div  class="tab-buttons" >
+                                    <!-- <button  (click)="setActiveTab('suspect')" [class.active]="activeTab === 'suspect'"><h3>Suspect Data</h3></button> -->
+                                      <button (click)="setActiveTab('victim')" [class.active]="activeTab === 'victim'"><h3>Victim Data</h3></button>
+                                       <button (click)="setActiveTab('evidence')" [class.active]="activeTab === 'evidence'"><h3>Evidence Data</h3> </button>
+                                     </div>
+                                        
+            
+            
+                                <div class="data-container">
+                                  <!-- Centered Div -->
+                                  <div class="data" *ngIf="activeTab === 'victim'" [@expandCollapse]>
+                                    <tr>
+                                      <td><b>Victim Id</b></td>
+                                      <td><b>Victim Name</b></td>
+                                      <td><b>Civil Status</b></td>
+                                      <td><b>Gender</b></td>
+                                      <td><b>Deceased</b></td>
+                                    
+                      
+                                    </tr>
+                                
+                                    <tr *ngFor="let victim of victims" style="padding-right: 2rem">
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 2rem;">
+                                        <span>{{ victim?.victim_id }}</span>
+                                      </td>
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        <span>{{ victim.firstname }} {{ victim.lastname }}</span>
+                                      </td>
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        <span>{{ victim.civil_status || 'Unknown' }}</span>
+                                      </td>
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        <span>{{ getGenderName(victim.sex) }}</span>
+                                      </td>
+            
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        <span>{{ isCitizenDeceased(victim.bio_status) }}</span>
+                                      </td>
+                                      
+                                    </tr>
+                                  </div>
+                                </div>
+            
+                               
+                              
+                                <div *ngIf="activeTab === 'evidence'" [@expandCollapse] >
+                                 
+                                  <tr>
+                                    <td style="padding-bottom: 2rem"><h3>Evidences:</h3></td>
+                                  </tr>
+                
+                                  <div *ngIf="isLoading">Loading evidences...</div>
+                                  
+                                  <div
+                                    *ngIf="!isLoading && evidences.length > 0"
+                                    class="evidence-container"
+                                  >
+                                    <div
+                                      *ngFor="let evidence of evidences"
+                                      class="evidence-item"
+                                      (click)="openModalEvidence(evidence)"
+                                    >
+                
+                                      <div *ngIf="evidence.content_type.startsWith('image/')">
+                                        <img
+                                          [src]="
+                                            'data:' +
+                                            evidence.content_type +
+                                            ';base64,' +
+                                            cleanBase64(evidence.file_contents)
+                                          "
+                                          alt="Evidence Image"
+                                        />
+                                      </div>
+                
+                                      <div *ngIf="evidence.content_type === 'application/pdf'">
+                                        <embed
+                                          [src]="
+                                            'data:' +
+                                            evidence.content_type +
+                                            ';base64,' +
+                                            evidence.file_contents
+                                          "
+                                          width="100%"
+                                          height="600px"
+                                          type="application/pdf"
+                                        />
+                                      </div>
+                                      <div *ngIf="evidence.content_type === 'text/plain'">
+                                        <pre>{{ decodeBase64(evidence.file_contents) }}</pre>
+                                      </div>
+                                      <div
+                                        *ngIf="
+                                          evidence.content_type === 'application/msword' ||
+                                          evidence.content_type ===
+                                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                        "
+                                      >
+                                        <span
+                                          >Document (.docx) cannot be viewed directly in
+                                          browser.</span
+                                        >
+                                        <!-- You could integrate a viewer for DOCX files, like using Google Docs Viewer or a custom viewer -->
+                                      </div>
+                                      <div
+                                        *ngIf="
+                                          evidence.content_type ===
+                                            'application/vnd.ms-excel' ||
+                                          evidence.content_type ===
+                                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                        "
+                                      >
+                                        <span
+                                          >Spreadsheet (.xlsx) cannot be viewed directly in
+                                          browser.</span
+                                        >
+                                      </div>
+                
+                                      <!-- Handling Audio files -->
+                                      <div *ngIf="evidence.content_type.startsWith('audio/')">
+                                        <audio controls>
+                                          <source
+                                            [src]="
+                                              'data:' +
+                                              evidence.content_type +
+                                              ';base64,' +
+                                              evidence.file_contents
+                                            "
+                                            type="{{ evidence.content_type }}"
+                                          />
+                                          Your browser does not support the audio element.
+                                        </audio>
+                                      </div>
+                
+                                      <!-- Handling Video files -->
+                                      <div *ngIf="evidence.content_type.startsWith('video/')">
+                                        <video width="100%" controls>
+                                          <source
+                                            [src]="
+                                              'data:' +
+                                              evidence.content_type +
+                                              ';base64,' +
+                                              evidence.file_contents
+                                            "
+                                            type="{{ evidence.content_type }}"
+                                          />
+                                          Your browser does not support the video element.
+                                        </video>
+                                      </div>
+                
+                                      <!-- If file type doesn't match any specific one above -->
+                                      <div
+                                        *ngIf="
+                                          !evidence.content_type.startsWith('image/') &&
+                                          !evidence.content_type.startsWith('audio/') &&
+                                          !evidence.content_type.startsWith('video/')
+                                        "
+                                      >
+                                        <strong>File:</strong>
+                                        <span>{{ evidence.content_type }}</span>
+                                        <a
+                                          [href]="
+                                            'data:' +
+                                            evidence.content_type +
+                                            ';base64,' +
+                                            evidence.file_contents
+                                          "
+                                          download
+                                        >
+                                          Download File
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div *ngIf="!isLoading && evidences.length === 0">
+                                    No evidences found.
+                                  </div>
+                
+                                  <div
+                                    *ngIf="isModalOpen"
+                                    class="modal-overlay"
+                                    (click)="closeModal()"
+                                  >
+                                    <div
+                                      class="modal-content"
+                                      (click)="$event.stopPropagation()"
+                                    >
+                                      <button class="modal-close" (click)="closeModal()">
+                                        X
+                                      </button>
+                                      <div *ngIf="selectedEvidence">
+                                        <div
+                                          *ngIf="
+                                            selectedEvidence.content_type.startsWith('image/')
+                                          "
+                                        >
+                                          <img
+                                            [src]="
+                                              'data:' +
+                                              selectedEvidence.content_type +
+                                              ';base64,' +
+                                              cleanBase64(selectedEvidence.file_contents)
+                                            "
+                                            alt="Evidence Image"
+                                          />
+                                        </div>
+                                        <div
+                                          *ngIf="
+                                            selectedEvidence.content_type === 'application/pdf'
+                                          "
+                                        >
+                                          <embed
+                                            [src]="
+                                              'data:' +
+                                              selectedEvidence.content_type +
+                                              ';base64,' +
+                                              selectedEvidence.file_contents
+                                            "
+                                            width="100%"
+                                            height="600px"
+                                            type="application/pdf"
+                                          />
+                                        </div>
+                                        <div
+                                          *ngIf="
+                                            selectedEvidence.content_type.startsWith('audio/')
+                                          "
+                                        >
+                                          <audio controls>
+                                            <source
+                                              [src]="
+                                                'data:' +
+                                                selectedEvidence.content_type +
+                                                ';base64,' +
+                                                selectedEvidence.file_contents
+                                              "
+                                              type="{{ selectedEvidence.content_type }}"
+                                            />
+                                          </audio>
+                                        </div>
+                                        <div
+                                          *ngIf="
+                                            selectedEvidence.content_type.startsWith('video/')
+                                          "
+                                        >
+                                          <video width="100%" controls>
+                                            <source
+                                              [src]="
+                                                'data:' +
+                                                selectedEvidence.content_type +
+                                                ';base64,' +
+                                                selectedEvidence.file_contents
+                                              "
+                                              type="{{ selectedEvidence.content_type }}"
+                                            />
+                                          </video>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div *ngIf="errorMessage">{{ errorMessage }}</div>
+                              
+            
+                              <div *ngIf="isSignatureVisible" class="modal">
+                                <div class="modal-content">
+                                  <span class="close" (click)="closeSignature()"
+                                    >&times;</span
+                                  >
+                                  <img [src]="currentSignature" alt="E-Signature" />
+                                </div>
+                              </div>
+            
+                              <div *ngIf="isIDvisible" class="modal">
+                                <div class="modal-content">
+                                  <span class="close" (click)="closeID()"
+                                    >&times;</span
+                                  >
+                                  <img [src]="currentID" alt="ID" />
+                                </div>
+                                </div>
+            
+                                <table>
+                                <tr>
+                                  <td style="padding-bottom: 0.5rem; padding-top:10rem;"><h3>Signed By</h3></td>
+                                  <tr>
+                                    <td style="text-align: left; padding-bottom: 0.5rem">
+                                      <div *ngIf="selectedReport.report.e_signature.startsWith('data:image/')">
+                                        <img
+                                          [src]="selectedReport.report.e_signature"
+                                          alt="E-Signature"
+                                          style="max-width: 200px; max-height: 100px;"
+                                        />
+                                        
+                                      </div>
+                                      <div *ngIf="!selectedReport.report.e_signature.startsWith('data:image/')">
+                                        <span>No signature available</span>
+                                      </div>
+                                    </td>
+                                    
+                                  </tr>
+                                  <div  class="sign-name">
+                                    <span>{{ getComplainantInfo(selectedReport.report.citizen_id) }}</span>
+                                  </div>
+                                  
+                                  <!-- <tr>
+                                    <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+                                  </tr> -->
+                                  
+                            </table>
+                          </div>
+            
+                          
+            
+                      
+                        </section>
+                      </main>
+                    </div>
+            
+                  </div>
+                </div>
+
+              </div>
             </div>
           </section>
         </main>

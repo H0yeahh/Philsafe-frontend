@@ -63,7 +63,10 @@ import { SpamReportsComponent } from './spam-reports/spam-reports.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { StatDetailsModalComponent } from './stats/stat-details-modal/stat-details-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { StationGeoanalysisComponent } from './station-geoanalysis/station-geoanalysis.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 
 
@@ -121,7 +124,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PoliceMapComponent,
     SpammerUsersComponent,
     SpamReportsComponent,
-    StatDetailsModalComponent],
+    StatDetailsModalComponent,
+    StationGeoanalysisComponent],
 
   imports: [
     BrowserModule,
@@ -130,7 +134,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     FormsModule,
     NgxPaginationModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule 
   ],
   providers: [
     MapboxService,

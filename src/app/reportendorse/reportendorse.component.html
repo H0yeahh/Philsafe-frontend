@@ -1,101 +1,3 @@
-<!-- <div class="container">
-    <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
-    </div>
-    <div class="min-h-screen bg-zinc-100 flex">
-      <aside class="w-64 bg-white shadow-md">
-        <div class="p-4 text-center">
-          <img src="assets/police.svg" alt="CCPO Logo" class="mx-auto mb-4 logo"> 
-          <h2 class="text-lg font-semibold">Abellana Police Station 2</h2>
-          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
-        </div>
-        <nav class="mt-7"> 
-          <ul class="list-none p-0">
-            <li>
-              <a  href="#" class="nav-link">
-                <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                <span>DASHBOARD</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/inbox.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-                <span>INBOX</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/reports.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-                <span>REPORTS</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
-                <span>CRIME MAP</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/station.svg" alt="Station Icon" class="w-6 h-6 mr-2">
-                <span>STATION</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link">
-                <img src="assets/support.svg" alt="Contact Support Icon" class="w-6 h-6 mr-2">
-                <span>CONTACT SUPPORT</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-        
-        <div class="main-content bg-background p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">DASHBOARD</h1>
-            <div class="flex items-center space-x-4">
-              <select class="border border-zinc-300 rounded p-2">
-                <option>Quarterly</option>
-                <option>Monthly</option>
-                <option>Yearly</option>
-              </select>
-              <button class="button-reset flex items-center space-x-2 text-primary">
-                <img src="assets/refresh.svg" alt="Refresh Icon" class="icon-small">
-                <span>Refresh</span>
-              </button>
-              <button class="button-reset flex items-center space-x-2 text-primary">
-              <img src="assets/notification.svg" alt="Notification Icon">
-              </button>
-            </div>
-          </div>
-      
-          <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-100 p-4 rounded-lg text-center">
-              <h2 class="text-lg font-bold">Daily Reports</h2>
-              <p class="text-4xl font-bold">498</p>
-            </div>
-            <div class="bg-green-100 p-4 rounded-lg text-center">
-              <h2 class="text-lg font-bold">Weekly Reports</h2>
-              <p class="text-4xl font-bold">1,598</p>
-            </div>
-            <div class="bg-yellow-100 p-4 rounded-lg text-center">
-              <h2 class="text-lg font-bold">Monthly Reports</h2>
-              <p class="text-4xl font-bold">578</p>
-            </div>
-          </div>
-          <div class="bg-yellow-100 p-4 rounded-lg text-center">
-            <h2 class="text-lg font-bold">Annual Reports</h2>
-            <p class="text-4xl font-bold">578</p>
-          </div>
-        </div>
-      
-          <div class="bg-white p-4 rounded-lg">
-            <img src="assets/chart.jpg" alt="Chart Placeholder">
-          </div>
-        </div>
-      </div> -->
-
 <div class="container">
   <div class="emergency-banner">
     <!-- In case of emergencies, please dial your local emergency services number -->
@@ -551,98 +453,164 @@
                      
 
 
-                  <div class="data" *ngIf="activeTab === 'suspect'" [@expandCollapse]>
-                  
-                        <!-- <h3 class="category-label">SUSPECT DATA</h3> -->
-                     
+                         <div class="data-container">
+                          <!-- Centered Div -->
+                          <div class="data" *ngIf="activeTab === 'suspect'" [@expandCollapse]>
+                            <tr>
+                              <td><b>Suspect Id</b></td>
+                              <td><b>Suspect Name</b></td>
+                              <td><b>Civil Status</b></td>
+                              <td><b>Gender</b></td>
+                              <td><b>Arrested</b></td>
+                              <td><b>Deceased</b></td>
+                              <td><b>Nationality</b></td>
+              
+                            </tr>
+                        
+                            <tr *ngFor="let suspect of suspects" style="padding-right: 2rem" (click)="viewSuspectDesc(suspect.suspect_id)">
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ suspect?.suspect_id }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ suspect.first_name }} {{ suspect.last_name }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ getCivilStatus(suspect.person_id) || 'Unknown' }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ getGenderName(suspect.sex) }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ isCaught }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ isCitizenDeceased(suspect.bio_status) }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ suspectDesc?.ethnicity || 'Unknown' }}</span>
+                              </td>
+                            </tr>
+                          </div>
+                        </div>
 
-                    <tr>
-                      <td><b>Suspect Id</b></td>
-                      <td><b>Suspect Name</b></td>
-                      <td><b>Civil Status</b></td>
-                      <td><b>Gender</b></td>
-                      <td><b>Arrested</b></td>
-                    </tr>
+                  <!-- <div class="susDescModal" *ngIf="viewsusDesc">
+                    <div class="susDescModalContent">
+                      <button class="modal-close" (click)="closeModal()">
+                        X
+                      </button>
+                      <tr *ngFor="let desc of suspectDesc">
+                        <td style="padding-bottom: 2rem"><h3>Suspect Description: {{desc.suspect_id}}</h3></td>
 
+                        <td style="padding-bottom: 2rem"><h3>Suspect Description</h3></td>
+                        <td style="text-align: end; padding-bottom: 2rem">
+                          <span>{{ desc.suspect_desc }}</span>
+                        </td>
+                      </tr>
+                    </div>
                     
-                    <tr *ngFor="let suspect of suspects"  style="padding-right: 2rem"> 
-                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 5rem;">
-                        <span>{{ suspect?.suspect_id }}</span>
-                      </td>
-                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 5rem;">
-                        <span>{{ suspect.first_name }} {{ suspect.last_name }}</span>
-                      </td>
-                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 5rem;">
-                        <span>{{ getCivilStatus(suspect.person_id) || 'Unknown' }}</span>
-                      </td>
-                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 5rem;">
-                        <span>{{ getGenderName(suspect.sex) }}</span>
-                      </td>
-                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 5rem;">
-                        <span>{{ isCaught }}</span>
-                      </td>
-                    </tr>
+                  </div> -->
+
+                  <div class="susDescModal" *ngIf="viewsusDesc">
+                    <div class="susDescModalContent">
+                      <button class="modal-close" (click)="closeModal()">X</button>
+                  
+                      <!-- <div *ngIf="isLoading" class="loading">
+                        Loading...
+                      </div>   -->
+                      <div class="sus-name">
+                      <h3>{{ currentSuspectName}}</h3>
+                      <p>Suspect</p>
+                    </div>
+
+                      <div class="susDescDetails" *ngIf="suspectDesc">
+                        
+                        <tr>
+                          <td><strong>Ethnicity:</strong></td> 
+                          <td>{{ suspectDesc.ethnicity }}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Height:</strong> </td>
+                              <td>{{ suspectDesc.height }}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Weight:</strong> </td>
+                            <td>{{ suspectDesc.weight }}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Hair Color:</strong> </td>
+                            <td>{{ suspectDesc.hair_color }}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Eye Color:</strong> </td>
+                              <td>{{ suspectDesc.eye_color }}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Under Influence of Drug?:</strong></td> 
+                            <td>{{ suspectDesc.drug ? 'Yes' : 'No' }}</td>
+                          </tr>
+                            <tr>
+                              <td><strong>Under Influence of Alcohol?:</strong> </td>
+                                <td>{{ suspectDesc.alcohol ? 'Yes' : 'No' }}</td>
+                            </tr>     
+                          <tr>
+                            <td><strong>Distinguishing Mark:</strong> </td>
+                              <td>{{ suspectDesc.distinguishing_mark }}</td>
+                          </tr>                     
+                      </div>
+                    </div>
                   </div>
                   
                   
 
 
-                  <div class="data" *ngIf="activeTab === 'victim'" [@expandCollapse]>
-                    <!-- <thead>
-                      <tr>
-                        <th colspan="2" class="category-label">VICTIM DATA</th>
-                      </tr>
-                    </thead> -->
 
-                    <tr>
-                      <td style="padding-bottom: 2rem"><h3>Victim ID</h3></td>
-                      <td style="padding-bottom: 2rem"><h3>Victim Name</h3></td>
-                      <td style="padding-bottom: 2rem"><h3>Civil Status</h3></td>
-                      <td style="padding-bottom: 2rem"><h3>Gender</h3></td>
-                      <td style="padding-bottom: 2rem"><h3>Deceased</h3></td>
-                    </tr>
+                    <div class="data-container">
+                      <!-- Centered Div -->
+                      <div class="data" *ngIf="activeTab === 'victim'" [@expandCollapse]>
+                        <tr>
+                          <td><b>Victim Id</b></td>
+                          <td><b>Victim Name</b></td>
+                          <td><b>Civil Status</b></td>
+                          <td><b>Gender</b></td>
+                          <td><b>Deceased</b></td>
+                          <td><b>Nationality</b></td>
+          
+                        </tr>
+                    
+                        <tr *ngFor="let victim of victims" style="padding-right: 2rem">
+                          <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                            <span>{{ victim?.victim_id }}</span>
+                          </td>
+                          <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                            <span>{{ victim.firstname }} {{ victim.lastname }}</span>
+                          </td>
+                          <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                            <span>{{ getCivilStatus(victim.person_id) || 'Unknown' }}</span>
+                          </td>
+                          <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                            <span>{{ getGenderName(victim.sex) }}</span>
+                          </td>
 
-
-                    <tr >
-                      
-                      <td style="text-align: end; padding-bottom: 2rem">
-                        <span *ngIf="victims">{{ victims.victim_id }}</span>
-                      </td>
-                      <td style="text-align: end; padding-bottom: 2rem">
-                        <span>{{ victims.firstname }} {{ victims.lastname }}</span>
-                      </td>
-                
-                      
-                      <td style="text-align: end; padding-bottom: 2rem">
-                        <span>{{ victims.civil_status }}</span>
-                      </td>
-
-                      
-                      <td style="text-align: end; padding-bottom: 2rem">
-                        <span>{{ getGenderName(victims.sex) }}</span>
-                      </td>
-
-                      
-                      <td style="text-align: end; padding-bottom: 2rem">
-                        <span>{{ isCaught }}</span>
-                      </td>
-                    </tr>
-  
+                          <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                            <span>{{ isCitizenDeceased(victim.bio_status) }}</span>
+                          </td>
+                          <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                            <span>{{ victimDesc?.ethnicity || 'Unknown' }}</span>
+                          </td>
+                        </tr>
+                      </div>
                     </div>
 
+                   
                   
                     <div *ngIf="activeTab === 'evidence'" [@expandCollapse] >
-                      <thead>
-                        <tr>
-                          <th colspan="2" class="category-label">EVIDENCE</th>
-                        </tr>
-                      </thead>
+                     
                       <tr>
                         <td style="padding-bottom: 2rem"><h3>Evidences:</h3></td>
                       </tr>
     
                       <div *ngIf="isLoading">Loading evidences...</div>
-                      <div *ngIf="errorMessage">{{ errorMessage }}</div>
+                      
                       <div
                         *ngIf="!isLoading && evidences.length > 0"
                         class="evidence-container"
@@ -851,6 +819,7 @@
                         </div>
                       </div>
                     </div>
+                    <div *ngIf="errorMessage">{{ errorMessage }}</div>
                   
 
                   <div *ngIf="isSignatureVisible" class="modal">

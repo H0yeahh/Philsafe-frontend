@@ -188,7 +188,7 @@ export class StationCasesComponent implements OnDestroy{
     this.caseQueueService.getCitizens().subscribe(
       (response) => {
         // Limit the number of citizens stored
-        const limitedCitizens = response.slice(0, 50); // Limit to 50 most recent citizens
+        const limitedCitizens = response.slice(0, 100); // Limit to 50 most recent citizens
   
         this.citizens = limitedCitizens;
         
@@ -197,11 +197,11 @@ export class StationCasesComponent implements OnDestroy{
           const compactCitizens = limitedCitizens.map(citizen => ({
             citizen_id: citizen.citizen_id,
             name: citizen.name || `${citizen.firstname} ${citizen.lastname}`,
-            // Add other critical, compact fields
-            timestamp: Date.now() // Add timestamp for potential cleanup
+            id_proof: citizen.citizen_proof,
+            timestamp: Date.now()
           }));
   
-          localStorage.setItem('citizens', JSON.stringify(compactCitizens));
+          localStorage.setItem('citizens', JSON.stringify(response));
           
           // Log the size of stored data
           console.log('Citizens length', JSON.stringify(localStorage.getItem('citizens')).length);

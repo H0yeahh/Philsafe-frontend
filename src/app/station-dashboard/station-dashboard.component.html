@@ -186,6 +186,16 @@
         <canvas id="casesGraph"></canvas>
       </section>
 
+      <div class="export">
+        <label for="exportSelect" style="padding-right: 5px;">Export All Reports:</label>
+        <select  id="exportSelect" (change)="onExportChange($event)">
+          <option value="" disabled selected>Select Export Type</option>
+          <option value="xlsx-all">Excel</option>
+          <option value="csv-all">CSV</option>
+        </select>
+      </div>
+      
+
    <div class="parent-modal" *ngIf="isModalOpen">
     <div class="modal" *ngIf="isModalOpen">
       <button class="modal-close" (click)="closeModal()">X</button>
@@ -246,6 +256,15 @@
             </ng-template>
 
           </table>
+        </div>
+
+        <div class="export">
+          <label for="exportSelect" style="padding-right: 5px;">Export All Reports:</label>
+          <select  id="exportSelect" (change)="onExportChange($event)">
+            <option value="" disabled selected>Select Export Type</option>
+            <option value="xlsx-filtered">Excel</option>
+            <option value="csv-filtered">CSV</option>
+          </select>
         </div>
         
       </div>

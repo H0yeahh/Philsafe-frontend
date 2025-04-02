@@ -32,6 +32,9 @@ import { AuthService } from '../auth.service';
 import { CaseQueueService } from '../case-queue.service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
 import { AccountService } from '../account.service';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-station-dashboard',
@@ -299,7 +302,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       (response) => {
         this.cases = response;
         // console.log('Fetched Cases:', this.cases);
-        localStorage.setItem('cases', JSON.stringify(this.cases));
+        // localStorage.setItem('cases', JSON.stringify(this.cases));
       },
       (error) => {
         console.error('Error Fetching Cases:', error);
@@ -336,7 +339,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.accountService.getAccount().subscribe(
       (response) => {
         this.accounts = response;
-        localStorage.setItem('accounts', JSON.stringify(response));
+        // localStorage.setItem('accounts', JSON.stringify(response));
         // console.log('Fetched Accounts', this.accounts);
        
       },
@@ -655,6 +658,100 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     console.log('Rendering chart with config:', chartConfig);
     this.chart = new Chart(ctx, chartConfig);
   }
+
+
+
+  exportReports(type: 'xlsx' | 'csv', reportType: 'all' | 'filtered') {
+    let dataToExport = [];
+  
+    if (reportType === 'all') {
+      dataToExport = this.reports; // All reports
+    } else if (reportType === 'filtered') {
+      if (this.modalType === 'weekly') {
+        dataToExport = this.filteredWeekly;
+      } else if (this.modalType === 'monthly') {
+        dataToExport = this.filteredMonthly;
+      } else if (this.modalType === 'annual') {
+        dataToExport = this.filteredAnnually;
+      }
+    }
+  
+    if (!dataToExport.length) {
+      console.warn('No data available for export.');
+      return;
+    }
+  
+    if (type === 'xlsx') {
+      this.exportToExcel(dataToExport, reportType);
+    } else {
+      this.exportToCSV(dataToExport, reportType);
+    }
+  }
+
+  onExportChange(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    if (!selectedValue) return;
+  
+    const [format, type] = selectedValue.split('-');
+    this.exportReports(format as 'xlsx' | 'csv', type as 'all' | 'filtered');
+  }
+  
+
+  exportToExcel(data: any[], type: 'all' | 'filtered') {
+    const worksheetName = type === 'all' ? 'All Reports' : this.getWorksheetName(this.modalType);
+    
+  
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, worksheetName);
+  
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  
+      if(type === 'all') {
+      saveAs(dataBlob, `all_reports_${new Date().toISOString()}.xlsx`);
+    }
+    else if(type === 'filtered'){
+    saveAs(dataBlob, `${this.modalType}_reports_${new Date().toISOString()}.xlsx`);
+   }
+  }
+  
+  getWorksheetName(reportType?: 'weekly' | 'monthly' | 'annual'): string {
+    switch (reportType) {
+      case 'weekly': return 'Weekly Report';
+      case 'monthly': return 'Monthly Report';
+      case 'annual': return 'Annual Report';
+      default: return 'Filtered_Reports';
+    }
+  }
+  
+  exportToCSV(data: any[], type: 'all' | 'filtered') {
+    if (!data || data.length === 0) {
+      console.warn('No data available for export.');
+      return;
+    }
+  
+    // Convert data to CSV format
+    const csvContent = [
+      Object.keys(data[0]).join(','), 
+      ...data.map((row) => Object.values(row).map(value => `"${value}"`).join(',')) // Rows
+    ].join('\n');
+  
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  
+    const fileName = type === 'all' 
+      ? `all_reports_${new Date().toISOString()}.csv` 
+      : `${this.modalType}_${new Date().toISOString()}.csv`;
+  
+    saveAs(blob, fileName);
+  }
+
+  
+
+
+
+
+
 
   logout() {
     this.authService.logout().subscribe(

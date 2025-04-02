@@ -1,0 +1,129 @@
+
+
+<div class="container">
+    <div class="emergency-banner">
+      <!-- In case of emergencies, please dial your local emergency services number -->
+    </div>
+    <div class="min-h-screen bg-zinc-100 flex">
+      <aside class="w-64 bg-white shadow-md">
+        <div class="p-4 text-center">
+          <div class="logo">
+            <img [src]="avatarUrl" alt="CCPO Logo" />
+          </div>
+  
+          <div *ngIf="stationDetails; else loadingTemplate">
+            <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
+          </div>
+  
+          <ng-template #loadingTemplate>
+            <div id="loading">Loading Station Details...</div>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+        </div>
+        <nav class="mt-7">
+          <ul class="list-none p-0">
+            <li>
+              <a [routerLink]="['/station-dashboard']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/dashbold.svg"
+                  alt="Dashboard Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>DASHBOARD</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-cases']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/cases.svg"
+                  alt="Inbox Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>CASES</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-case-queue']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/reports.svg"
+                  alt="Reports Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>REPORTS</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/crime-map.svg"
+                  alt="Crime Map Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>CRIME MAP</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/station.svg"
+                  alt="Station Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>STATION</span>
+              </a>
+            </li>
+            <!-- <li>
+              <a href="#" class="nav-link">
+                <img
+                  src="assets/support.svg"
+                  alt="Contact Support Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>CONTACT SUPPORT</span>
+              </a>
+            </li> -->
+          </ul>
+          <div class="logout">
+            <button type="submit" class="button" (click)="logout()">
+              LOG OUT
+            </button>
+          </div>
+        </nav>
+      </aside>
+  
+      <main class="content">
+        <div class="welcome flex justify-between items-center mb-4">
+           
+            <div class="text-left date-time">
+              <p><strong>Date:</strong> {{ currentDate }}</p>
+              <p><strong>Time:</strong> {{ currentTime }}</p>
+            </div>
+          </div>
+
+          <section class="section-map">
+            <!-- Incident Type Filter -->
+<!-- <div class=filter>
+    <label for="incidentTypeFilter">Filter by Incident Type</label>
+    <select multiple id="incidentTypeFilter" [(ngModel)]="selectedIncidentTypes" (change)="filterMarkers()">
+      <option *ngFor="let type of uniqueIncidentTypes" [value]="type">{{ type }}</option>
+    </select>
+  </div> -->
+
+            <mat-form-field>
+              <mat-label>Filter by Incident Type</mat-label>
+              <mat-select multiple [(ngModel)]="selectedIncidentTypes" >
+                <mat-option class="mat-select-option" *ngFor="let type of uniqueIncidentTypes" [value]="type">
+                  <img [src]="'assets/icons/' + getCrimeIcon(type)" class="incident-icon"> {{ type }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+                    
+  
+            <div id="map-container" class="map"></div>
+          </section>
+    
+          
+      </main>
+    </div>
+  </div>
+  

@@ -2,7 +2,7 @@ import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CaseQueueService } from '../case-queue.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IReport } from '../case.service';
+import { CaseService, IReport } from '../case.service';
 import { IStation, JurisdictionService } from '../jurisdiction.service';
 import {
   IPerson,
@@ -89,6 +89,15 @@ export class ReportEndorseComponent implements OnInit {
   filteredCases: any[] = [];
   searchQuery = '';
   activeTab: string = 'suspect';
+  descriptions: any = [];
+  viewsusDesc: boolean = false;
+  suspectDesc: any = []
+  isDeceased: string = '';
+  currentSuspectName: string = '';
+  victimDesc: any = [];
+  victimDescriptions: any = [];
+  
+
 
   constructor(
     private fb: FormBuilder,
@@ -103,7 +112,7 @@ export class ReportEndorseComponent implements OnInit {
     private authService: AuthService,
     private suspectService: SuspectServiceService,
     private victimService: VictimDataService,
-   
+    private caseService: CaseService
 
   ) {}
 
@@ -121,7 +130,8 @@ export class ReportEndorseComponent implements OnInit {
     this.fetchPersons();
     this.fetchVictims();
     this.fetchSuspects();
-   
+    this.fetchAccounts();
+    this.fetchCases();
    
 
     const policeData = localStorage.getItem('policeDetails');
@@ -144,20 +154,20 @@ export class ReportEndorseComponent implements OnInit {
     if (reportsData) {
       this.reports = JSON.parse(reportsData);
     } 
-    if (accountsData) {
-      this.accounts = JSON.parse(accountsData);
-    }
-    if (caseDetails) {
-      this.cases = JSON.parse(caseDetails);
-    }
+    // if (accountsData) {
+    //   this.accounts = JSON.parse(accountsData);
+    // }
+    // if (caseDetails) {
+    //   this.cases = JSON.parse(caseDetails);
+    // }
 
     if (personDetails) {
       this.persons = JSON.parse(personDetails);
     }
 
-    console.log('Retrieved Police Details:', this.policeDetails);
-    console.log('Retrieved Station Details:', this.stationDetails);
-    console.log('Retrieved Reports:', this.reports);
+    // console.log('Retrieved Police Details:', this.policeDetails);
+    // console.log('Retrieved Station Details:', this.stationDetails);
+    // console.log('Retrieved Reports:', this.reports);
 
     this.route.queryParams.subscribe((params) => {
       const reportId = params['reportID'];
@@ -343,6 +353,20 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
+  fetchCases(){
+
+    this.caseService.getAllCases().subscribe(
+      (response) => {
+        this.cases = response;
+        // console.log('Fetched Cases:', this.cases);
+        // localStorage.setItem('cases', JSON.stringify(this.cases));
+      },
+      (error) => {
+        console.error('Error Fetching Cases:', error);
+      });
+
+  }
+
   fetchStations(): void {
     this.jurisdictionService.getAll().subscribe(
       (response: IStation[]) => {
@@ -400,16 +424,22 @@ export class ReportEndorseComponent implements OnInit {
     );
   }
 
-  // fetchAccounts(): Observable<any> {
-  //   return this.accountService.getAccount().pipe(
-  //     tap((response) => {
-  //       this.accounts = response;
-  //       // Store as JSON string
-  //       localStorage.setItem('accounts', JSON.stringify(response));
-  //     })
-  //   );
-  // }
+ 
 
+  fetchAccounts(): void {
+    this.accountService.getAccount().subscribe(
+      (response) => {
+        this.accounts = response;
+        // localStorage.setItem('accounts', JSON.stringify(response));
+        // console.log('Fetched Accounts', this.accounts);
+       
+      },
+      (error) => {
+        console.error('Error fetching Accounts:', error);
+        this.errorMessage = 'Failed to load persons. Please try again.';
+      }
+    );
+  }
 
   fetchEvidences(reportId: number): void {
     this.personService.getEvidences(reportId).subscribe(
@@ -430,7 +460,7 @@ export class ReportEndorseComponent implements OnInit {
       tap((response) => {
         this.locations = response;
         // Store as JSON string
-        localStorage.setItem('locations', JSON.stringify(response));
+        // localStorage.setItem('locations', JSON.stringify(response));
       })
     );
   }
@@ -464,10 +494,14 @@ export class ReportEndorseComponent implements OnInit {
     this.victimService.retrieveReportedVictim(reportID).subscribe(
       (response) => {
         if (Array.isArray(response) && response.length > 0) {
-          this.victims = response[0]; 
+          this.victims = response; 
           let victimData = response
           console.log('Fetched Reported victim', this.victims);
           localStorage.setItem('reported-victim', JSON.stringify(victimData));
+          this.victims.forEach((victim) => {
+            this.fetchVictimDescription(victim.person_id);  
+          });
+          // this.fetchVictimDescription(this.victims.person_id);
 
         } else {
           console.error('No victim data found');
@@ -476,8 +510,8 @@ export class ReportEndorseComponent implements OnInit {
         //   console.log('Fetched Reported victim', this.victims);
       },
       (error) => {
-        console.error('Error fetching reported suspect:', error);
-        this.errorMessage = 'Failed to load suspect. Please try again.';
+        console.error('Error fetching reported victim:', error);
+        this.errorMessage = 'Failed to load victim. Please try again.';
       }
     );
   }
@@ -516,6 +550,12 @@ export class ReportEndorseComponent implements OnInit {
       next: (response) => {
         console.log('Fetched Description:', response);
         console.log('Suspect ID in description', suspectId)
+        this.descriptions = response
+        const susDesc = this.descriptions.find((p: any) => p.suspect_id === suspectId);
+          if (susDesc) {
+            this.suspectDesc = susDesc;
+          }
+          console.log(`Suspect ${suspectId} Description:`, this.suspectDesc);
       },
       error: (error) => {
         console.error('Error fetching description:', error);
@@ -523,6 +563,62 @@ export class ReportEndorseComponent implements OnInit {
       }
     });
   }
+
+
+  fetchVictimDescription(personId: number){
+    
+    this.victimService.getDescription(personId).subscribe({
+      next: (response) => {
+        console.log('Fetched Description:', response);
+        console.log('Person ID in description', personId)
+        this.victimDescriptions = response
+        const vicDesc = this.victimDescriptions.find((p: any) => p.person_id === personId);
+          if (vicDesc) {
+            this.victimDesc = vicDesc;
+          }
+          console.log(`victim ${personId} Description:`, this.victimDesc);
+      },
+      error: (error) => {
+        console.error('Error fetching description:', error);
+        this.errorMessage = 'Failed to load description. Please try again.';
+      }
+    });
+  }
+
+  // fetchDescription(suspectId: number): Promise<void> {
+  //   return new Promise((resolve, reject) => {
+  //     this.suspectService.getDescription(suspectId).subscribe({
+  //       next: (response) => {
+  //         this.suspectDesc = response;
+  //         resolve();
+  //       },
+  //       error: (error) => {
+  //         console.error('Error fetching description:', error);
+  //         reject();
+  //       }
+  //     });
+  //   });
+  // }
+
+  isCitizenDeceased(deceased: boolean): string {
+    return deceased ? 'No' : 'Yes';
+  }
+
+
+  viewSuspectDesc(suspectId: number){
+    this.viewsusDesc = true;
+    this.isLoading = true; 
+    this.fetchDescription(suspectId);
+
+    const suspect = this.suspects.find((s) => s.suspect_id === suspectId);
+    if (suspect) {
+      this.currentSuspectName = `${suspect.first_name} ${suspect.last_name}`;
+    } else {
+      this.currentSuspectName = 'Unknown';
+    }
+  }
+
+  
   
   isSuspectCaught(isCaught: boolean){
     if(isCaught) {
@@ -531,6 +627,8 @@ export class ReportEndorseComponent implements OnInit {
       this.isCaught = 'No'
     }
   }
+
+
 
   getCivilStatus(personId: number): string {
  
@@ -577,7 +675,7 @@ export class ReportEndorseComponent implements OnInit {
       console.error("Citizens data is empty or undefined");
       return;
     }
-    console.log("Citizens Data:", this.citizens);
+    // console.log("Citizens Data:", this.citizens);
   
     // 2. Find Citizen
     const citizen = this.citizens.find((citizen: any) => citizen.citizen_id === citizenId);
@@ -749,6 +847,8 @@ export class ReportEndorseComponent implements OnInit {
   }
 
 
+
+
   cleanBase64(base64String: string): string {
     return base64String.replace(/(\r\n|\n|\r| )/gm, '');  // Remove unwanted characters
   }
@@ -783,6 +883,7 @@ export class ReportEndorseComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.selectedEvidence = null;
+    this.viewsusDesc = false
   }
 
   isReportsActive(): boolean {
@@ -805,6 +906,7 @@ export class ReportEndorseComponent implements OnInit {
         this.clearSession();
         localStorage.setItem('authenticated', '0');
         this.router.navigate(['/login']);
+
       },
       (error) => {
         console.error('Error during sign out:', error);
