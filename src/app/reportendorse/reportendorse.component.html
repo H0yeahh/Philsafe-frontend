@@ -111,7 +111,506 @@
 
     <main class="content">
       <!-- <form [formGroup]="endorseForm"> -->
+        <div>
+          <button (click)="exportToPDF(selectedReport.report_id)" class="export-btn">
+            <i class="fas fa-file-export"></i>
+            Export to PDF
+          </button>
+        </div>
+        
        
+        <div *ngIf="forExport" id="report-content">
+          <div >
+
+            <div class="univ-person-data">
+              <div class="parent-person-data">
+                <div class="prof-pic">
+                  <img [src]="avatarUrl" alt="Profile Picture">
+                </div>
+                
+              </div>
+              <div *ngIf="citizenData" class="person-data">
+                <section class="report-details">
+                  <thead>
+                    <tr>
+                      <th colspan="2" class="category-label">COMPLAINANT</th>
+                    </tr>
+                  </thead>
+                  <div class="complainant-data">
+                    <div>
+                      
+                      <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
+                    </div>      
+                    <div class="complainant-id">
+                      <span> <b>Complainant Id:</b> <br> <p style="text-align: end;">{{ citizenData.citizen_id }}</p></span>
+                    </div>    
+                  </div>   
+                </section>
+                
+                <span>{{ accountData.contact_num }}</span>
+                <span>{{ accountData.email }}</span>
+                <span>
+                  {{ locationData.block || "" }}
+                  {{ locationData.street || "" }}
+                  {{ locationData.barangay || "" }}
+                  {{ locationData.municipality || "" }}
+                  {{ locationData.province || "" }}
+                  {{ locationData.Region || "" }}
+                </span>
+              </div>   
+            </div>
+            
+            <div class="container">
+              <main class="main-content">
+                <h2 style="padding-bottom: 30px">
+                  <span>{{ selectedReport.subcategory_name }}</span>
+                </h2>
+                <section class="report-details">
+              
+                  <div class="table-container">
+                    <table>
+                <thead>
+                  <tr>
+                    <th colspan="2" class="category-label">REPORT DATA</th>
+                  </tr>
+                </thead>
+                <tr>
+                  <td style="padding-bottom: 2rem"><h3>Report ID</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ selectedReport.report_id }}</span>
+                  </td>
+                </tr>
+                <tr>
+                <tr>
+                  <td style="padding-bottom: 2rem"><h3>Reported Date</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ selectedReport.reported_date | date }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 2rem"><h3>Incident Name</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ selectedReport.subcategory_name }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 2rem"><h3>Category Name</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ selectedReport.category_name }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 2rem"><h3>Incident Date</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ selectedReport.incident_date | date }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 2rem; vertical-align: top;"><h3>Narrative</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <div class="narrative">
+                      <textarea
+                      style="width: 99%; height:150px; text-align: justify; justify-content: flex-start; resize: none;"
+                        [(ngModel)]="selectedReport.report_body"
+                        placeholder="Description"
+                        readonly
+                      ></textarea>
+                    </div>
+                    
+                  </td>
+                </tr>
+           
+                    
+               
+                     
+                      <tr>
+                        <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
+                        <td style="text-align: end; padding-bottom: 2rem">
+                          <!-- <a
+                            style="color: blue; text-decoration: underline"
+                            (click)="viewID(citizenData.citizen_proof)"
+                            >View Complainant ID</a
+                          > -->
+                        
+                            <div class="modal-content">
+        
+                              <img  [src]="
+                              citizenData.citizen_proof
+                            "
+                            alt="Evidence Image" />
+                            </div>
+                         
+                        </td>
+                      </tr>
+                    </table>
+                     
+    
+                    <thead>
+                      <tr>
+                        <th colspan="2" class="category-label">SUSPECT DATA</th>
+                      </tr>
+                    </thead>
+                             <div class="data-container">
+                              <!-- Centered Div -->
+                              
+                                <tr>
+                                  <td><b>Suspect Id</b></td>
+                                  <td><b>Suspect Name</b></td>
+                                  <td><b>Civil Status</b></td>
+                                  <td><b>Gender</b></td>
+                                  <td><b>Arrested</b></td>
+                                  <td><b>Deceased</b></td>
+                                  <td><b>Nationality</b></td>
+                  
+                                </tr>
+                            
+                                <tr *ngFor="let suspect of suspects" style="padding-right: 2rem" (click)="viewSuspectDesc(suspect.suspect_id)">
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ suspect?.suspect_id }}</span>
+                                  </td>
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ suspect.first_name }} {{ suspect.last_name }}</span>
+                                  </td>
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ getCivilStatus(suspect.person_id) || 'Unknown' }}</span>
+                                  </td>
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ getGenderName(suspect.sex) }}</span>
+                                  </td>
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ isCaught }}</span>
+                                  </td>
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ isCitizenDeceased(suspect.bio_status) }}</span>
+                                  </td>
+                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                    <span>{{ suspectDesc?.ethnicity || 'Unknown' }}</span>
+                                  </td>
+                                </tr>
+                          
+                            </div>
+    
+    
+                      <thead>
+                        <tr>
+                          <th colspan="2" class="category-label">VICTIM DATA</th>
+                        </tr>
+                      </thead>
+                        <div class="data-container">
+                          <!-- Centered Div -->
+                         
+                            <tr>
+                              <td><b>Victim Id</b></td>
+                              <td><b>Victim Name</b></td>
+                              <td><b>Civil Status</b></td>
+                              <td><b>Gender</b></td>
+                              <td><b>Deceased</b></td>
+                              <td><b>Nationality</b></td>
+              
+                            </tr>
+                        
+                            <tr *ngFor="let victim of victims" style="padding-right: 2rem">
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ victim?.victim_id }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ victim.firstname }} {{ victim.lastname }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ getCivilStatus(victim.person_id) || 'Unknown' }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ getGenderName(victim.sex) }}</span>
+                              </td>
+    
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ isCitizenDeceased(victim.bio_status) }}</span>
+                              </td>
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                <span>{{ victimDesc?.ethnicity || 'Unknown' }}</span>
+                              </td>
+                            </tr>
+        
+                        </div>
+    
+                       
+                      
+                   
+                         
+                        <thead>
+                          <tr>
+                            <th colspan="2" class="category-label">EVIDENCES</th>
+                          </tr>
+                        </thead>
+        
+                          <!-- <div *ngIf="isLoading">Loading evidences...</div> -->
+                          
+                          <div
+                            *ngIf="!isLoading && evidences.length > 0"
+                            class="evidence-container"
+                          >
+                            <div
+                              *ngFor="let evidence of evidences"
+                              class="evidence-item"
+                              (click)="openModal(evidence)"
+                            >
+        
+                              <div *ngIf="evidence.content_type.startsWith('image/')">
+                                <img
+                                  [src]="
+                                    'data:' +
+                                    evidence.content_type +
+                                    ';base64,' +
+                                    cleanBase64(evidence.file_contents)
+                                  "
+                                  alt="Evidence Image"
+                                />
+                              </div>
+        
+                              <div *ngIf="evidence.content_type === 'application/pdf'">
+                                <embed
+                                  [src]="
+                                    'data:' +
+                                    evidence.content_type +
+                                    ';base64,' +
+                                    evidence.file_contents
+                                  "
+                                  width="100%"
+                                  height="600px"
+                                  type="application/pdf"
+                                />
+                              </div>
+                              <div *ngIf="evidence.content_type === 'text/plain'">
+                                <pre>{{ decodeBase64(evidence.file_contents) }}</pre>
+                              </div>
+                              <div
+                                *ngIf="
+                                  evidence.content_type === 'application/msword' ||
+                                  evidence.content_type ===
+                                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                "
+                              >
+                                <span
+                                  >Document (.docx) cannot be viewed directly in
+                                  browser.</span
+                                >
+                                <!-- You could integrate a viewer for DOCX files, like using Google Docs Viewer or a custom viewer -->
+                              </div>
+                              <div
+                                *ngIf="
+                                  evidence.content_type ===
+                                    'application/vnd.ms-excel' ||
+                                  evidence.content_type ===
+                                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                "
+                              >
+                                <span
+                                  >Spreadsheet (.xlsx) cannot be viewed directly in
+                                  browser.</span
+                                >
+                              </div>
+        
+                              <!-- Handling Audio files -->
+                              <div *ngIf="evidence.content_type.startsWith('audio/')">
+                                <audio controls>
+                                  <source
+                                    [src]="
+                                      'data:' +
+                                      evidence.content_type +
+                                      ';base64,' +
+                                      evidence.file_contents
+                                    "
+                                    type="{{ evidence.content_type }}"
+                                  />
+                                  Your browser does not support the audio element.
+                                </audio>
+                              </div>
+        
+                              <!-- Handling Video files -->
+                              <div *ngIf="evidence.content_type.startsWith('video/')">
+                                <video width="100%" controls>
+                                  <source
+                                    [src]="
+                                      'data:' +
+                                      evidence.content_type +
+                                      ';base64,' +
+                                      evidence.file_contents
+                                    "
+                                    type="{{ evidence.content_type }}"
+                                  />
+                                  Your browser does not support the video element.
+                                </video>
+                              </div>
+        
+                              <!-- If file type doesn't match any specific one above -->
+                              <div
+                                *ngIf="
+                                  !evidence.content_type.startsWith('image/') &&
+                                  !evidence.content_type.startsWith('audio/') &&
+                                  !evidence.content_type.startsWith('video/')
+                                "
+                              >
+                                <strong>File:</strong>
+                                <span>{{ evidence.content_type }}</span>
+                                <a
+                                  [href]="
+                                    'data:' +
+                                    evidence.content_type +
+                                    ';base64,' +
+                                    evidence.file_contents
+                                  "
+                                  download
+                                >
+                                  Download File
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                          <div *ngIf="!isLoading && evidences.length === 0">
+                            No evidences found.
+                          </div>
+        
+                          <div
+                            *ngIf="isModalOpen"
+                            class="modal-overlay"
+                            (click)="closeModal()"
+                          >
+                            <div
+                              class="modal-content"
+                              (click)="$event.stopPropagation()"
+                            >
+                              <button class="modal-close" (click)="closeModal()">
+                                X
+                              </button>
+                              <div *ngIf="selectedEvidence">
+                                <div
+                                  *ngIf="
+                                    selectedEvidence.content_type.startsWith('image/')
+                                  "
+                                >
+                                  <img
+                                    [src]="
+                                      'data:' +
+                                      selectedEvidence.content_type +
+                                      ';base64,' +
+                                      cleanBase64(selectedEvidence.file_contents)
+                                    "
+                                    alt="Evidence Image"
+                                  />
+                                </div>
+                                <div
+                                  *ngIf="
+                                    selectedEvidence.content_type === 'application/pdf'
+                                  "
+                                >
+                                  <embed
+                                    [src]="
+                                      'data:' +
+                                      selectedEvidence.content_type +
+                                      ';base64,' +
+                                      selectedEvidence.file_contents
+                                    "
+                                    width="100%"
+                                    height="600px"
+                                    type="application/pdf"
+                                  />
+                                </div>
+                                <div
+                                  *ngIf="
+                                    selectedEvidence.content_type.startsWith('audio/')
+                                  "
+                                >
+                                  <audio controls>
+                                    <source
+                                      [src]="
+                                        'data:' +
+                                        selectedEvidence.content_type +
+                                        ';base64,' +
+                                        selectedEvidence.file_contents
+                                      "
+                                      type="{{ selectedEvidence.content_type }}"
+                                    />
+                                  </audio>
+                                </div>
+                                <div
+                                  *ngIf="
+                                    selectedEvidence.content_type.startsWith('video/')
+                                  "
+                                >
+                                  <video width="100%" controls>
+                                    <source
+                                      [src]="
+                                        'data:' +
+                                        selectedEvidence.content_type +
+                                        ';base64,' +
+                                        selectedEvidence.file_contents
+                                      "
+                                      type="{{ selectedEvidence.content_type }}"
+                                    />
+                                  </video>
+                                </div>
+                              </div>
+                     
+                          </div>
+                        </div>
+                        <div *ngIf="errorMessage">{{ errorMessage }}</div>
+                      
+    
+                      <div *ngIf="isSignatureVisible" class="modal">
+                        <div class="modal-content">
+                          <span class="close" (click)="closeSignature()"
+                            >&times;</span
+                          >
+                          <img [src]="currentSignature" alt="E-Signature" />
+                        </div>
+                      </div>
+    
+                      <div *ngIf="isIDvisible" class="modal">
+                        <div class="modal-content">
+                          <span class="close" (click)="closeID()"
+                            >&times;</span
+                          >
+                          <img [src]="currentID" alt="ID" />
+                        </div>
+                        </div>
+    
+                        <table>
+                        <tr>
+                          <td style="padding-bottom: 0.5rem; padding-top:10rem;"><h3>Signed By</h3></td>
+                          <tr>
+                            <td style="text-align: left; padding-bottom: 0.5rem">
+                              <div *ngIf="selectedReport.e_signature.startsWith('data:image/')">
+                                <img
+                                  [src]="selectedReport.e_signature"
+                                  alt="E-Signature"
+                                  style="max-width: 200px; max-height: 100px;"
+                                />
+                                
+                              </div>
+                              <div *ngIf="!selectedReport.e_signature.startsWith('data:image/')">
+                                <span>No signature available</span>
+                              </div>
+                            </td>
+                            
+                          </tr>
+                          <div *ngIf="citizenData" class="sign-name">
+                            <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+                            <span style=" font-weight:bold">Complainant</span>
+                          </div>
+                          
+
+                    </table>
+                  </div>
+
+                </section>
+              </main>
+            </div>
+          </div>
+          </div>
+          
+
+
+
         <div class="univ-person-data">
           <div class="parent-person-data">
             <!-- <h3>Complainant Name:</h3>
@@ -861,6 +1360,7 @@
                       </tr>
                       <div *ngIf="citizenData" class="sign-name">
                         <span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+                        <span style=" font-weight:bold">Complainant</span>
                       </div>
                       
                       <!-- <tr>

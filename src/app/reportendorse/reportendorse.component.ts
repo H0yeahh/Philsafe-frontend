@@ -18,7 +18,8 @@ import { SuspectServiceService } from '../suspect-service.service';
 import { VictimDataService } from '../victim-data.service';
 import { expandCollapse } from '../animations/expand';
 import { DialogService } from '../dialog/dialog.service';  
-
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-reportendorse',
@@ -97,6 +98,7 @@ export class ReportEndorseComponent implements OnInit {
   currentSuspectName: string = '';
   victimDesc: any = [];
   victimDescriptions: any = [];
+  forExport: boolean = false;
   
 
 
@@ -853,7 +855,8 @@ export class ReportEndorseComponent implements OnInit {
 
 
   cleanBase64(base64String: string): string {
-    return base64String.replace(/(\r\n|\n|\r| )/gm, '');  // Remove unwanted characters
+
+    return base64String.replace(/(\r\n|\n|\r| )/gm, '');
   }
   
   convertBase64ToBlobUrl(base64: string, contentType: string): string {
@@ -995,6 +998,184 @@ export class ReportEndorseComponent implements OnInit {
       return crimeIdMatch || citeNumMatch || incidentNameMatch || statusMatch;
     });
   }
+  
+
+  // exportToPDF(reportId: any) {
+
+  //   const content = document.getElementById('report-content'); // Make sure this ID exists in your HTML
+  //   this.dialogService.openLoadingDialog(); 
+  //   if (content) {
+  //     this.forExport = true;
+  //     html2canvas(content).then((canvas) => {
+  //       const imgData = canvas.toDataURL('image/png');
+  //       const pdf = new jsPDF('p', 'mm', 'a4');
+
+  //       const imgWidth = 190;
+  //       const pageHeight = pdf.internal.pageSize.height;
+  //       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  //       let heightLeft = imgHeight;
+  //       let position = 10;
+
+  //       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+  //       heightLeft -= pageHeight;
+
+  //       while (heightLeft > 0) {
+  //         position = heightLeft - imgHeight;
+  //         pdf.addPage();
+  //         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+  //         heightLeft -= pageHeight;
+  //       }
+
+  //       setTimeout(() => {
+  //         this.dialogService.closeLoadingDialog();
+  //         this.dialogService.openUpdateStatusDialog('Success', 'Report successfully exported');
+  //         this.dialogService.closeAllDialogs();
+          
+  //         setTimeout(() => {
+  //           pdf.save(`Report ${reportId}.pdf`);
+  //         }, 2000);
+  //       }, 5000);
+
+  //     });
+  //   } else {
+  //     this.dialogService.closeAllDialogs();
+  //     this.dialogService.openUpdateStatusDialog('Error', 'Unable to save, contact your administrator');
+  //     console.error("Element not found!");
+  //   }
+  // }
+
+
+//   exportToPDF(reportId: any) {
+
+// this.forExport = true;
+    
+// setTimeout(() => {
+//   const content = document.getElementById('report-content'); // Make sure this ID exists in your HTML
+//   this.dialogService.openLoadingDialog(); 
+//   console.log('content', content)
+//   if (content) {
+ 
+//     html2canvas(content).then((canvas) => {
+//       const imgData = canvas.toDataURL('image/png');
+//       const pdf = new jsPDF('p', 'mm', 'a4');
+
+//       const imgWidth = 190;
+//       const pageHeight = pdf.internal.pageSize.height;
+//       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+//       let heightLeft = imgHeight;
+//       let position = 10;
+
+//       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+//       heightLeft -= pageHeight;
+
+
+//       while (heightLeft > 0) {
+//         position = heightLeft - imgHeight;
+//         pdf.addPage();
+//         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+//         heightLeft -= pageHeight;
+//       }
+//       setTimeout(() => {
+//         this.dialogService.closeLoadingDialog();
+//         this.dialogService.openUpdateStatusDialog('Success', 'Report successfully exported');
+        
+//         setTimeout(() => {
+//           pdf.save(`Report ${reportId}.pdf`);
+//           this.dialogService.closeAllDialogs();
+//         }, 2000);
+//       }, 5000);
+
+//     });
+//   } else {
+//     this.dialogService.closeAllDialogs();
+//     this.dialogService.openUpdateStatusDialog('Error', 'Unable to save, contact your administrator');
+//     console.error("Element not found!");
+//   }
+// }, 5000)
+     
+//   }
+exportToPDF(reportId: any) {
+  this.forExport = true;
+  
+  // Increase timeout to ensure content is fully rendered
+  setTimeout(() => {
+    const content = document.getElementById('report-content');
+    this.dialogService.openLoadingDialog();
+    console.log('content', content);
+    
+    // Debug the content dimensions and visibility
+    if (content) {
+      console.log('Content dimensions:', content.offsetWidth, content.offsetHeight);
+      console.log('Content visibility:', window.getComputedStyle(content).visibility);
+      console.log('Content display:', window.getComputedStyle(content).display);
+      
+      // Force display if needed
+      content.style.display = 'block';
+      content.style.visibility = 'visible';
+      
+      // Ensure the content has some minimum dimensions
+      if (content.offsetWidth === 0 || content.offsetHeight === 0) {
+        console.error('Content has zero dimensions!');
+        this.dialogService.closeAllDialogs();
+        this.dialogService.openUpdateStatusDialog('Error', 'Content has zero dimensions');
+        return;
+      }
+      
+      html2canvas(content, {
+        // Add options to improve rendering
+        logging: true,
+        allowTaint: true,
+        useCORS: true,
+        scale: 2 // Higher quality
+      }).then((canvas) => {
+        // Check if canvas is empty or very small
+        if (canvas.width < 10 || canvas.height < 10) {
+          console.error('Canvas is too small, likely empty content');
+          this.dialogService.closeAllDialogs();
+          this.dialogService.openUpdateStatusDialog('Error', 'Unable to generate PDF - empty content');
+          return;
+        }
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        const imgWidth = 190;
+        const pageHeight = pdf.internal.pageSize.height;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 10;
+
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        pdf.save(`Report ${reportId}.pdf`);
+        this.dialogService.closeLoadingDialog();
+        this.dialogService.openUpdateStatusDialog('Success', 'Report successfully exported');
+        
+      }).catch(err => {
+        console.error('PDF generation error:', err);
+        this.dialogService.closeAllDialogs();
+        this.dialogService.openUpdateStatusDialog('Error', 'Error generating PDF: ' + err.message);
+      });
+    } else {
+      this.dialogService.closeAllDialogs();
+      this.dialogService.openUpdateStatusDialog('Error', 'Report content element not found');
+      console.error("Element not found!");
+    }
+  }, 1000); // Increase timeout to 1 second
+}
+  
+  
   
 
   isFieldMatched(fieldValue: any, query: string): boolean {
