@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service'; // Import the service
 import { Router } from '@angular/router';
 import {Account} from '../../data/Account/Account';
-
+import { DialogService } from '../dialog/dialog.service';
 
 
 interface LoginResponse {
@@ -31,7 +31,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialogService: DialogService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -49,6 +50,8 @@ export class LoginComponent {
 // }
 submitLogin(loginData: { email: string; password: string }): Promise<Account> {
   return new Promise((resolve, reject) => {
+    
+   
     this.authService.login({ ...loginData, SignInType: "Email" }).subscribe(
       (data) => {
         
@@ -61,17 +64,22 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
           console.log('Role stored in login:', localStorage.getItem('role')); 
           console.log('Data stored as userData:', localStorage.getItem('userData'));
           console.log('Token Stored', data.access_token)
-          alert('Login successful');
+          // alert('Login successful');
+
+         
+          
           resolve(data);
           this.accountData = data;
         } else {
           console.error(`Unauthorized: Role is not valid (${data.role})`);
-          alert('Invalid role detected. Login failed.');
+          // alert('Invalid role detected. Login failed.');
+       
           reject(new Error('Invalid role'));
         }
       } else {
         console.error('Unauthorized: Role is not provided');
-        alert('Login data is invalid');
+        // alert('Login data is invalid');
+ 
         reject(new Error('Login data is invalid'));
       }
     },      
@@ -123,21 +131,40 @@ token: string = '';
 // }
 
 async onSubmit() {
+
+ 
   if (this.loginForm.valid) {
     const { username, password } = this.loginForm.value;
     const signInType = this.identifySignInType(username);
     try {
+
+      
+      this.dialogService.openLoadingDialog(); 
       const account = await this.submitLogin({ email: username, password });
+
       if (account && account.role) {
         localStorage.setItem('userData', JSON.stringify(account));
         localStorage.setItem('role', account.role);
-       
-        this.accountData = account;
-        this.router.navigate([this.getRedirectUrl(account.role)]);
+        
+        setTimeout(() => {
+          // this.dialogService.closeAllDialogs(); 
+          // this.dialogService.closeLoadingDialog();
+          this.dialogService.closeLoadingDialog(); 
+          this.dialogService.openUpdateStatusDialog('Success', 'Login successful');
+          
+          setTimeout(() => {
+            this.accountData = account;
+            this.router.navigate([this.getRedirectUrl(account.role)]);
+            this.dialogService.closeAllDialogs();
+          }, 2000);
+        }, 3000);
+        
+        
+        
       }
     } catch (error) {
       console.error('Login failed:', error);
-      this.errorMessage = 'Login failed. Please try again.';
+     
     }
   }
 }

@@ -67,7 +67,17 @@ import { StationGeoanalysisComponent } from './station-geoanalysis/station-geoan
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-
+import { ConfirmationModalComponent } from './confirmation-modal/confirmation-modal.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ConfirmationDialogComponent } from './dialog/confirmation-dialog.component';
+import { SuccessDialogComponent } from './dialog/success-dialog.component';
+import { LoadingDialogComponent } from './dialog/loading-dialog.component';
+import { UpdateStatusDialogComponent } from './dialog/update-status-dialog.component';
+import { DialogService } from './dialog/dialog.service';
 
 
 @NgModule({
@@ -125,19 +135,28 @@ import { MatSelectModule } from '@angular/material/select';
     SpammerUsersComponent,
     SpamReportsComponent,
     StatDetailsModalComponent,
-    StationGeoanalysisComponent],
+    StationGeoanalysisComponent,
+    ConfirmationModalComponent,
+    ConfirmationDialogComponent,
+    SuccessDialogComponent,
+    LoadingDialogComponent,
+    UpdateStatusDialogComponent],
 
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule, // Add this line
+    ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
     NgxPaginationModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule 
+    MatSelectModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
   ],
   providers: [
     MapboxService,
@@ -150,6 +169,7 @@ import { MatSelectModule } from '@angular/material/select';
     }
    
   ], 
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

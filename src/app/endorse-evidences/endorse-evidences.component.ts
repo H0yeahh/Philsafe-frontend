@@ -17,6 +17,7 @@ import { AuthService } from '../auth.service';
 import { SuspectServiceService } from '../suspect-service.service';
 import { VictimDataService } from '../victim-data.service';
 import { PoliceDashbordService } from '../police-dashbord.service';
+import { DialogService } from '../dialog/dialog.service';
 
 @Component({
   selector: 'app-endorse-evidences',
@@ -92,7 +93,9 @@ export class EndorseEvidencesComponent implements OnInit {
     private authService: AuthService,
     private suspectService: SuspectServiceService,
     private victimService: VictimDataService,
-    private policeDashbordService: PoliceDashbordService
+    private policeDashbordService: PoliceDashbordService,
+    private dialogService: DialogService
+
 
   ) {}
 
@@ -865,7 +868,8 @@ export class EndorseEvidencesComponent implements OnInit {
   navigateToCase(reportId: number) {
 
     if(!this.assignedTeam){
-      alert("Please choose Assigned Team");
+      // alert("Please choose Assigned Team");
+      this.dialogService.openUpdateStatusDialog('Note', 'Please choose Assigned Team!');
     }
     if(reportId) {
       console.log("Pre-navigation values:", {

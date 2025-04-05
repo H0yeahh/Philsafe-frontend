@@ -4,6 +4,7 @@ import { map, tap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { environment } from './environment';
+import { DialogService } from './dialog/dialog.service';  
 
 export interface ILogin {
   email: string;
@@ -31,7 +32,10 @@ export class AuthService {
      private authCookie: string | null = null;
      
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private dialogService: DialogService
+  ) { }
  
  
   // login(data: ILogin): Observable<any> {
@@ -41,15 +45,22 @@ export class AuthService {
   // }
 
    login(data: ILogin): Observable<any> {
+ 
+    
       return this.http.post(this.loginURL, data, { 
         observe: 'response',
         withCredentials: true
       }).pipe(
         map(response => {
+          
          console.log('Response', response)
+         
           return response.body;
+          
         }),
+        
         catchError(this.handleError)
+
       );
     }
 
@@ -114,12 +125,15 @@ export class AuthService {
   }
 
   private presentAlert(message: string): void {
-    alert(message);
+    // alert(message);
+    this.dialogService.closeLoadingDialog();
+    this.dialogService.openUpdateStatusDialog('Error', `${message}`);
   }
   
   private handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage = 'An unknown error occurred!';
-  
+    
+    
     if (error.status === 401) {
       if (error.error && error.error.message) {
         errorMessage = error.error.message;
@@ -131,6 +145,8 @@ export class AuthService {
     } else if (error.status === 500) {
       errorMessage = 'Internal Server Error';
     }
+    
+    
     this.presentAlert(errorMessage);
     return throwError(() => new Error(errorMessage));
   };

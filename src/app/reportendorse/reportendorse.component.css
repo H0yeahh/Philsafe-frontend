@@ -1084,3 +1084,15 @@ tbody td a {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
+textarea{
+  background-color: #ffffff;
+  color: #000000;
+  border: #c9c9c9 solid 0.1px;
+  border-radius: 20px;
+  padding: 10px;
+  width: 150%;
+  max-width: 160%;
+  margin: 20px;
+}
+
+

@@ -14,6 +14,8 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { AccountService } from '../account.service';
 import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
+import { DialogService } from '../dialog/dialog.service';  
+
 // import { report } from 'node:process';
 
 @Component({
@@ -67,7 +69,9 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     private router: Router,
     private http: HttpClient,
     private authService: AuthService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private dialogService: DialogService
+
   ) {}
 
   // Initialize the form and fetch reports, stations, and ranks
@@ -391,7 +395,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
       });
     } else {
       console.error('report ID not found for the selected report.');
-      alert('Invalid report id. Please select a valid report.');
+      this.dialogService.openUpdateStatusDialog('Error', 'Invalid report id. Please select a valid report');
     }
   }
 
@@ -430,7 +434,17 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
       this.caseQueueService.spamReport(reportId).subscribe(
         () => {
           alert(`Report ${reportId} has been successfully deleted.`);
-          window.location.reload(); 
+
+          setTimeout(() => {
+            this.dialogService.closeLoadingDialog();
+            this.dialogService.openUpdateStatusDialog('Success', `Report ${reportId} has been successfully deleted.`);
+            
+            setTimeout(() => {
+              window.location.reload(); 
+            }, 2000);
+          }, 5000);
+  
+          this.dialogService.closeAllDialogs();
           this.reports = this.reports.filter(report => report.report_id !== reportId);
         }
       );

@@ -4,6 +4,8 @@ import { environment } from '../environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { LocationData, LocationsService } from '../locations.service';
+import { DialogService } from '../dialog/dialog.service';  
+
 
 @Component({
   selector: 'app-plot-longitude-and-latitude',
@@ -35,7 +37,9 @@ export class PlotLongitudeAndLatitudeComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private locationService: LocationsService
+    private locationService: LocationsService,
+    private dialogService: DialogService
+
   ) {}
 
   ngOnInit() {
@@ -57,10 +61,10 @@ export class PlotLongitudeAndLatitudeComponent implements OnInit {
       this.longitude = lng;
       this.latitude = lat;
 
-      // Log the coordinates
+   
       console.log('Selected Coordinates:', { longitude: lng, latitude: lat });
 
-      // Remove the previous marker if it exists
+    
       if (this.marker) {
         this.marker.remove();
       }
@@ -93,12 +97,21 @@ export class PlotLongitudeAndLatitudeComponent implements OnInit {
     this.locationData.longtitude  = this.longitude;
     this.locationData.latitude = this.latitude;
     console.log('Final Data for edit', this.locationData);
-
+    this.dialogService.openLoadingDialog();
     this.locationService.editLoc(this.locationId, this.locationData).subscribe(
       (res) => {
-        alert('Location successfully plotted on the crime map.')
-        console.log('Location Data successfully updated!', res);
-        this.router.navigate(['station-dashboard'])
+        // alert('Location successfully plotted on the crime map.')
+        
+        setTimeout(() => {
+          this.dialogService.closeLoadingDialog();
+          this.dialogService.openUpdateStatusDialog('Success', 'Location successfully plotted on the crime map.');
+          
+          setTimeout(() => {
+            console.log('Location Data successfully updated!', res);
+            this.router.navigate(['station-dashboard'])
+          }, 2000);
+        }, 5000);
+        
       },
       (err) => {
         console.error('Location Data failed to updated', err);

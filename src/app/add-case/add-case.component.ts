@@ -7,6 +7,8 @@ import { AuthService } from '../auth.service';
 import { CaseQueueService } from '../case-queue.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { error } from 'console';
+import { DialogService } from '../dialog/dialog.service';  
+
 
 @Component({
   selector: 'app-add-case',
@@ -70,10 +72,15 @@ export class AddCaseComponent {
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private caseQueueService: CaseQueueService
+    private caseQueueService: CaseQueueService,
+    private dialogService: DialogService
+
   ) {}
 
   ngOnInit(): void {
+
+
+    this.fetchCases();
     const stationData = localStorage.getItem('stationDetails');
     const caseData = localStorage.getItem('cases');
     const police = localStorage.getItem('policeByStation');
@@ -119,14 +126,7 @@ export class AddCaseComponent {
     } else {
         console.error("Status is undefined or null in case details.");
     }
-      this.cases = this.caseDetails;
-
-      this.distinctTitles = Array.from(
-        new Set(this.cases.map((c: any) => c.title))
-      );
-      this.distinctOffenseTypes = Array.from(
-        new Set(this.cases.map((c: any) => c.offense_type))
-      );
+      
 
       console.log('Distinct Title', this.distinctTitles);
       console.log('Distinct Offense', this.distinctOffenseTypes);
@@ -224,6 +224,28 @@ export class AddCaseComponent {
     return activeRoutes.some((route) => this.router.url.includes(route));
   }
 
+  fetchCases(){
+
+    this.caseService.getAllCases().subscribe(
+      (response) => {
+        this.cases = response;
+        // console.log('Fetched Cases:', this.cases);
+        // localStorage.setItem('cases', JSON.stringify(this.cases));
+    
+
+        this.distinctTitles = Array.from(
+          new Set(this.cases.map((c: any) => c.title))
+        );
+        this.distinctOffenseTypes = Array.from(
+          new Set(this.cases.map((c: any) => c.offense_type))
+      );
+      },
+      (error) => {
+        console.error('Error Fetching Cases:', error);
+      });
+
+  }
+
   submitCase() {
     
     console.log('Case Data to be posted', this.caseData);
@@ -231,14 +253,20 @@ export class AddCaseComponent {
     this.caseService.postCase(this.caseData).subscribe(
       (response) => {
         console.log('Case successfully added', response);
-        alert("Case has been successfully added!")
+        // alert("Case has been successfully added!")
+        this.dialogService.openUpdateStatusDialog('Success', 'Case successfully added');
+
         this.caseService
           .connectDot(this.reportId, response.id, this.caseData)
           .subscribe(
             (response) => {
               console.log('Report successfully added to case', response);
               this.loading = false;
-              this.router.navigate(['/station-dashboard']);
+              setTimeout(() => {
+                this.router.navigate(['/station-dashboard']);
+                this.dialogService.closeAllDialogs();
+              },3000)
+              
             },
             (error) => {
               console.error('Error adding case to report', error);

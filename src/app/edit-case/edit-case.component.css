@@ -1041,7 +1041,6 @@ tbody td a {
   .found-sus {
     display: flex;
     justify-content: flex-start;
-    padding-bottom: 40px;
     flex-direction: column;
   }
 
@@ -1070,6 +1069,10 @@ tbody td a {
     cursor: pointer;
     background-color: #f0f0f0;
     border-radius: 5px;
+    max-width: 150px;
+    width: 100px;
+    max-height: 150px;
+    height: 70px;
   }
   
   .found-sus ul button.active {
@@ -1204,4 +1207,22 @@ tbody td a {
     height: 15px;
     padding-right: 5px;
 
+  }
+
+  .add-suspect {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 2rem;
+  }
+
+  .add-suspect button {
+    padding: 10px;
+    margin-left: 20px;
+    background-color: #1e40af;
+    cursor: pointer;
+    padding-bottom: 10px;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    width: 10rem;
   }

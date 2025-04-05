@@ -17,6 +17,7 @@ import { AuthService } from '../auth.service';
 import { SuspectServiceService } from '../suspect-service.service';
 import { VictimDataService } from '../victim-data.service';
 import { expandCollapse } from '../animations/expand';
+import { DialogService } from '../dialog/dialog.service';  
 
 
 @Component({
@@ -112,7 +113,9 @@ export class ReportEndorseComponent implements OnInit {
     private authService: AuthService,
     private suspectService: SuspectServiceService,
     private victimService: VictimDataService,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private dialogService: DialogService
+
 
   ) {}
 
@@ -939,7 +942,7 @@ export class ReportEndorseComponent implements OnInit {
       this.showSubModal = false;
       this.showModal = false;
     } else {
-      alert('Please enter a case ID');
+      this.dialogService.openUpdateStatusDialog('Note', 'Please enter Case ID');
     }
   }
 
@@ -952,7 +955,8 @@ export class ReportEndorseComponent implements OnInit {
   navigateToCase(reportId: number) {
 
     if(!this.assignedTeam){
-      alert("Please choose Assigned Team");
+      // alert("Please choose Assigned Team");
+      this.dialogService.openUpdateStatusDialog('Note', 'Please choose Assigned Team!');
     }
     if(reportId) {
       console.log("Pre-navigation values:", {

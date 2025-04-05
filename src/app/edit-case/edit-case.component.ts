@@ -21,7 +21,8 @@ import { error } from 'console';
 import { environment } from '../environment';
 import { formatDate } from '@angular/common';
 import { expandCollapse } from '../animations/expand';
-
+import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { DialogService } from '../dialog/dialog.service';
 
 @Component({
   selector: 'app-edit-case',
@@ -144,7 +145,9 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private suspectService: SuspectServiceService,
     private victimService: VictimDataService,
-    private crimeService: CrimeService
+    private crimeService: CrimeService,
+    private confirmationService: ConfirmationModalService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -435,12 +438,25 @@ export class EditCaseComponent implements OnInit, OnDestroy {
   markSolved(crimeId: number) {
     this.crimeService.markSolved(crimeId).subscribe(
       (res) => {
-        console.log('Case Solved', res);
-        alert('Case solved!');
-        this.router.navigate(['/station-dashboard']);
+        // console.log('Case Solved', res);
+        // alert('Case solved!');
+        // this.router.navigate(['/station-dashboard']);
+
+        this.dialogService.openLoadingDialog(); 
+        setTimeout(() => {
+          this.dialogService.closeAllDialogs(); 
+          this.dialogService.openUpdateStatusDialog('Success', 'Case Solved!');
+          
+          setTimeout(() => {
+            this.router.navigate(['/station-dashboard']);
+            this.dialogService.closeAllDialogs();
+          }, 2000);
+        }, 5000);
       },
       (err) => {
         console.error('Error solving case', err);
+        this.dialogService.closeLoadingDialog();
+        this.dialogService.openUpdateStatusDialog('Error', 'Failed to solve the case');
       }
     );
   }
@@ -450,19 +466,29 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     console.log('Report Id', reportId);
     console.log('Crime Id', crimeId)
 
-    this.loading = true;
+    this.dialogService.openLoadingDialog(); 
     this.caseQueueService.sendBlotter(reportId, crimeId).subscribe(
       (res) => {
         console.log('Ticket Blotter successfully sent');
-        alert('Ticket Blotter successfully sent');
-        this.loading = false;
-        this.router.navigate[('/edit-case')]
+        // alert('Ticket Blotter successfully sent');
+        // this.router.navigate[('/edit-case')
+        
+        setTimeout(() => {
+          this.dialogService.closeAllDialogs(); 
+          this.dialogService.openUpdateStatusDialog('Success', 'Ticket Blotter successfully sent');
+          
+          setTimeout(() => {
+            this.router.navigate[('/edit-case')]
+          }, 2000);
+        }, 5000);
       },
       (err) => {
-        this.loading = false;
+        
         console.error('Failed to send ticket blotter', err);
         if(err.status === 400){
-          alert('You have not caught the suspect yet')
+          // alert('You have not caught the suspect yet')
+          this.dialogService.closeLoadingDialog();
+          this.dialogService.openUpdateStatusDialog('Error', 'You have not caught the suspect yet');
           
         }
       }
@@ -532,7 +558,13 @@ export class EditCaseComponent implements OnInit, OnDestroy {
 
 
   showAlert() {
-    alert('Case is solved and you can no longer modify suspects.');
+    // alert('Case is solved and you can no longer modify suspects.');
+    this.dialogService.openLoadingDialog(); 
+    setTimeout(() => {
+      this.dialogService.closeAllDialogs(); 
+      this.dialogService.openUpdateStatusDialog('NOTE', 'Case is solved and you can no longer modify suspects.');
+  
+    }, 5000);
   }
   
 
@@ -605,7 +637,13 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       });
 
     } else if(status.trim() === 'Solved') {
-      alert('Case is solved and you can no longer modify suspects.')
+      // alert('Case is solved and you can no longer modify suspects.').
+      this.dialogService.openLoadingDialog(); 
+      setTimeout(() => {
+        this.dialogService.closeAllDialogs(); 
+        this.dialogService.openUpdateStatusDialog('NOTE', 'Case is solved and you can no longer modify suspects.');
+        
+      }, 5000);
     }
     
   }
@@ -651,7 +689,13 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       this.activeSuspectIndex = this.suspects.length - 1;
       this.isEditing = true;
     } else if (status.trim() === 'Solved') {
-      alert('Case is solved and you can no longer modify suspects.');
+      // alert('Case is solved and you can no longer modify suspects.');
+      this.dialogService.openLoadingDialog(); 
+      setTimeout(() => {
+        this.dialogService.closeAllDialogs(); 
+        this.dialogService.openUpdateStatusDialog('NOTE', 'Case is solved and you can no longer modify suspects');
+        
+      }, 5000);
     }
 
     
@@ -663,7 +707,6 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     const suspectData = new FormData();
     suspect.motive_long = this.selectedmodus?.method_name; 
     suspect.motive_short = this.selectedmodus?.method_abbr;
-  
   
 
     suspectData.append('FirstName', suspect.first_name || '');
@@ -695,19 +738,32 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.loading = true;
+    
 
     this.http.post(`${environment.ipAddUrl}api/suspect/identify/suspect/fully`, suspectData).subscribe({
-      next: (response) => {
-        console.log('New suspect added:', response);
-        alert('New suspect added successfully!');
+      next: async (response) => {
+        console.log('New suspect added:', response); 
+      
+        this.dialogService.openLoadingDialog(); 
+        setTimeout(() => {
+          this.dialogService.closeAllDialogs(); 
+          this.dialogService.openUpdateStatusDialog('Success', 'Suspect Updated Successfully');
+          
+          setTimeout(() => {
+            location.reload(); 
+          }, 2000);
+        }, 5000);
+
+       
         suspect.isNew = false;
-        window.location.reload();
-        this.loading = false;
+   
       },
       error: (error) => {
         console.error('Error adding suspect:', error);
-        alert('Failed to add new suspect.');
+        this.dialogService.closeLoadingDialog();
+        this.dialogService.openUpdateStatusDialog('Error', 'Failed to update suspect. Please try again.');
+
+
       }
     });
 
@@ -757,11 +813,10 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     suspectData.append('BirthDate', suspect.birth_date || '');
     suspectData.append('CivilStatus', suspect.civil_status || '');
     suspectData.append('BioStatus', suspect.bio_status || '');
-    suspectData.append('DatetimeOfCaught', this.dateCaught || '');
+    suspectData.append('DatetimeOfCaught', suspect.datetime_of_caught || '');
     suspectData.append('IsCaught', suspect.is_caught  || '');
     suspectData.append('GangAffiliation', suspect.gang || '');
     suspectData.append('Reward', suspect.reward || '');
-    suspectData.append('Date Arrested', suspect.datetime_of_caught || '');
     suspectData.append('MotiveLong', this.selectedmodus?.method_name || '');
     suspectData.append('MotiveShort', this.selectedmodus?.method_abbr || '');
     suspectData.append('CrimeId', this.crimeData.crime_id || '');
@@ -782,25 +837,38 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.loading = true;
+    
 
       console.log('Suspect Data to be editted', suspectData)
   
       this.http.post(`${environment.ipAddUrl}api/suspect/identify/existingSuspect`, suspectData).subscribe({
         next: (response) => {
           console.log('Existing suspect updated:', response);
-          alert('Suspect updated successfully!');
+          // alert('Suspect updated successfully!');
+          this.dialogService.openLoadingDialog(); 
+          setTimeout(() => {
+            this.dialogService.closeAllDialogs(); 
+            this.dialogService.openUpdateStatusDialog('Success', 'Suspect Updated Successfully');
+            
+            setTimeout(() => {
+              location.reload(); 
+            }, 2000);
+          }, 5000);
+
+
               suspect.isModified = false;
               suspect.isNew = false;
               this.isEditing = false;
-              window.location.reload();
-              this.loading = false;
+              // window.location.reload();
+              
         },
         error: (error) => {
           console.error('Error updating suspect:', error);
-          alert('Failed to update suspect.');
+          // alert('Failed to update suspect.');
+          this.dialogService.closeLoadingDialog();
+          this.dialogService.openUpdateStatusDialog('Error', 'Failed to update suspect. Please try again.');
           suspect.isModified = true;
-          this.loading = false;
+          
         }
       });
 
@@ -837,7 +905,9 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error updating suspect:', error);
-        alert('Failed to add new suspect.');
+        // alert('Failed to add new suspect.');
+        this.dialogService.closeLoadingDialog();
+        this.dialogService.openUpdateStatusDialog('Error', 'Failed to add new suspect. Please try again.');
       }
     });
 
@@ -849,8 +919,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
 
     this.suspects.forEach((suspect) => {
       if (status.trim() !== 'Solved') {
-      
-        this.loading = true;
+  
         
       if (suspect.isNew) {
         console.log('Adding new suspect:', suspect);
@@ -877,7 +946,14 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       suspect.isNew = false;
       suspect.isModified = false;
       } else if(status.trim() === 'Solved'){
-        alert('Case is solved and you can no longer modify suspects.');
+        // alert('Case is solved and you can no longer modify suspects.');
+        this.dialogService.openLoadingDialog(); 
+        setTimeout(() => {
+          this.dialogService.closeAllDialogs(); 
+          this.dialogService.openUpdateStatusDialog('Success', 'Suspect Updated Successfully');
+          
+        }, 5000);
+
       }
     
       
@@ -913,12 +989,24 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     this.http.delete(`${environment.ipAddUrl}api/suspect/discard/${id}`).subscribe({
       next: (response) => {
         console.log('Suspect Deleted', response);
-        alert(`Suspect ${id} susccessfully deleted`);
+        // alert(`Suspect ${id} susccessfully deleted`);
+        this.dialogService.openLoadingDialog(); 
+        setTimeout(() => {
+          this.dialogService.closeAllDialogs(); 
+          this.dialogService.openUpdateStatusDialog('Success', `'Suspect ${id} successfully deleted'`);
+          
+          setTimeout(() => {
+            location.reload(); 
+          }, 2000);
+        }, 5000);
+
         
       },
       error: (error) => {
         console.error('Error deleting suspect:', error);
-        alert('Failed to delete suspect.');
+        // alert('Failed to delete suspect.');
+        this.dialogService.closeLoadingDialog();
+        this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect. Please try again.');
       }
     });
   }
@@ -988,7 +1076,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
   
     this.http.get(url, { headers: this.auth_headers }).subscribe({
       next: (res) => {
-        console.log('Mugshots retrieved:', res);
+        // console.log('Mugshots retrieved:', res);
         suspect.mugshots = res; // Assign mugshots specifically to the suspect
         // console.log(`Mugshots for suspect ${personId}:`, suspect.mugshots);
       },
