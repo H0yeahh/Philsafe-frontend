@@ -13,11 +13,23 @@ export class DialogService {
     private loadingDialogRef: any
   constructor(private dialog: MatDialog) {}
 
-  openConfirmationDialog(message: string): void {
-    this.dialog.open(ConfirmationDialogComponent, {
-      data: { message },
+  // openConfirmationDialog(message: string): void {
+  //   this.dialog.open(ConfirmationDialogComponent, {
+  //     data: { message },
+  //   });
+  // }
+  openConfirmationDialog(message: string): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: { message }
+    });
+  
+    return new Promise((resolve) => {
+      dialogRef.afterClosed().subscribe((result) => {
+        resolve(result); // Resolving the promise with the result of the dialog
+      });
     });
   }
+  
 
   openSuccessDialog(message: string): void {
     this.dialog.open(SuccessDialogComponent, {

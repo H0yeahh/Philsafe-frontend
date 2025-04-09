@@ -154,13 +154,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     
     this.loadModus();
 
-    // this.subscription = this.router.events
-    // .pipe(filter((event) => event instanceof NavigationEnd))
-    // .subscribe(() => {
-    //   const currentPath = this.router.url.split('?')[0];
-    //   this.isActive = ['/edit-case', '/station-cases'].includes(currentPath);
-    //   console.log('Updated Active State:', this.isActive);
-    // });
+ 
 
     const policeData = localStorage.getItem('policeDetails');
     const stationData = localStorage.getItem('stationDetails');
@@ -168,7 +162,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     const accountsData = localStorage.getItem('accounts');
     const citizensData = localStorage.getItem('citizens');
 
-    // Parse and assign the data if it exists
+
     if (policeData) {
       this.policeDetails = JSON.parse(policeData);
     }
@@ -199,15 +193,6 @@ export class EditCaseComponent implements OnInit, OnDestroy {
       this.crimeId = crimeId;
       this.fetchACrime(crimeId);
       this.fetchCrimeReports(crimeId);
-
-      this.previousPage = params['fromPage'] ? +params['fromPage'] : 1;
-      const page = params['page'];
-      if (page) {
-        this.currentPage = +page;
-      } else {
-        const savedPage = localStorage.getItem('currentPage');
-        this.currentPage = savedPage ? +savedPage : 1;
-      }
      
     });
 
@@ -220,18 +205,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToCases() {
-    this.router.navigate(['/station-cases']).then(() => {
-      window.scrollTo(0, 0); // Scroll to the top of the page
-    });
-  }
 
-  
-  
-  // Method for back button
-  goBack() {
-    this.navigateToCases();
-  }
 
  
   fetchLocations(): Observable<any> {
@@ -279,13 +253,13 @@ export class EditCaseComponent implements OnInit, OnDestroy {
 
   
 
-  // isReportsActive(): boolean {
+  isReportsActive(): boolean {
 
-  //   console.log('Current Path:', this.router.url);
-  //   const currentPath = this.router.url.split('?')[0];
-  //   const activeRoutes = ['/edit-case', '/station-cases'];
-  //   return activeRoutes.includes(currentPath);
-  // }
+    console.log('Current Path:', this.router.url);
+    const currentPath = this.router.url.split('?')[0];
+    const activeRoutes = ['/edit-case', '/station-cases'];
+    return activeRoutes.includes(currentPath);
+  }
   
 
   clearSession() {
@@ -618,13 +592,28 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     console.log('Birthdate', this.suspects.birth_date)
   }
 
+  uneditClicked() {
+    if (!this.isEditing) {
+      this.dialogService.openUpdateStatusDialog('Error', 'If you wish to modify, click "Edit"');
+    }
+  }
+
 
   editSuspect(index: number, status: any){
 
     // console.log('STATUS editSUSPECT', status)
+   
     if(status.trim() !== 'Solved') {
-      this.isEditing = true;
+      
       const suspect = this.suspects[index];
+      if (!this.isEditing) {
+        this.dialogService.openUpdateStatusDialog(
+          'Error',
+          'If you wish to modify, click "Edit"'
+        );
+      }
+      
+      this.isEditing = true;
       suspect.isModified = true;
 
     this.selectedmodus = this.selectedmodus || { method_name: suspect.motive_long, method_abbr: suspect.motive_short };
@@ -821,7 +810,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     suspectData.append('MotiveShort', this.selectedmodus?.method_abbr || '');
     suspectData.append('CrimeId', this.crimeData.crime_id || '');
     suspectData.append('SuspectId', suspect.suspect_id || '');
-    suspectData.append('Sex', suspect.sex || '');
+    suspectData.append('PersonId', suspect.person_id || '');
 
 
     if(suspect.deathDate){
@@ -851,7 +840,7 @@ export class EditCaseComponent implements OnInit, OnDestroy {
             this.dialogService.openUpdateStatusDialog('Success', 'Suspect Updated Successfully');
             
             setTimeout(() => {
-              location.reload(); 
+              // location.reload(); 
             }, 2000);
           }, 5000);
 
@@ -961,55 +950,248 @@ export class EditCaseComponent implements OnInit, OnDestroy {
     
   }
 
-  deleteSuspect(suspectId: number) {
-    const suspectToDelete = this.suspects.find((suspect) => suspect.suspect_id === suspectId);
+  // deleteSuspect(index: number, suspectId: number) {
+
+  //   const susToDelete = this.suspects[index];
+  //   const suspectToDelete = this.suspects.find((suspect) => suspect.suspect_id === suspectId);
+
+  //     if(susToDelete.isNew){
+  //       this.dialogService.openConfirmationDialog('Are you sure you want to remove the new suspect ').then((confirmed) => {
+  //       if (confirmed) {
+  //         this.suspects.splice(susToDelete, 1); 
+        
+  //         if (this.activeSuspectIndex === susToDelete) {
+  //           this.activeSuspectIndex = null;
+  //         } else if (this.activeSuspectIndex > susToDelete) {
+  //           this.activeSuspectIndex--;
+  //         }
+  //         this.dialogService.openUpdateStatusDialog('Success', 'New suspect removed successfully.');
+  //       }
+  //     });
+  //   } else if (!suspectToDelete.isNew && suspectToDelete) {
+   
+  //   this.dialogService.openLoadingDialog(); 
   
-    if (suspectToDelete) {
-      
-      const isConfirmed = window.confirm(`Are you sure you want to permanently delete the suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`);
-  
-      if (isConfirmed) {
-        console.log('Deleting suspect:', suspectToDelete);
-  
+  //     // const isConfirmed = window.confirm(`Are you sure you want to permanently delete the suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`);
+  //    const isConfirmed = setTimeout(() => {
+  //       this.dialogService.closeLoadingDialog();
+  //       this.dialogService.openConfirmationDialog(`Are you sure you want to permanently delete the suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`);
+  //       setTimeout(() => {
+  //         this.dialogService.closeLoadingDialog(); 
+
+  //         if (isConfirmed) {
+  //           console.log('Deleting suspect:', suspectToDelete);
+  //           this.dialogService.openUpdateStatusDialog('Success', 'Suspect Deleted Successfully');
+  //           this.dialogService.closeAllDialogs();
     
-        this.suspects = this.suspects.filter((suspect) => suspect.suspect_id !== suspectId);
+  //         } else {
+  //           console.log('Deletion canceled by the user');
+  //         }
+           
+  //     }, 5000);
+  //   });
   
-       
-        this.deleteSuspectService(suspectId);
-      } else {
-        console.log('Deletion canceled by the user');
-      }
-    } else {
-      console.error('Suspect not found');
-    }
-  }
+      
+  //   } else {
+  //     console.error('Suspect not found');
+  //     this.dialogService.closeLoadingDialog();
+  //     this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect.');
+  //   }
+  // }
 
 
-  deleteSuspectService(id: number) {
-    this.http.delete(`${environment.ipAddUrl}api/suspect/discard/${id}`).subscribe({
-      next: (response) => {
-        console.log('Suspect Deleted', response);
-        // alert(`Suspect ${id} susccessfully deleted`);
-        this.dialogService.openLoadingDialog(); 
-        setTimeout(() => {
-          this.dialogService.closeAllDialogs(); 
-          this.dialogService.openUpdateStatusDialog('Success', `'Suspect ${id} successfully deleted'`);
+  // deleteSuspectService(id: number) {
+  //   this.http.delete(`${environment.ipAddUrl}api/suspect/discard/${id}`).subscribe({
+  //     next: (response) => {
+  //       console.log('Suspect Deleted', response);
+  //       // alert(`Suspect ${id} susccessfully deleted`);
+  //       this.dialogService.openLoadingDialog(); 
+  //       setTimeout(() => {
+  //         this.dialogService.closeAllDialogs(); 
+  //         this.dialogService.openUpdateStatusDialog('Success', `'Suspect ${id} successfully deleted'`);
           
-          setTimeout(() => {
-            location.reload(); 
-          }, 2000);
-        }, 5000);
+  //         setTimeout(() => {
+  //           location.reload(); 
+  //         }, 2000);
+  //       }, 5000);
 
         
-      },
-      error: (error) => {
-        console.error('Error deleting suspect:', error);
-        // alert('Failed to delete suspect.');
-        this.dialogService.closeLoadingDialog();
-        this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect. Please try again.');
-      }
-    });
+  //     },
+  //     error: (error) => {
+  //       console.error('Error deleting suspect:', error);
+  //       // alert('Failed to delete suspect.');
+  //       this.dialogService.closeLoadingDialog();
+  //       this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect. Please try again.');
+  //     }
+  //   });
+  // }
+
+  deleteSuspect(index: number, suspectId: number) {
+
+    // Get the suspect at the provided index
+    const suspectToDelete = this.suspects[index];
+  
+    // Check if the suspect is new (local only deletion)
+    if (suspectToDelete.isNew) {
+      // Open confirmation dialog for new suspect removal
+      this.dialogService.openConfirmationDialog(`Are you sure you want to remove the new suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`)
+        .then((confirmed) => {
+          if (confirmed) {
+            // Remove the new suspect from the array
+            this.suspects.splice(index, 1);
+  
+            // Adjust the activeSuspectIndex if needed
+            if (this.activeSuspectIndex === index) {
+              this.activeSuspectIndex = null;
+            } else if (this.activeSuspectIndex > index) {
+              this.activeSuspectIndex--;
+            }
+
+            setTimeout(()=>{
+              this.dialogService.openUpdateStatusDialog('Success', 'New suspect removed successfully.');
+              this.dialogService.closeAllDialogs();
+              window.location.reload();
+            }, 2000)
+          }
+        });
+    } else if (!suspectToDelete.isNew && suspectToDelete) {
+      // If it's an existing suspect, proceed with backend deletion
+  
+      // Show loading dialog while deleting the suspect
+      this.dialogService.openLoadingDialog();
+  
+      // Confirm deletion with the user
+      this.dialogService.openConfirmationDialog(`Are you sure you want to permanently delete the suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`)
+        .then((confirmed) => {
+          if (confirmed) {
+            // Perform backend deletion here
+            this.http.delete(`${environment.ipAddUrl}api/suspect/${suspectId}`).subscribe({
+              next: () => {
+                // On success, remove the suspect from the list
+                this.suspects.splice(index, 1);
+  
+                // Adjust the activeSuspectIndex if needed
+                if (this.activeSuspectIndex === index) {
+                  this.activeSuspectIndex = null;
+                } else if (this.activeSuspectIndex > index) {
+                  this.activeSuspectIndex--;
+                }
+  
+                // Close loading dialog and show success message
+                this.dialogService.closeLoadingDialog();
+                this.dialogService.openUpdateStatusDialog('Success', 'Suspect deleted successfully.');
+                setTimeout(()=>{
+                  this.dialogService.closeAllDialogs();
+                  window.location.reload();
+                }, 2000)
+              },
+              error: (error) => {
+                // On error, show the error message
+                console.error('Error deleting suspect:', error);
+                this.dialogService.closeLoadingDialog();
+                this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect.');
+              }
+            });
+          } else {
+            // If the user cancels, close the loading dialog and log the cancellation
+            this.dialogService.closeLoadingDialog();
+            console.log('Deletion canceled by the user');
+          }
+        });
+    } else {
+      // If suspect not found or neither is new nor existing
+      console.error('Suspect not found');
+      this.dialogService.openUpdateStatusDialog('Error', 'Suspect not found.');
+    }
   }
+  
+
+  
+  
+
+  // deleteSuspect(suspectId: number) {
+
+
+
+  //   const suspectToDelete = this.suspects.find((suspect) => suspect.suspect_id === suspectId);
+
+  //   const susToDelete = this.suspects.findIndex((suspect) => suspect.suspect_id === suspectId);
+
+  //   if(susToDelete.isNew){
+  //     this.dialogService.openConfirmationDialog('Are you sure you want to remove the new suspect ').then((confirmed) => {
+  //       if (confirmed) {
+  //         this.suspects.splice(susToDelete, 1); 
+  
+        
+  //         if (this.activeSuspectIndex === susToDelete) {
+  //           this.activeSuspectIndex = null;
+  //         } else if (this.activeSuspectIndex > susToDelete) {
+  //           this.activeSuspectIndex--; // shift left due to removal
+  //         }
+  
+  //         this.dialogService.openUpdateStatusDialog('Success', 'New suspect removed successfully.');
+          
+  //       }
+  //     });
+  //   }
+
+
+  //   this.dialogService.openLoadingDialog(); 
+  //   if (suspectToDelete) {
+      
+  //     // const isConfirmed = window.confirm(`Are you sure you want to permanently delete the suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`);
+  //    const isConfirmed = setTimeout(() => {
+  //       this.dialogService.closeLoadingDialog();
+  //       this.dialogService.openConfirmationDialog(`Are you sure you want to permanently delete the suspect "${suspectToDelete.first_name} ${suspectToDelete.last_name}"?`);
+  //       setTimeout(() => {
+  //         this.dialogService.closeLoadingDialog(); 
+
+  //         if (isConfirmed) {
+  //           console.log('Deleting suspect:', suspectToDelete);
+  //           this.dialogService.openUpdateStatusDialog('Success', 'Suspect Deleted Successfully');
+  //           this.dialogService.closeAllDialogs();
+    
+  //         } else {
+  //           console.log('Deletion canceled by the user');
+  //         }
+           
+  //     }, 5000);
+  //   });
+  
+      
+  //   } else {
+  //     console.error('Suspect not found');
+  //     this.dialogService.closeLoadingDialog();
+  //     this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect.');
+  //   }
+  // }
+
+
+  // deleteSuspectService(id: number) {
+  //   this.http.delete(`${environment.ipAddUrl}api/suspect/discard/${id}`).subscribe({
+  //     next: (response) => {
+  //       console.log('Suspect Deleted', response);
+  //       // alert(`Suspect ${id} susccessfully deleted`);
+  //       this.dialogService.openLoadingDialog(); 
+  //       setTimeout(() => {
+  //         this.dialogService.closeAllDialogs(); 
+  //         this.dialogService.openUpdateStatusDialog('Success', `'Suspect ${id} successfully deleted'`);
+          
+  //         setTimeout(() => {
+  //           location.reload(); 
+  //         }, 2000);
+  //       }, 5000);
+
+        
+  //     },
+  //     error: (error) => {
+  //       console.error('Error deleting suspect:', error);
+  //       // alert('Failed to delete suspect.');
+  //       this.dialogService.closeLoadingDialog();
+  //       this.dialogService.openUpdateStatusDialog('Error', 'Failed to delete suspect. Please try again.');
+  //     }
+  //   });
+  // }
 
   // onFilesSelected(event: any, suspect: any, position: 'front' | 'left' | 'right') {
   //   const file = event.target.files[0]; 

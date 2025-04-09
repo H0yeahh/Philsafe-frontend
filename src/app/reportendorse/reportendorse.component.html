@@ -245,93 +245,114 @@
                     </table>
                      
     
-                    <thead>
+                    
                       <tr>
-                        <th colspan="2" class="category-label">SUSPECT DATA</th>
+                        <p class="category-label">SUSPECT DATA</p>
                       </tr>
-                    </thead>
+                  
                              <div class="data-container">
                               <!-- Centered Div -->
+                              <table>
+                                  <tr>
+                                    <th>Suspect ID</th>
+                                    <th>Suspect Name</th>
+                                    <th>Gender</th>
+                                    <th>Arrested</th>
+                                  </tr>
                               
-                                <tr>
-                                  <td><b>Suspect Id</b></td>
-                                  <td><b>Suspect Name</b></td>
-                                  <td><b>Civil Status</b></td>
-                                  <td><b>Gender</b></td>
-                                  <td><b>Arrested</b></td>
-                                  <td><b>Deceased</b></td>
-                                  <td><b>Nationality</b></td>
-                  
-                                </tr>
-                            
-                                <tr *ngFor="let suspect of suspects" style="padding-right: 2rem" (click)="viewSuspectDesc(suspect.suspect_id)">
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ suspect?.suspect_id }}</span>
-                                  </td>
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ suspect.first_name }} {{ suspect.last_name }}</span>
-                                  </td>
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ getCivilStatus(suspect.person_id) || 'Unknown' }}</span>
-                                  </td>
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ getGenderName(suspect.sex) }}</span>
-                                  </td>
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ isCaught }}</span>
-                                  </td>
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ isCitizenDeceased(suspect.bio_status) }}</span>
-                                  </td>
-                                  <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                    <span>{{ suspectDesc?.ethnicity || 'Unknown' }}</span>
-                                  </td>
-                                </tr>
+                               
+                                  <tr *ngFor="let suspect of suspects" (click)="viewSuspectDesc(suspect.suspect_id)">
+                                    <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                      {{ suspect?.suspect_id }}
+                                    </td>
+                                    <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                      {{ suspect.first_name }} {{ suspect.last_name }}
+                                    </td>
+                                    <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                      {{ getGenderName(suspect.sex) }}
+                                    </td>
+                                    <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                      {{ isCaught }}
+                                    </td>
+                                  </tr>
+                                
+                              </table>
+                              
                           
                             </div>
     
     
-                      <thead>
+<!--                       
                         <tr>
-                          <th colspan="2" class="category-label">VICTIM DATA</th>
+                          <p class="category-label">VICTIM DATA</p>
                         </tr>
-                      </thead>
+                     
                         <div class="data-container">
-                          <!-- Centered Div -->
-                         
+                 
+                           <table>
+
                             <tr>
-                              <td><b>Victim Id</b></td>
-                              <td><b>Victim Name</b></td>
-                              <td><b>Civil Status</b></td>
-                              <td><b>Gender</b></td>
-                              <td><b>Deceased</b></td>
-                              <td><b>Nationality</b></td>
-              
+                              <th>Victim ID</th>
+                              <th>Victim Name</th>
+                              <th>Gender</th>
+                              <th>Civil Status</th>
+
                             </tr>
                         
-                            <tr *ngFor="let victim of victims" style="padding-right: 2rem">
-                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                <span>{{ victim?.victim_id }}</span>
+                            <tr *ngFor="let victim of victims">
+                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem; padding-left: 5px;">
+                                {{ victim?.victim_id }}
                               </td>
                               <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                <span>{{ victim.firstname }} {{ victim.lastname }}</span>
+                                {{ victim.firstname }} {{ victim.lastname }}
                               </td>
                               <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                <span>{{ getCivilStatus(victim.person_id) || 'Unknown' }}</span>
+                                {{ getGenderName(victim.sex) }}
                               </td>
                               <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                <span>{{ getGenderName(victim.sex) }}</span>
+                                {{ getCivilStatus(victim.civil_status)}}
                               </td>
     
-                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                <span>{{ isCitizenDeceased(victim.bio_status) }}</span>
-                              </td>
-                              <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                <span>{{ victimDesc?.ethnicity || 'Unknown' }}</span>
-                              </td>
                             </tr>
-        
-                        </div>
+                           </table>
+                         
+                      
+                        </div> -->
+
+                        <tr>
+                          <p class="category-label">VICTIM DATA</p>
+                        </tr>
+                    
+                               <div class="data-container">
+                                <!-- Centered Div -->
+                                <table>
+                                    <tr>
+                                      <th>Victim ID</th>
+                                      <th>Victim Name</th>
+                                      <th>Gender</th>
+                                      <th>Civil Status</th>
+                                    </tr>
+                                
+                                 
+                                    <tr *ngFor="let victim of victims" (click)="viewSuspectDesc(victim.victim_id)">
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        {{ victim?.victim_id }}
+                                      </td>
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        {{ victim.firstname }} {{ victim.lastname }}
+                                      </td>
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        {{ getGenderName(victim.sex) }}
+                                      </td>
+                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
+                                        {{ getCivilStatus(victim.civil_status) }}
+                                      </td>
+                                    </tr>
+                                  
+                                </table>
+                                
+                            
+                              </div>
     
                        
                       
@@ -378,10 +399,11 @@
                                   width="100%"
                                   height="600px"
                                   type="application/pdf"
-                                />
+                                /> PDF (.pdf) cannot be viewed in pdf
                               </div>
                               <div *ngIf="evidence.content_type === 'text/plain'">
                                 <pre>{{ decodeBase64(evidence.file_contents) }}</pre>
+                                TEXT (.txt) cannot be viewed in pdf
                               </div>
                               <div
                                 *ngIf="
@@ -391,10 +413,9 @@
                                 "
                               >
                                 <span
-                                  >Document (.docx) cannot be viewed directly in
-                                  browser.</span
+                                  >Document (.docx) cannot be viewed pdf.</span
                                 >
-                                <!-- You could integrate a viewer for DOCX files, like using Google Docs Viewer or a custom viewer -->
+                         
                               </div>
                               <div
                                 *ngIf="
@@ -405,41 +426,19 @@
                                 "
                               >
                                 <span
-                                  >Spreadsheet (.xlsx) cannot be viewed directly in
-                                  browser.</span
+                                  >Spreadsheet (.xlsx) cannot be viewed in pdf.</span
                                 >
                               </div>
         
                               <!-- Handling Audio files -->
                               <div *ngIf="evidence.content_type.startsWith('audio/')">
-                                <audio controls>
-                                  <source
-                                    [src]="
-                                      'data:' +
-                                      evidence.content_type +
-                                      ';base64,' +
-                                      evidence.file_contents
-                                    "
-                                    type="{{ evidence.content_type }}"
-                                  />
-                                  Your browser does not support the audio element.
-                                </audio>
+                              
+                                <span>AUDIO (.mp3) cannot be viewed in pdf</span>
                               </div>
         
                               <!-- Handling Video files -->
                               <div *ngIf="evidence.content_type.startsWith('video/')">
-                                <video width="100%" controls>
-                                  <source
-                                    [src]="
-                                      'data:' +
-                                      evidence.content_type +
-                                      ';base64,' +
-                                      evidence.file_contents
-                                    "
-                                    type="{{ evidence.content_type }}"
-                                  />
-                                  Your browser does not support the video element.
-                                </video>
+                                <span>VIDEO (.mp4) cannot be viewed in pdf</span>
                               </div>
         
                               <!-- If file type doesn't match any specific one above -->

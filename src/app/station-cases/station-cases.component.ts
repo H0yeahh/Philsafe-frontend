@@ -93,10 +93,10 @@ export class StationCasesComponent implements OnDestroy{
       setInterval(() => this.updateDateTime(), 60000);
       this.intervalId = setInterval(() => this.updateDateTime(), 1000);
 
-      const savedPage = localStorage.getItem('currentPage');
-      if (savedPage) {
-        this.currentPage = +savedPage; // Restore the saved page
-      }
+      // const savedPage = localStorage.getItem('currentPage');
+      // if (savedPage) {
+      //   this.currentPage = +savedPage; // Restore the saved page
+      // }
       
     }
 

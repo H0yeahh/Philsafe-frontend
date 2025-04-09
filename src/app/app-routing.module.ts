@@ -149,7 +149,7 @@ const routes: Routes = [
       canActivate: [roleGuard], data: { roles: ['Police'] } },
   { path: 'dashboard', component: PoliceDashboardComponent },
   { path: 'edit-case', component: EditCaseComponent, 
-    canActivate: [roleGuard], data: { roles: ['Police'] } },
+    canActivate: [roleGuard], data: { roles: ['Police'] }, },
   { path: 'station-police-archives', component: StationPoliceArchivesComponent, 
       canActivate: [roleGuard], data: { roles: ['Police'] } },
  

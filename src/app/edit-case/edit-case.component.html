@@ -37,7 +37,7 @@
           </li>
           <li>
             <a
-            (click)="navigateToCases()" 
+            [routerLink]="['/station-cases']"
               class="nav-link"
               routerLinkActive="active"
             >
@@ -76,7 +76,6 @@
           <li>
             <a
               [routerLink]="['/station-list-of-officers']"
-              routerLinkActive="active"
               class="nav-link"
             >
               <img
@@ -106,8 +105,8 @@
       </nav>
     </aside>
 
-    <main class="content">
-      <div class="container">
+    <div class="main-content">
+      
         <!-- <div
         [routerLink]="['/station-cases']"
         class="back">
@@ -270,7 +269,7 @@
                       <button (click)="saveSuspect(crimeData.status)" >Save</button>
                     </div>
 
-                    <section class="main-content">
+                    <section class="sus-content">
                       <div *ngFor="let suspect of suspects; let i = index">
                         <div *ngIf="activeSuspectIndex === i">
                           <label>
@@ -299,7 +298,7 @@
                             </tr>
 
 
-                            <tr>
+                            <tr >
                               <td>
                                 <span
                                   style="margin-left: 10px; font-weight: bold"
@@ -311,6 +310,7 @@
                                   type="text"
                                   [(ngModel)]="suspect.first_name"
                                   [disabled]="!isEditing"
+                                  (ngModelChange)="uneditClicked()"
                                 />
                               </td>
                             </tr>
@@ -561,6 +561,9 @@
                                   onFilesSelected($event, suspect, 'full_front')
                                 "
                                 id="full-front-img"
+                                [disabled]="!isEditing"
+                                (ngModelChange)="uneditClicked()"
+
                                 hidden
                               />
                               <div class="icon-label">
@@ -578,6 +581,7 @@
                                   onFilesSelected($event, suspect, 'front_part')
                                 "
                                 id="front-img"
+                                [disabled]="!isEditing"
                                 hidden
                               />
                               <div class="icon-label">
@@ -594,6 +598,7 @@
                                 (change)="
                                   onFilesSelected($event, suspect, 'left')
                                 "
+                                [disabled]="!isEditing"
                                 hidden
                               />
                               <div class="icon-label">
@@ -610,6 +615,7 @@
                                 (change)="
                                   onFilesSelected($event, suspect, 'right')
                                 "
+                                [disabled]="!isEditing"
                                 hidden
                               />
                               <div class="icon-label">
@@ -768,7 +774,7 @@
                                   </div>
                               </tr>
 
-                              <div class="delete-sus-parent" (click)="deleteSuspect(suspect.suspect_id)">
+                              <div class="delete-sus-parent" (click)="deleteSuspect(activeSuspectIndex, suspect.suspect_id)">
                                 <div class="delete-sus">
                                   <tr>
                                     
@@ -1250,7 +1256,7 @@
             </div>
           </section>
         </main>
-      </div>
-    </main>
+     
+    </div>
   </div>
 </div>
