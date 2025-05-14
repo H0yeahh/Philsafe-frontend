@@ -76,20 +76,14 @@
               <span>CRIME MAP</span>
             </a>
           </li>
+
           <li>
-            <a
-              [routerLink]="['/station-list-of-officers']"
-              routerLinkActive="active"
-              class="nav-link"
-            >
-              <img
-                src="assets/station.svg"
-                alt="Station Icon"
-                class="w-6 h-6 mr-2"
-              />
-              <span>STATION</span>
+            <a [routerLink]="['/station-citizens']" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS</span>
             </a>
           </li>
+          
           <!-- <li>
             <a href="#" class="nav-link">
               <img
@@ -111,10 +105,19 @@
 
     <main class="content">
       <!-- <form [formGroup]="endorseForm"> -->
-        <div>
+
+          <div *ngIf="selectedReport?.is_spam" class="spam-disclaimer">
+    ⚠️ <strong>Probable Spam Report:</strong> This report has been flagged as potential spam due to multiple similar reports submitted by the same user within a short time frame. Please verify its authenticity before further action.
+  </div>
+        <div class="button-header">
           <button (click)="exportToPDF(selectedReport.report_id)" class="export-btn">
             <i class="fas fa-file-export"></i>
             Export to PDF
+          </button>
+
+           <button (click)=" onRestrict(deleteReport.bind(this), selectedReport.report_id)" class="delete-btn">
+            <i class="fa-solid fa-trash"></i>
+            Delete Report
           </button>
         </div>
         
@@ -130,23 +133,35 @@
                 
               </div>
               <div *ngIf="citizenData" class="person-data">
-                <section class="report-details">
-                  <thead>
-                    <tr>
-                      <th colspan="2" class="category-label">COMPLAINANT</th>
-                    </tr>
-                  </thead>
-                  <div class="complainant-data">
-                    <div>
+                <table>
+
+                  <section class="report-details">
+                 
+                    <thead>
+                      <tr>
+                        <th colspan="2" class="category-label">COMPLAINANT</th>
+                      </tr>
+                    </thead>
+                    <div class="complainant-data">
+                      <div>
+                        
+                        <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span>
+                          <img *ngIf="accountData.role === 'Certified'" src="assets/verified.png" alt="Certified" class="role-icon" />
+                          <img *ngIf="accountData.role === 'Pending'" src="assets/pending.png" alt="Pending" class="role-icon" />
+                          <img *ngIf="accountData.role === 'Uncertified'" src="assets/not-verified.png" alt="Uncertified" class="role-icon" />
+                        
+                        </h3>
+                        
+                      </div>    
                       
-                      <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
-                    </div>      
-                    <div class="complainant-id">
-                      <span> <b>Complainant Id:</b> <br> <p style="text-align: end;">{{ citizenData.citizen_id }}</p></span>
-                    </div>    
-                  </div>   
-                </section>
+                      <div class="complainant-id">
+                        <span> <b>Complainant Id:</b> <br> <p style="text-align: end;">{{ citizenData.citizen_id }}</p></span>
+                      </div>    
+                    </div>   
+                  </section>
+                  
                 
+                </table>
                 <span>{{ accountData.contact_num }}</span>
                 <span>{{ accountData.email }}</span>
                 <span>
@@ -206,6 +221,12 @@
                   </td>
                 </tr>
                 <tr>
+                  <td style="padding-bottom: 2rem"><h3>Incident Location</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ getLocationName(selectedReport.location_id)  }}</span>
+                  </td>
+                </tr>
+                <tr >
                   <td style="padding-bottom: 2rem; vertical-align: top;"><h3>Narrative</h3></td>
                   <td style="text-align: end; padding-bottom: 2rem">
                     <div class="narrative">
@@ -222,31 +243,12 @@
            
                     
                
-                     
-                      <tr>
-                        <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
-                        <td style="text-align: end; padding-bottom: 2rem">
-                          <!-- <a
-                            style="color: blue; text-decoration: underline"
-                            (click)="viewID(citizenData.citizen_proof)"
-                            >View Complainant ID</a
-                          > -->
-                        
-                            <div class="modal-content">
-        
-                              <img  [src]="
-                              citizenData.citizen_proof
-                            "
-                            alt="Evidence Image" />
-                            </div>
-                         
-                        </td>
-                      </tr>
+                
                     </table>
                      
     
-                    
-                      <tr>
+                    <br><br><br><br><br><br> <br><br><br><br><br><br>
+                      <tr style="padding-top: 30rem">
                         <p class="category-label">SUSPECT DATA</p>
                       </tr>
                   
@@ -330,7 +332,7 @@
                                       <th>Victim ID</th>
                                       <th>Victim Name</th>
                                       <th>Gender</th>
-                                      <th>Civil Status</th>
+                                    
                                     </tr>
                                 
                                  
@@ -344,9 +346,7 @@
                                       <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
                                         {{ getGenderName(victim.sex) }}
                                       </td>
-                                      <td style="text-align: end; padding-bottom: 2rem; padding-right: 6rem;">
-                                        {{ getCivilStatus(victim.civil_status) }}
-                                      </td>
+                                     
                                     </tr>
                                   
                                 </table>
@@ -624,9 +624,18 @@
           <div *ngIf="citizenData" class="person-data">
             <section class="report-details">
               <div class="complainant-data">
-                <div>
-                  <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}</span></h3>
+                <div class="citizenDetails">
+                  <h3><span>{{ citizenData.firstname }}, {{ citizenData.lastname }}
+                     
+                  </span>
+                  <img *ngIf="accountData.role === 'Certified'" src="assets/verified.png" alt="Certified" class="role-icon" />
+                  <img *ngIf="accountData.role === 'Pending'" src="assets/pending.png" alt="Pending" class="role-icon" />
+                  <img *ngIf="accountData.role === 'Uncertified'" src="assets/not-verified.png" alt="Uncertified" class="role-icon" />
+                
+                  </h3>
                 </div>      
+
+            
                 <div class="complainant-id">
                   <span> <b>Complainant Id:</b> <br> <p style="text-align: end;">{{ citizenData.citizen_id }}</p></span>
                 </div>    
@@ -677,10 +686,10 @@
                     <button
                       type="button"
                       class="endorse-btn"
-                      (click)="showModal = true"
+                      (click)="onRestrict(onShowModal.bind(this))"
                     >
                       Add Case
-                    </button>
+                    </button>  
                   </td>
                   <div class="modal" *ngIf="showModal">
                     
@@ -715,7 +724,7 @@
                         <h3>Enter existing case ID:</h3>
                         <input type="text" class="input-case" [(ngModel)]="existingCaseId" placeholder="Case ID" />
                         <button type="button" class="submit-btn" (click)="addExistingCase(selectedReport.report_id, existingCaseId)">
-                          Submit
+                          SUBMIT
                         </button>
                       </div>
    
@@ -852,28 +861,7 @@
                -->
               <div class="table-container">
                 <table>
-                  <!-- <thead>
-              <tr>
-                <th>Report ID</th>
-                <th>Incident Name</th>
-                <th>Incident Date</th>
-                <th>Reported Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr >
-                
-                <td>{{ selectedReport.report_id }}</td>
-               
-                <td>{{ selectedReport.subcategory_name }}</td>
-              
-                <td>{{ selectedReport.incident_date | date }}</td>
-              
-                <td>{{ selectedReport.reported_date | date }}</td>
-              
-              </tr>
-            </tbody> -->
+        
             <thead>
               <tr>
                 <th colspan="2" class="category-label">REPORT DATA</th>
@@ -911,6 +899,12 @@
               </td>
             </tr>
             <tr>
+                  <td style="padding-bottom: 2rem"><h3>Incident Location</h3></td>
+                  <td style="text-align: end; padding-bottom: 2rem">
+                    <span>{{ getLocationName(selectedReport.location_id)  }}</span>
+                  </td>
+                </tr>
+            <tr>
               <td style="padding-bottom: 2rem; vertical-align: top;"><h3>Narrative</h3></td>
               <td style="text-align: end; padding-bottom: 2rem">
                 <div class="narrative">
@@ -928,7 +922,7 @@
                 
            
                  
-                  <tr>
+                  <!-- <tr>
                     <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
                     <td style="text-align: end; padding-bottom: 2rem">
                       <a
@@ -937,7 +931,7 @@
                         >View Complainant ID</a
                       >
                     </td>
-                  </tr>
+                  </tr> -->
                 </table>
                  
 

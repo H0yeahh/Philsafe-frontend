@@ -31,6 +31,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
   //reports: IReport[] = [];  // Array to hold fetched reports`3
   reports: any;
   accounts: any;
+  locations:any;
   stations: IStation[] = [];
   persons: any = [];
   ranks: IRank[] = [];
@@ -46,7 +47,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
   searchQuery = '';
   policeDetails: any = {};
   stationDetails: any = {};
-  avatarUrl: string = 'assets/user-default.jpg';
+  avatarUrl: string = 'assets/ccpo_logo.jpg';
   accountData: any;
   citizenData: any;
   profilePics: { [citizenId: number]: any } = {};
@@ -58,7 +59,10 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
   currentTime: string = '';
   intervalId: any;
   selectedRemark: string = 'all';
-
+  userData: any = []
+  policePersonData: any;
+  isProfileMenuOpen = false;
+  locationName: any;
 
   constructor(
     private fb: FormBuilder,
@@ -70,7 +74,8 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     private http: HttpClient,
     private authService: AuthService,
     private accountService: AccountService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    
 
   ) {}
 
@@ -80,7 +85,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     this.updateDateTime();
   setInterval(() => this.updateDateTime(), 60000);
   this.intervalId = setInterval(() => this.updateDateTime(), 1000);
-    this.initializeForm();
+  
     //this.getOfficerStationId(); // Fetch officer's station ID on init
     this.fetchRanks();
     this.fetchStations();
@@ -91,10 +96,14 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     this.fetchCitizens();
     this.fetchPersons();
     this.fetchAccounts();
+    this.loadUserProfile();
+    this.getAllLocation();
 
     const policeData = localStorage.getItem('policeDetails');
     const stationData = localStorage.getItem('stationDetails');
     const reportsData = localStorage.getItem('reports');
+    const userData = localStorage.getItem('userData');
+
     // const accountData = localStorage.getItem('accounts');
     // const citizenData = localStorage.getItem('citizens');
 
@@ -120,6 +129,11 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     } else {
       console.warn('No reports data found in localStorage');
     }
+
+    if (userData) {
+      this.userData = JSON.parse(userData);
+      console.log('Fetched User Data', this.userData);
+    }
     
 
     // if (citizenData) {
@@ -143,32 +157,48 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
    
   }
 
-  // Define the form controls
-  initializeForm(): void {
-    this.reportsForm = this.fb.group({
-      reportID: ['', Validators.required],
-      type: ['', Validators.required],
-      complainant: ['', Validators.required],
-      dateReceived: ['', Validators.required],
-      reportBody: ['', Validators.required],
-      citizen_id: ['', Validators.required],
-      reportSubCategoryID: ['', Validators.required],
-      locationID: [''], // Optional field
-      stationID: ['', Validators.required],
-      crimeID: [''], // Optional field
-      reported_date: ['', Validators.required],
-      incidentDate: [''], // Optional field
-      blotterNum: ['', Validators.required],
-      hasAccount: [true],
-      eSignature: ['', Validators.required], // Assuming eSignature is a string or file
-      rankID: ['', Validators.required], // Rank field added
-      personID: ['', Validators.required], // Person field added
-      reportSubCategory: ['', Validators.required],
-      subcategory_name: ['', Validators.required],
-      status: ['', Validators.required],
-      is_spam: ['', Validators.required],
-      color: ['', Validators.required],
-    });
+
+  loadUserProfile() {
+    const userData = localStorage.getItem('userData');
+    const parsedData = JSON.parse(userData);
+    console.log('USER DATA SESSION', userData);
+    if (userData) {
+      try {
+        
+        this.personId = parsedData.personId;
+        this.policeAccountsService.getPoliceById().subscribe(
+          (response) => {
+            this.policePersonData = response;
+            console.log('Fetched Police Person Data', this.policePersonData);
+            // this.fetchReportStation(this.policePersonData.station_id);
+            // this.fetchStation(this.policePersonData.station_id);
+            // // this.fetchPoliceData(this.policePersonData.police_id);
+            console.log('Police ID:', this.policePersonData.police_id);
+          },
+          (error) => {
+            console.error('Error Police Person Data', error);
+          }
+        );
+
+        console.log('Person ID', this.personId);
+      } catch {
+        console.error('Error fetching localStorage');
+      }
+
+      this.accountService.getProfPic(parsedData.acc_id).subscribe(
+        (profilePicBlob: Blob) => {
+          if (profilePicBlob) {
+              // Create a URL for the Blob
+              this.avatarUrl = URL.createObjectURL(profilePicBlob);
+              console.log('PROFILE PIC URL', this.avatarUrl);
+
+          } else {
+              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              this.avatarUrl = 'assets/user-default.jpg';
+          }
+        }
+      )
+    }
   }
 
 
@@ -227,30 +257,7 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     }
   }
   
-  // filterReports() {
-  //   if (!this.searchQuery) {
-  //     this.filteredReports = this.reports;
-  //     return;
-  //   }
 
-  //   const query = this.searchQuery.toLowerCase();
-
-  //   this.filteredReports = this.reports.filter((report) => {
-  //     const reportIdMatch = report.report_id
-  //       .toString()
-  //       .toLowerCase()
-  //       .includes(query);
-  //       const nameMatch = this.getCitizenName(report.citizen_id)
-  //       .toLowerCase()
-  //       .includes(query);
-  //     const incidentNameMatch = report.subcategory_name
-  //       .toLowerCase()
-  //       .includes(query);
-     
-
-  //     return reportIdMatch  || nameMatch || incidentNameMatch;
-  //   });
-  // }
 
   filterReportsByRemark() {
     if (this.selectedRemark === 'disabled') {
@@ -399,6 +406,25 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     }
   }
 
+
+  getAllLocation(){
+    this.accountService.getAllLocation().subscribe(
+      (res) => {
+        this.locations = res;
+        // console.log('All Location', this.locations)
+      },
+      (err) => {
+        console.error('Error fetching location', err)
+      }
+    )
+  }
+
+
+  getLocationName(locationId: any){
+    const location = this.locations.find((loc: any) => loc.location_id === locationId);
+    return location ? `${location.street}, ${location.barangay}, ${location.province}`  : "Unknown Location"
+  }
+
   goBack(): void {
     this.router.navigate(['/manage-police']);
   }
@@ -425,12 +451,22 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
     );
   }
 
+  onRestrict(action: (...args: any[]) => void, ...params: any[]): void {
+    if (!this.userData?.is_officer_of_the_day) {
+      this.dialogService.openUpdateStatusDialog('RESTRICTED', 'You are not In-Charge for today');
+      return;
+    }
+  
+    action(...params);
+  }
   
 
   deleteReport(reportId: number) {
-    const userConfirmed = window.confirm(`Please be informed that this report can no longer be retrieved. Are you sure you want to permanently delete the report?`);
-  
-    if (userConfirmed) {
+    // const userConfirmed = window.confirm(`Please be informed that this report can no longer be retrieved. Are you sure you want to permanently delete the report?`);
+
+    this.dialogService.openConfirmationDialog('Are you sure you want to delete the report?').then(
+      (userConfirmed) => {
+        if (userConfirmed) {
       this.caseQueueService.spamReport(reportId).subscribe(
         () => {
           alert(`Report ${reportId} has been successfully deleted.`);
@@ -449,8 +485,36 @@ export class StationCaseQueueComponent implements OnInit, OnDestroy{
         }
       );
     } else {
+      this.dialogService.closeLoadingDialog();
+      this.dialogService.openUpdateStatusDialog('Officer deletion was canceled', 'The report deletion was canceled.');
       console.log('Officer deletion was canceled');
     }
+      }
+    )
+  
+    
   }
+  
+
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+    
+    if (this.isProfileMenuOpen) {
+      setTimeout(() => {
+        document.addEventListener('click', this.closeProfileMenu);
+      }, 0);
+    }
+  }
+  
+  closeProfileMenu = (event: MouseEvent): void => {
+    const profileContainer = document.querySelector('.profile-menu-container');
+    if (profileContainer && !profileContainer.contains(event.target as Node)) {
+      this.isProfileMenuOpen = false;
+      document.removeEventListener('click', this.closeProfileMenu);
+   
+     
+    }
+  }
+ 
 
 }

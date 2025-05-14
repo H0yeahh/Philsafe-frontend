@@ -1,6 +1,6 @@
 <div class="container">
     <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
+      <!-- In case of emergencies, please dial your local emergency services number -->
     </div>
     <div class="form-container">
       <div class="form-section">
@@ -8,17 +8,17 @@
           <h1>Create Account</h1>
           <img src="assets/logo.svg" alt="Logo" class="logo" />
         </div>
-        <form
+        <!-- <form
           [formGroup]="addPoliceForm"
           (ngSubmit)="onSubmit()"
           enctype="multipart/form-data"
-        >
+        > -->
           <!-- Profile Picture Section -->
           <div class="profile-pic-container">
             <input
               type="file"
               id="profile-pic-input"
-              (change)="onPhotoSelected($event)"
+              (change)="onProfilePicSelected($event)"
               accept="image/*"
               hidden
             />
@@ -42,7 +42,7 @@
             <label for="firstName">First Name</label>
             <input
               type="text"
-              formControlName="firstName"
+              [(ngModel)]="upgraded.firstname"
               id="firstName"
               placeholder="Enter First Name"
               required
@@ -50,7 +50,7 @@
             <label for="middleName">Middle Name</label>
             <input
               type="text"
-              formControlName="middleName"
+              [(ngModel)]="upgraded.middlename"
               id="middleName"
               placeholder="Enter Middle Name"
               required
@@ -60,7 +60,7 @@
             <label for="lastName">Last Name</label>
             <input
               type="text"
-              formControlName="lastName"
+              [(ngModel)]="upgraded.lastname"
               id="lastName"
               placeholder="Enter Last Name"
               required
@@ -68,14 +68,14 @@
             <label for="dateOfBirth">Date of Birth</label>
             <input
               type="date"
-              formControlName="dateOfBirth"
+              [(ngModel)]="upgraded.birthdate"
               id="dateOfBirth"
               required
             />
           </div>
           <div class="form-group">
             <label for="gender">Gender</label>
-            <select formControlName="gender" id="gender" required>
+            <select [(ngModel)]="upgraded.sex" id="gender" required>
               <option value="" disabled selected>Select Gender</option>
               <option value="M">Male</option>
               <option value="F">Female</option>
@@ -84,7 +84,7 @@
           </div>
           <div class="form-group">
             <label for="civilStatus">Civil Status</label>
-            <select formControlName="civilStatus" id="civilStatus" required>
+            <select [(ngModel)]="upgraded.civilStatus" id="civilStatus" required>
               <option value="" disabled selected>Select Civil Status</option>
               <option value="single">Single</option>
               <option value="married">Married</option>
@@ -98,13 +98,13 @@
           <div class="section-header">Home Address</div>
           <div class="form-group">
             <label for="region">Region</label>
-            <select formControlName="region" id="region" required>
+            <select [(ngModel)]="userHomeAddress.region"id="region" required>
               <option value="" disabled selected>Select Region</option>
               
               <option>Region VII</option>
             </select>
             <label for="province">Province</label>
-            <select formControlName="province" id="province" required>
+            <select [(ngModel)]="userHomeAddress.province" id="province" required>
               <option value="" disabled selected>Select Province</option>
              
               <option>Cebu</option>
@@ -112,13 +112,13 @@
           </div>
           <div class="form-group">
             <label for="municipality">Municipality</label>
-            <select formControlName="municipality" id="municipality" required>
+            <select [(ngModel)]="userHomeAddress.municipality" id="municipality" required>
               <option value="" disabled selected>Select Municipality</option>
               <option>Minglanilla</option>
               <option>Basak</option>
             </select>
             <label for="barangay">Barangay</label>
-            <select formControlName="barangay" id="barangay" required>
+            <select [(ngModel)]="userHomeAddress.barangay" id="barangay" required>
               <option value="" disabled selected>Select Barangay</option>
               <option>Pakigne</option>
               <option>Summit</option>
@@ -128,7 +128,7 @@
             <label for="street">Street</label>
             <input
               type="text"
-              formControlName="street"
+              [(ngModel)]="userHomeAddress.street"
               id="street"
               placeholder="Enter Street"
               required
@@ -136,7 +136,7 @@
             <label for="blockLotUnit">Block/Lot/Unit Number</label>
             <input
               type="text"
-              formControlName="blockLotUnit"
+              [(ngModel)]="userHomeAddress.block"
               id="blockLotUnit"
               placeholder="Enter Block/Lot/Unit Number"
               required
@@ -144,7 +144,7 @@
             <label for="zipCode">Zip Code</label>
             <input
               type="text"
-              formControlName="zipCode"
+              [(ngModel)]="home_zip_code"
               id="zipCode"
               placeholder="Enter Zip Code"
               required
@@ -156,8 +156,9 @@
           <div class="form-group">
             <div class="checkbox-group">
               <input
+              (change)="onAddressCheckboxChange($event)"
                 type="checkbox"
-                formControlName="isSameAddress"
+                [(ngModel)]="isSameAddress"
                 id="isSameAddress"
               />
               <label for="isSameAddress" class="certification-label">
@@ -168,16 +169,16 @@
               </label>
             </div>
           </div>
-          <div *ngIf="!addPoliceForm.get('isSameAddress')?.value">
+          <div >
             <div class="form-group">
               <label for="workRegion">Region</label>
-              <select formControlName="workRegion" id="workRegion">
+              <select [(ngModel)]="userWorkAddress.region" id="workRegion">
                 <option value="" disabled selected>Select Region</option>
                 <option>Select Region</option>
                 <option>Region VII</option>
               </select>
               <label for="workProvince">Province</label>
-              <select formControlName="workProvince" id="workProvince">
+              <select [(ngModel)]="userWorkAddress.province" id="workProvince">
                 <option value="" disabled selected>Select Province</option>
                 <option>Select Province</option>
                 <option>Cebu</option>
@@ -186,39 +187,41 @@
             <div class="form-group">
               <label for="workMunicipality">Municipality</label>
               <select
-                formControlName="workMunicipality"
+              [(ngModel)]="userWorkAddress.municipality"
                 id="workMunicipality"
               >
                 <option value="" disabled selected>Select Municipality</option>
                 <option>Select Municipality</option>
                 <option>Minglanilla</option>
+                <option>Basak</option>
               </select>
               <label for="workBarangay">Barangay</label>
-              <select formControlName="workBarangay" id="workBarangay">
+              <select [(ngModel)]="userWorkAddress.barangay" id="workBarangay">
                 <option value="" disabled selected>Select Barangay</option>
                 <option>Select Barangay</option>
                 <option>Pakigne</option>
+                <option>Summit</option>
               </select>
             </div>
             <div class="form-group">
               <label for="workStreet">Street</label>
               <input
                 type="text"
-                formControlName="workStreet"
+                [(ngModel)]="userWorkAddress.street"
                 id="workStreet"
                 placeholder="Enter Street"
               />
               <label for="workBlockLotUnit">Block/Lot/Unit Number</label>
               <input
                 type="text"
-                formControlName="workBlockLotUnit"
+                [(ngModel)]="userWorkAddress.block"
                 id="workBlockLotUnit"
                 placeholder="Enter Block/Lot/Unit Number"
               />
               <label for="workZipCode">Zip Code</label>
               <input
                 type="text"
-                formControlName="workZipCode"
+                [(ngModel)]="work_zip_code"
                 id="workZipCode"
                 placeholder="Enter Zip Code"
               />
@@ -231,7 +234,7 @@
             <label for="email">Email</label>
             <input
               type="email"
-              formControlName="email"
+              [(ngModel)]="upgraded.email"
               id="email"
               placeholder="Enter Email"
               required
@@ -241,19 +244,31 @@
             <label for="contactNum">Contact Number</label>
             <input
               type="text"
-              formControlName="contactNum"
+              [(ngModel)]="upgraded.contactNum"
               id="contactNum"
               placeholder="Enter Contact Number"
               required
             />
           </div>
+
+          <div class="form-group">
+            <label for="contactNum">Telephone Number</label>
+            <input
+              type="text"
+              [(ngModel)]="upgraded.telNum"
+              id="contactNum"
+              placeholder="Enter Contact Number"
+              required
+            />
+          </div>
+
           <div class="mb-4 relative">
             <label for="password" class="font-bold">Password</label>
             <input
               type="password"
               placeholder="Enter Password"
               class="password-input w-full p-3 rounded-lg border border-zinc-300 pr-10"
-              formControlName="password"
+              [(ngModel)]="upgraded.password"
               id="password"
               required
               (input)="onPasswordChange()"
@@ -303,7 +318,7 @@
               type="password"
               placeholder="Confirm Password"
               class="confirm-password-input w-full p-3 rounded-lg border border-zinc-300 pr-10"
-              formControlName="confirmPassword"
+              [(ngModel)]="confirmPassword"
               id="confirmPassword"
               required
               [type]="showConfirmPassword ? 'text' : 'password'"
@@ -315,10 +330,8 @@
             ></i>
             <div
               *ngIf="
-                addPoliceForm.get('confirmPassword')?.touched &&
-                addPoliceForm.get('confirmPassword')?.value !==
-                  addPoliceForm.get('password')?.value
-              "
+             confirmPassword !== upgraded.password"
+              
               class="text-red-500 mt-1"
               style="font-size: 0.75rem"
             >
@@ -329,7 +342,7 @@
           <div class="section-header">Police Information</div>
           <div class="form-group">
             <label for="rank">Rank</label>
-            <select  formControlName="rank_id" class="rank-select" placeholder="Rank">
+            <select [(ngModel)]="upgraded.rankId" class="rank-select" placeholder="Rank">
               <option value="" disabled selected>Select Rank</option>
               <option *ngFor="let rank of ranks" [value]="rank.rank_id">
                 {{ rank.rank_full }}
@@ -339,41 +352,54 @@
 
           <div class="form-group">
             <label for="role">Role</label>
-              <select formControlName="role" class="role-select" placeholder="Role">
+              <select [(ngModel)]="upgraded.role" class="role-select" placeholder="Role" (change)="onRoleChange($event)">
                 <option value="" disabled selected>Select Role</option>
-                <option value="Chief">Admin</option>
+                <option value="StationAdmin">Station Admin</option>
+                <option value="Admin">Admin</option>
                 <option value="Chief">Chief</option>
                 <option value="Police">Police</option>
+              </select>
+          </div>
+
+          <div class="form-group">
+            <label for="policeRole">Specialized Role</label>
+              <select [(ngModel)]="upgraded.policeRole" class="role-select" placeholder="Police Role" (change)="onPoliceRoleChange($event)">
+                <option value="" disabled selected>Select Specialized Role</option>
+                <option value="Intelligence">Intelligence</option>
+                <option value="Forensic">Forensic</option>
+                <option value="Highway Patrol">Highway Patrol</option>
+                <option value="Public Order">Public Order</option>
+                <option value="Police Transport">Police Transport</option>
               </select>
           </div>
 
 
         <div class="form-group">
             <label for="unit">Unit</label>
-            <input type="text" formControlName="unit" placeholder="Unit" required>
+            <input type="text" [(ngModel)]="upgraded.unit" placeholder="Unit" required>
         </div>
 
         <div class="form-group">
             <label for="badgeNumber">Badge Number</label>
-            <input type="text" formControlName="badgeNumber" placeholder="Badge Number" required>
+            <input type="text" [(ngModel)]="upgraded.badgeNum" placeholder="Badge Number" required>
         </div>  
 
         <div class="form-group">
             <label for="debut-date">Debut Date</label>
-            <input type="date" formControlName="debutDate" placeholder="Debut Date" required>
+            <input type="date" [(ngModel)]="upgraded.debutDate" placeholder="Debut Date" required>
         </div>  
 
         <div class="form-group">
           <label for="datetimeCreated">Date Time Created</label>
-          <input type="date" formControlName="datetimeCreated" placeholder="Date Time Date" required>
+          <input type="date" [(ngModel)]="upgraded.dateTimeCreated" placeholder="Date Time Date" required>
       </div>  
 
         <div class="form-group">
             <label for="station-id">Station</label>
-            <select formControlName="stationId" required>
-              <option value="" disabled selected>Select Station</option>
-              <option *ngFor="let station of stations" [value]="station.station_id">
-                {{ station.hq }}
+            <select [(ngModel)]="upgraded.stationId" required>
+              <option  disabled selected>Select Station</option>
+              <option value="7">
+                Pardo Station
               </option>
             </select>
           </div>
@@ -381,7 +407,7 @@
         
           <div class="form-group">
             <label for="created-by">Created By</label>
-            <input type="text" formControlName="createdBy" placeholder="Created By" required>
+            <input type="text" [(ngModel)]="upgraded.createdBy" placeholder="Created By" required>
           </div>
 
 
@@ -389,7 +415,7 @@
           <div class="checkbox-group">
             <input
               type="checkbox"
-              formControlName="certification"
+              [(ngModel)]="certification"
               id="certification"
               required
             />
@@ -415,9 +441,9 @@
             <button type="button" class="back-button" routerLink="/login">
               BACK
             </button>
-            <button type="submit" class="register-btn">REGISTER</button>
+            <button type="submit" class="register-btn" (click)="onSubmit()">REGISTER</button>
           </div>
-        </form>
+        <!-- </form> -->
       </div>
     </div>
   </div>

@@ -26,6 +26,7 @@ body {
     flex-direction: column;
 }
 
+
 .emergency-banner {
     background-color: #1e40af;
     color: white;
@@ -841,20 +842,24 @@ tbody td a {
 
   .input-case {
 
-    padding: 5px;
+    padding: 20px;
     border-radius: 5px;
     margin: 10px;
     border: #a99a9a solid 0.5px;
+    max-width: 20rem;
+    width: 20rem;
+    font-size: large
   }
 
   .submit-btn {
-    padding: 5px 10px;
+    padding: 20px;
     background-color: #002bb8;
     color: rgb(255, 255, 255);
     border: #cfcfcf solid 0.1px;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
+    font-size: large;
   }
 
   .modal-content-case {
@@ -865,6 +870,7 @@ tbody td a {
     width: 60%;
     text-align: center;
     border-radius: 20px;
+    overflow: auto;
   }
 
 .cases {
@@ -1132,4 +1138,87 @@ textarea{
 }
 
 
+.delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fd3535; 
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
+.delete-btn .icon {
+  font-size: 18px;
+}
+
+.delete-btn:hover {
+  background-color: #fc7f7b;
+}
+
+
+.top-details {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  flex-direction: row;
+  z-index: 2;
+}
+
+.complainant-data img{ 
+  width: 30px;
+  height: 30px;
+}
+
+
+@media print {  
+  .report-details,
+  .data-container,
+  .table-container,
+  .evidence-container {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .main-content {
+    page-break-before: always;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  textarea {
+    overflow: hidden;
+  }
+}
+
+
+#report-content {
+  transform: scale(0.95);
+  transform-origin: top left;
+}
+
+
+
+.spam-disclaimer {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-left: 5px solid #ffc107;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.button-header {
+  display: flex;
+  justify-content: space-between;
+}

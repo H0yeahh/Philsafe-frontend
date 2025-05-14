@@ -1,0 +1,260 @@
+
+
+<div class="container">
+    <div class="emergency-banner">
+      <!-- In case of emergencies, please dial your local emergency services number -->
+    </div>
+    <div class="min-h-screen bg-zinc-100 flex">
+
+      <aside class="w-64 bg-white shadow-md">
+        <!-- <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>  -->
+        <div class="p-4 text-center">
+          <div class="logo">
+            <img [src]="avatarUrl" alt="Profile Picture" >
+          </div>
+    
+  
+          <div *ngIf="adminDetails; else loadingTemplate">
+            <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
+              {{ adminDetails?.last_name }} </h2>
+          </div>
+    
+          <ng-template #loadingTemplate>
+            <div id="loading">Loading Police Details...</div>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+        </div>
+        <nav class="mt-7"> <!-- Reduced margin-top to create less space -->
+          <ul class="list-none p-0">
+            <li>
+              <a [routerLink]="['/dashboard']" routerLinkActive="active" class="nav-link">
+                <img src="assets/dashbold.svg" alt="Dashboard" class="w-6 h-6 mr-2">
+                <span>DASHBOARD</span>
+              </a>
+            </li>
+           
+            <li>
+              <a  [routerLink]="['/manage-users']" routerLinkActive="active" class="nav-link">
+                <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+                <span>CITIZENS PORTAL</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/police-officers']" routerLinkActive="active" class="nav-link">
+                  <img src="assets/police-officer.svg" alt="Manage Police Icon" class="w-6 h-6 mr-2">
+                  <span>POLICE OFFICERS</span>
+              </a>
+          </li>   
+          <li>
+            <a [routerLink]="['/police-archives']" routerLinkActive="active" class="nav-link">
+                <img src="assets/archive-solid.png" alt="Manage Police Archives Icon" class="archive-icon">
+                <span>POLICE ARCHIVES</span>
+            </a>
+        </li>  
+            <li>
+              <a [routerLink]="['/police-stations']" routerLinkActive="active" class="nav-link">
+                <img src="assets/manage station.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                <span>MANAGE STATION</span>
+              </a>
+              <!-- <li>
+                <a [routerLink]="['/crime-map']" routerLinkActive="active" class="nav-link">
+                  <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                  <span>CRIME MAP</span>
+                </a>
+              </li> -->
+                <li>
+            <a
+              [routerLink]="['/police-reports']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW REPORTS</span>
+            </a>
+          </li>
+ 
+             <li>
+            <a
+              [routerLink]="['/police-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW CASES</span>
+            </a>
+          </li>
+          </ul>
+        </nav>
+        <div class="logout">
+          <button type="submit" class="logout-button mt-auto" (click)="logout()" >LOG OUT</button>
+        </div>
+  
+      </aside>
+  
+  
+      <div class="main-content">
+        
+        <div>
+          <h1>POLICE ARCHIVES</h1>
+        </div>
+        <main class="content">
+
+          <div class="search-container">
+            <input
+            type="text" [(ngModel)]="searchQuery" 
+              placeholder="Search"
+              class="search-input"
+              (ngModelChange)="filterPolice()"
+            />
+<!--   
+            <div class="archives">
+              <a href="station-police-archives">            
+                POLICE ARCHIVES
+              </a>
+            </div> -->
+  
+          </div>
+
+
+          <section class="user-section">
+           
+            <table class="user-table w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="border border-zinc-300 p-2">STATION ID</th>
+                  <th class="border border-zinc-300 p-2">FULL NAME</th>
+                  <th class="border border-zinc-300 p-2">POLICE ID</th>
+                  <th class="border border-zinc-300 p-2">BADGE NUMBER</th>
+                  <th class="border border-zinc-300 p-2">SPECIALIZED ROLE</th>
+                  <th class="border border-zinc-300 p-2">ACTION</th>
+                  <!-- <th class="border border-zinc-300 p-2">ACTION</th> -->
+
+                </tr>
+              </thead>
+              <tbody>
+
+                <ng-container *ngIf="searchQuery; else allPolice">
+                  <ng-container
+                  *ngIf="filteredPolice.length > 0; else noResults"
+                  >
+                    <tr *ngFor="let officer of filteredPolice | paginate: { 
+                      id: 'police', 
+                      itemsPerPage: pageSize, 
+                      currentPage: currentPage, 
+                      totalItems: filteredPolice.length 
+                    }; let i = index"
+                    [id]="'polce-' + officer.police_id"
+                    
+                    >
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(fetchStationName(officer.station_id), searchQuery)"
+                    [innerHTML]="highlight(fetchStationName(officer.station_id))"
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">  
+
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(officer.rank_full, searchQuery)"
+                    [innerHTML]="highlight(officer.rank_full)">
+                  </span>
+                  
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(officer.firstname, searchQuery)"
+                    [innerHTML]="highlight(officer.firstname)">
+                  </span>
+
+                  <span
+                    [class.highlight]="
+                      isFieldMatched(officer.lastname, searchQuery)"
+                    [innerHTML]="highlight(officer.lastname)">
+                  </span>
+                  
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(officer.police_id, searchQuery)"
+                    [innerHTML]="highlight(officer.police_id)">
+                  </span>
+                    
+                    </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(officer.badge_number, searchQuery)"
+                    [innerHTML]="highlight(officer.badge_number)">
+                  </span>
+                    </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(officer.role, searchQuery)"
+                    [innerHTML]="highlight(officer.role)">
+                  </span>
+                </td>
+                    <td
+                    class="icon"
+                    (click)="reinstatePolice(officer.police_id)"
+                  >
+                    <button class="confirm">Reinstate</button>
+                  </td>
+                
+                  </ng-container>
+                  <ng-template #noResults>
+                    <tr>
+                      <td colspan="4" class="no-results">
+                        No results found for "{{ searchQuery }}"
+                      </td>
+                    </tr>
+                  </ng-template>
+                </ng-container>
+
+                <ng-template #allPolice>
+                <tr *ngFor="let officer of police | paginate: { 
+                                id: 'police', 
+                                itemsPerPage: pageSize, 
+                                currentPage: currentPage, 
+                                totalItems: police.length 
+                              }; let i = index"
+                    [id]="'police-' + officer.police_id"
+                    
+                    >
+                  <td class="border border-zinc-300 p-2">{{ fetchStationName(officer.station_id) }}</td>
+                  <td class="border border-zinc-300 p-2">{{ officer.rank_full }}  {{ officer.firstname }} {{ officer.lastname }}</td>
+                  <td class="border border-zinc-300 p-2">{{ officer.police_id }}</td>
+                  <td class="border border-zinc-300 p-2">{{ officer.badge_number }}</td>
+                  <td class="border border-zinc-300 p-2">{{ officer.role }}</td>
+                  <td
+                    class="icon"
+                    (click)="reinstatePolice(officer.police_id)"
+                  >
+                    <button class="confirm">Reinstate</button>
+                  </td>
+                 
+                </tr>
+              </ng-template>
+              </tbody>
+            </table>
+
+            
+            <pagination-controls id="police" (pageChange)="currentPage = $event"></pagination-controls>
+          </section>
+        </main>
+      </div>
+      
+      </div>
+
+         
+  

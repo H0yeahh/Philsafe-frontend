@@ -1,0 +1,446 @@
+<div class="container">
+  <div class="emergency-banner">
+    <!-- In case of emergencies, please dial your local emergency services number -->
+  </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <!-- <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>  -->
+      <div class="p-4 text-center">
+        <div class="logo">
+          <img [src]="avatarUrl" alt="Profile Picture" />
+        </div>
+
+        <div *ngIf="adminDetails; else loadingTemplate">
+          <h2 class="text-lg font-semibold">
+            {{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
+            {{ adminDetails?.last_name }}
+          </h2>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div id="loading">Loading Police Details...</div>
+        </ng-template>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+      </div>
+      <nav class="mt-7">
+        <!-- Reduced margin-top to create less space -->
+        <ul class="list-none p-0">
+          <li>
+            <a
+              [routerLink]="['/dashboard']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              [routerLink]="['/manage-users']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS PORTAL</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/police-officers']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/police-officer.svg"
+                alt="Manage Police Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>POLICE OFFICERS</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/police-archives']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/archive-solid.png"
+                alt="Manage Police Archives Icon"
+                class="archive-icon"
+              />
+              <span>POLICE ARCHIVES</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/police-stations']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/manage station.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>MANAGE STATION</span>
+            </a>
+            <!-- <li>
+                <a [routerLink]="['/crime-map']" routerLinkActive="active" class="nav-link">
+                  <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                  <span>CRIME MAP</span>
+                </a>
+              </li> -->
+          </li>
+
+          <li>
+            <a
+              [routerLink]="['/police-reports']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW REPORTS</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              [routerLink]="['/police-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW CASES</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="logout">
+        <button type="submit" class="logout-button mt-auto" (click)="logout()">
+          LOG OUT
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <div>
+        <h1>CEBU CITY LIST OF CASES</h1>
+      </div>
+      <main class="content">
+        <div class="search-container">
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search"
+            class="search-input"
+            (ngModelChange)="filterCases()"
+          />
+         
+          <div class="mb-2 flex gap-4">
+            <label>
+              From:
+              <input
+                type="date"
+                [(ngModel)]="fromDate"
+                (ngModelChange)="filterCases()"
+                class="fromTo"
+              />
+            </label>
+
+            <label>
+              To:
+              <input
+                type="date"
+                [(ngModel)]="toDate"
+                (ngModelChange)="filterCases()"
+                class="fromTo"
+              />
+            </label>
+          </div>
+        </div>
+
+       <div *ngIf="searchQuery || fromDate || toDate" class="search-results-count mb-2 text-zinc-700">
+    <ng-container *ngIf="searchQuery && !fromDate && !toDate">Search results for "{{searchQuery}}"</ng-container>
+    
+    <ng-container *ngIf="!searchQuery">
+      <ng-container *ngIf="fromDate && toDate">Filtered cases from {{fromDate | date}} to {{toDate | date}}</ng-container>
+      <ng-container *ngIf="fromDate && !toDate">Filtered cases from {{fromDate | date}}</ng-container>
+      <ng-container *ngIf="!fromDate && toDate">Filtered cases up to {{toDate | date}}</ng-container>
+    </ng-container>
+    
+    <ng-container *ngIf="searchQuery && (fromDate || toDate)">
+      <ng-container *ngIf="fromDate && toDate">Search results for "{{searchQuery}}" from {{fromDate | date}} to {{toDate | date}}</ng-container>
+      <ng-container *ngIf="fromDate && !toDate">Search results for "{{searchQuery}}" from {{fromDate | date}}</ng-container>
+      <ng-container *ngIf="!fromDate && toDate">Search results for "{{searchQuery}}" up to {{toDate | date}}</ng-container>
+    </ng-container>
+    
+    : {{filteredCases?.length || 0}} case(s) found
+  </div>
+
+        <section class="user-section">
+          <table class="user-table w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="border border-zinc-300 p-2">STATION ID</th>
+                <th class="border border-zinc-300 p-2">STATION NAME</th>
+                <th class="border border-zinc-300 p-2">CASE ID</th>
+                <th class="border border-zinc-300 p-2">CRIME TYPE</th>
+                <th class="border border-zinc-300 p-2">COMMITTED DATE</th>
+                <!-- <th class="border border-zinc-300 p-2">STATUS</th> -->
+                <!-- <th class="border border-zinc-300 p-2">ACTION</th> -->
+              </tr>
+            </thead>
+         
+
+            <tbody>
+                <ng-container *ngIf="isLoading">
+                    <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"> <!-- Show 5 skeleton rows -->
+                    <td *ngFor="let j of [1,2,3,4,5]" class="border border-zinc-300 p-2">
+                        <div class="skeleton-loader"></div>
+                    </td>
+                    </tr>
+                </ng-container>
+      
+                <ng-container *ngIf="!isLoading">
+                    <ng-container
+                *ngIf="
+                  filteredCases && filteredCases.length > 0;
+                  else noResults
+                "
+              >
+                <tr
+                  *ngFor="
+                    let case of filteredCases
+                      | paginate
+                        : {
+                            id: 'case',
+                            itemsPerPage: pageSize,
+                            currentPage: currentPage,
+                            totalItems: filteredCases.length
+                          };
+                    let i = index
+                  "
+                  [id]="'case-' + case.crime_id"
+                   (click)="openCrimeDetails(case)"
+                >
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(case.station_id, searchQuery)
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(case.station_id)
+                          : case.station_id
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(
+                          fetchStationName(case.station_id),
+                          searchQuery
+                        )
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(fetchStationName(case.station_id))
+                          : fetchStationName(case.station_id)
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(case.crime_id, searchQuery)
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(case.crime_id)
+                          : case.crime_id
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(case.incident_type, searchQuery)
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(case.incident_type)
+                          : case.incident_type
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(
+                          formatDate(case.date_committed),
+                          searchQuery
+                        )
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(formatDate(case.date_committed))
+                          : (case.date_committed | date)
+                      "
+                    ></span>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- No results template -->
+              <ng-template #noResults>
+                <!-- Check if we're filtering (either by search or dates) -->
+                <ng-container
+                  *ngIf="searchQuery || fromDate || toDate; else allReports"
+                >
+                  <tr>
+                    <td colspan="5" class="text-center p-4">
+                      No results found matching your criteria
+                    </td>
+                  </tr>
+                </ng-container>
+
+                <!-- Default to showing all cases when no filters are applied -->
+                <ng-template #allReports>
+                  <tr
+                    *ngFor="
+                      let case of cases
+                        | paginate
+                          : {
+                              id: 'case',
+                              itemsPerPage: pageSize,
+                              currentPage: currentPage,
+                              totalItems: cases.length
+                            };
+                      let i = index
+                    "
+                    [id]="'case-' + case.crime_id"
+                     (click)="openCrimeDetails(case)"
+                  >
+                    <td class="border border-zinc-300 p-2">
+                      {{ case.station_id }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ fetchStationName(case.station_id) }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ case.crime_id || case.cite_number}}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ case.incident_type }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ case.date_committed | date }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </ng-template>
+                </ng-container>
+              
+            </tbody>
+
+            <div class="modal-overlay" *ngIf="isOpenCrime" (click)="closeModal($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crime Details</h2>
+      <button class="close-button" (click)="isOpenCrime = false">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedCrime">
+      <div class="crime-detail">
+        <strong>Crime ID:</strong>
+        <span>{{ selectedCrime.crime_id || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>CITE Number:</strong>
+        <span>{{ selectedCrime.cite_number || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Date Committed:</strong>
+        <span>{{ selectedCrime.date_committed | date:'medium' || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Time Committed:</strong>
+        <span>{{ selectedCrime.time_committed || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Date Reported:</strong>
+        <span>{{ selectedCrime.datetime_reported | date:'medium' || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Incident Type:</strong>
+        <span>{{ selectedCrime.incident_type || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Offense Type:</strong>
+        <span>{{ selectedCrime.offense_type || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Status:</strong>
+        <span>{{ selectedCrime.status || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Station ID:</strong>
+        <span>{{ selectedCrime.station_id || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Station Name:</strong>
+        <span>{{ fetchStationName(selectedCrime.station_id) || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Location:</strong>
+        <span>{{ selectedCrime.street || 'Unknown' }}, {{ selectedCrime.barangay || 'Unknown' }}, {{ selectedCrime.province || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Created By:</strong>
+        <span>{{ selectedCrime.created_by || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Created On:</strong>
+        <span>{{ selectedCrime.datetime_created | date:'medium' || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Modified By:</strong>
+        <span>{{ selectedCrime.modified_by || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail">
+        <strong>Last Modified:</strong>
+        <span>{{ selectedCrime.last_modified | date:'medium' || 'Unknown, Please Contact Station' }}</span>
+      </div>
+      <div class="crime-detail crime-description">
+        <strong>Description:</strong>
+        <span>{{ selectedCrime.description || 'Unknown, Please Contact Station' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+          </table>
+
+          <pagination-controls
+            id="case"
+            (pageChange)="currentPage = $event"
+          ></pagination-controls>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>

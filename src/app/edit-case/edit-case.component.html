@@ -74,18 +74,12 @@
             </a>
           </li>
           <li>
-            <a
-              [routerLink]="['/station-list-of-officers']"
-              class="nav-link"
-            >
-              <img
-                src="assets/station.svg"
-                alt="Station Icon"
-                class="w-6 h-6 mr-2"
-              />
-              <span>STATION</span>
+            <a [routerLink]="['/station-citizens']" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS</span>
             </a>
           </li>
+         
           <!-- <li>
                   <a href="#" class="nav-link">
                     <img
@@ -129,7 +123,7 @@
                 <button
                   type="button"
                   class="plot-btn"
-                  (click)="plotLongAndLat(crimeData.location_id)"
+                  (click)="onRestrict(plotLongAndLat.bind(this), crimeData.location_id)"
                 >
                   PLOT LONGITUDE AND LATITUDE
                 </button>
@@ -140,8 +134,8 @@
                     <button
                       type="button"
                       class="endorse-btn"
-                      (click)="markSolved(crimeData.crime_id)"
                       *ngIf="crimeData.status.trim() !== 'Solved'"
+                      (click)="onRestrict(markSolved.bind(this), crimeData.crime_id)"
                     >
                       Mark as Solved
                     </button>
@@ -218,14 +212,303 @@
                 
                 </tr>
 
+
+                <tr (click)="openVictimModal()">
+                  <div class="add-sus">
+                    <!-- <span><img src="assets/edit-icon.svg" /></span> -->
+                    <span>View Victim/s</span>
+                  </div>
+                </tr>
+
+                <div *ngIf="isVictimModal" class="modal">
+                  <div class='modal-content'>
+                    <button class="modal-close" (click)="closeVictimModal()">
+                      X
+                    </button>
+
+
+                    <div class="found-sus">
+                      <label><h4>Victim/s Found</h4></label>
+                      <ul>
+                        <li *ngFor="let victim of victims; let i = index">
+                          <button
+                            [class.active]="activeVictimIndex === i"
+                            (click)="setActiveVictim(i)"
+                          >
+                            Victim {{ i + 1 }}
+                          </button>
+                        </li>
+                        
+                      </ul>        
+                    </div>
+                    <div class="add-suspect">
+                      <button 
+                      (click)="onRestrict(addVictim.bind(this), crimeData.status)"
+                      >
+                       <i class="fas fa-plus"></i> Add Victim</button>
+                    </div>
+
+                    <div class="save-sus">
+                      <!-- <div *ngIf="" class="-overlay">
+                        <div class="spinner"></div>
+                        <p>Saving suspect...</p>
+                      </div> -->
+                      <button 
+                      (click)="onRestrict(saveVictim.bind(this), crimeData.status)">Save</button>
+                    </div>
+                    <section class="sus-content">
+                      <div *ngFor="let victim of victims; let i = index">
+                        <div *ngIf="activeVictimIndex === i">
+                          <label>
+                            <h2
+                              style="
+                                margin-left: 10px;
+                                text-align: center;
+                                padding-bottom: 30px;
+                              "
+                            >
+                              Victim {{ i + 1 }}
+                            </h2>
+                          </label>
+
+                          <table class="table-sus" style="text-align: center">
+                            <tr>
+                              <td colspan="2" class="edit">
+                                <span (click)="editVictim(i, crimeData.status)">Edit</span>
+                                <span *ngIf="victim.isNew">
+                                  (New Victim)</span
+                                >
+                                <span *ngIf="victim.isModified">
+                                  (Modified)</span
+                                >
+                              </td>
+                            </tr>
+
+
+                            <tr >
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >First Name</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="text"
+                                  [(ngModel)]="victim.firstname"
+                                  [disabled]="!isEditing"
+                                  (ngModelChange)="uneditClicked()"
+                                />
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Middle Name</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="text"
+                                  [(ngModel)]="victim.middlename"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Last Name</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="text"
+                                  [(ngModel)]="victim.lastname"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Gender</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <select
+                                  [(ngModel)]="victim.sex"
+                                  [disabled]="!isEditing"
+                                >
+                                  <option value="M">Male</option>
+                                  <option value="F">Female</option>
+                                  <option value="X">Prefer not to say</option>
+                                  <option value="">No gender selected</option>
+                                </select>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Date of Birth</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="date"
+                                  id="dateOfBirth"
+                                  [(ngModel)]="victim.birth_date"
+                                  [disabled]="!isEditing"
+                                  (dateChange)="onBirthDateChange($event)"
+                                />
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Civil Status</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="text"
+                                  [(ngModel)]="victim.civil_status"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
+                            </tr>
+
+                            <tr >
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Motive</span
+                                >
+                              </td>
+
+                              <td class="input-sus">
+                                <select
+                                  [(ngModel)]="selectedmodus"
+                                  name="modus"
+                                  (change)="onModusChange($event)"
+                                  [disabled]="!isEditing"
+                                >
+                                  <option
+                                    *ngFor="let method of modus"
+                                    [ngValue]="method"
+                                  >
+                                    {{ method.method_name }}
+                                  </option>
+                                </select>
+                              </td>
+                            </tr>
+
+                            
+
+                          
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Deceased</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <select
+                                  [(ngModel)]="victim.bio_status"
+                                  [disabled]="!isEditing"
+                                >
+                                  <option [ngValue]="false">Yes</option>
+                                  <option [ngValue]="true">No</option>
+                                </select>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <span
+                                  style="margin-left: 10px; font-weight: bold"
+                                  >Date of Death (if applicable)</span
+                                >
+                              </td>
+                              <td class="input-sus">
+                                <input
+                                  type="date"
+                                  [(ngModel)]="victim.deathDate"
+                                  [disabled]="!isEditing"
+                                />
+                              </td>
+                            </tr>
+                          </table>
+
+                            
+
+                              <table>
+                              <div class="delete-sus-parent" (click)="deleteVictim(activeVictimIndex, victim.victimId)">
+                                <div class="delete-sus">
+                                  <tr>
+                                    
+                                      <td style="text-align: center;">Delete Victim</td>
+                                    </tr>
+                                    </div>
+                              </div>
+                             
+                              
+
+                            </table>
+                         
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+
+
                 <tr (click)="openModal()">
                   <div class="add-sus">
                     <td>
-                      <span><img src="assets/edit-icon.svg" /></span>
-                      <span>Edit Suspect/s</span>
+                      <!-- <span><img src="assets/edit-icon.svg" /></span> -->
+                      <span>View Suspect/s</span>
                     </td>
                   </div>
                 </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 <!-- Modal -->
                 <div *ngIf="isModalOpen" class="modal">
@@ -256,7 +539,9 @@
 
 
                     <div class="add-suspect">
-                      <button (click)="addSuspect(crimeData.status)">
+                      <button 
+                      (click)="onRestrict(addSuspect.bind(this), crimeData.status)">
+                      
                        <i class="fas fa-plus"></i> Add Suspect</button>
                     </div>
 
@@ -266,7 +551,9 @@
                         <div class="spinner"></div>
                         <p>Saving suspect...</p>
                       </div> -->
-                      <button (click)="saveSuspect(crimeData.status)" >Save</button>
+                      <button 
+                      (click)="onRestrict(saveSuspect.bind(this), crimeData.status)"
+                      (click)="saveSuspect(crimeData.status)" >Save</button>
                     </div>
 
                     <section class="sus-content">
@@ -774,7 +1061,8 @@
                                   </div>
                               </tr>
 
-                              <div class="delete-sus-parent" (click)="deleteSuspect(activeSuspectIndex, suspect.suspect_id)">
+                              <div class="delete-sus-parent" 
+                              (click)="onRestrict(deleteSuspect.bind(this), activeSuspectIndex, suspect.suspect_id)">
                                 <div class="delete-sus">
                                   <tr>
                                     
@@ -786,12 +1074,26 @@
                               
 
                             </table>
+
+                        
                          
                         </div>
                       </div>
                     </section>
                   </div>
                 </div>
+
+
+                <tr (click)="openModal()">
+                  <div class="add-sus">
+                    <td>
+                      <!-- <span><img src="assets/edit-icon.svg" /></span> -->
+                      <span>View Evidence/s</span>
+                    </td>
+                  </div>
+                </tr>
+
+
               </table>
               <table class="reports">
                 <tr>
@@ -834,14 +1136,10 @@
                     <button
                       type="button"
                       class="send-blotter-btn"
-                      (click)="
-                        onSendBlotter(
-                          item.report.report_id,
-                          item.report.crime_id
-                        )
-                      "
+                      (click)="onRestrict(onSendBlotter.bind(this), item.report.report_id, item.report.crime_id)"
+                      
                     >
-                    Sending Ticket Blotter
+                    Send Ticket Blotter
                     </button>
                   </td>
                 </tr>
@@ -915,7 +1213,7 @@
                         </tr>
                   
                              
-                              <tr>
+                              <!-- <tr>
                                 <td style="padding-bottom: 2rem"><h3>Submited ID</h3></td>
                                 <td style="text-align: end; padding-bottom: 2rem">
                                   <a
@@ -924,7 +1222,7 @@
                                     >View Complainant ID</a
                                   >
                                 </td>
-                              </tr>
+                              </tr> -->
                             </table>
                              
             

@@ -1,0 +1,277 @@
+
+
+<div class="container">
+    <div class="emergency-banner">
+      <!-- In case of emergencies, please dial your local emergency services number -->
+    </div>
+    <div class="min-h-screen bg-zinc-100 flex">
+      <aside class="w-64 bg-white shadow-md">
+        <div class="p-4 text-center">
+          <div class="logo">
+            <img [src]="avatarUrl" alt="CCPO Logo" />
+          </div>
+  
+          <div *ngIf="stationDetails; else loadingTemplate">
+            <h2 class="text-lg font-semibold">{{ stationDetails?.hq }}</h2>
+          </div>
+  
+          <ng-template #loadingTemplate>
+            <div id="loading">Loading Station Details...</div>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Station Administrator</p>
+        </div>
+        <nav class="mt-7">
+          <ul class="list-none p-0">
+            <li>
+              <a [routerLink]="['/station-admin-dashboard']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/dashbold.svg"
+                  alt="Dashboard Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>DASHBOARD</span>
+              </a>
+            </li>
+
+            <li>
+              <a [routerLink]="['/station-admin-citizens']" routerLinkActive="active" class="nav-link">
+                <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+                <span>SPAMMERS</span>
+              </a>
+            </li>
+            
+            <li>
+              <a [routerLink]="['/station-admin-reports']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/reports.svg"
+                  alt="Reports Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>SPAM REPORTS</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/station-admin-police']" routerLinkActive="active" class="nav-link">
+                <img
+                  src="assets/station.svg"
+                  alt="Station Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>STATION</span>
+              </a>
+            </li>
+            
+            <li>
+                <a [routerLink]="['/station-admin-logs']" routerLinkActive="active" class="nav-link">
+                    <img
+                    src="assets/viewlog.png"
+                    alt="Station Icon"
+                    class="w-6 h-6 mr-2"
+                  />
+                  <span>VIEW LOGS</span>
+                </a>
+              </li>
+            <!-- <li>
+              <a href="#" class="nav-link">
+                <img
+                  src="assets/support.svg"
+                  alt="Contact Support Icon"
+                  class="w-6 h-6 mr-2"
+                />
+                <span>CONTACT SUPPORT</span>
+              </a>
+            </li> -->
+          </ul>
+          <div class="logout">
+            <button type="submit" class="button" (click)="logout()">
+              LOG OUT
+            </button>
+          </div>
+        </nav>
+      </aside>
+  
+      <!-- <main class="content">
+        <div class="header">
+          <h1>DASHBOARD</h1>
+          <form [formGroup]="dashboardForm">
+            <div class="filter">
+              <select formControlName="timePeriod">
+                <option value="quarterly">Quarterly</option>
+              </select>
+              <button type="button" class="refresh-button" (click)="onRefresh()">
+                Refresh
+              </button>
+            </div>
+          </form>
+        </div>
+  
+        <section class="stats">
+          <div class="stat-box solved-cases">
+            <h3>Solved Cases</h3>
+            <p>{{ dashboardForm.status }}</p>
+          </div>
+          <div class="stat-box reported-cases">
+            <h3>Number of Reported Cases</h3>
+            <p>{{ dashboardForm.value.reportedCases }}</p>
+          </div>
+          <div class="stat-box under-investigation">
+            <h3>Under Investigation</h3>
+            <p>{{ dashboardForm.value.underInvestigation }}</p>
+          </div>
+        </section>
+  
+        <section class="graph-section">
+          <canvas id="casesGraph"></canvas>
+        </section>
+      </main>
+    </div>
+  </div> -->
+  
+      <main class="content">
+        <div class="welcome flex justify-between items-center mb-4">
+          <div class="sub-welcome">
+            <h3>Welcome back,</h3>
+         
+            <h1 *ngIf="policePersonData; else loading">
+              {{ policePersonData?.rank_abbr }} {{ policePersonData?.firstname }}
+              {{ policePersonData?.lastname }}
+            </h1> 
+          
+          <ng-template #loading>
+            <p id="loading">Loading User...</p>
+          </ng-template>
+  
+          </div>
+          
+          <div class="text-left date-time">
+            <p><strong>Date:</strong> {{ currentDate }}</p>
+            <p><strong>Time:</strong> {{ currentTime }}</p>
+          </div>
+        </div>
+        
+        <div class="header">
+          <div></div>
+          <form [formGroup]="dashboardForm">
+            <div class="filter">
+              <label for="timePeriodSelect">Select Time Period:</label>
+              <select 
+                id="timePeriodSelect" 
+                [formControl]="timePeriodControl"
+                (change)="onSelect()">
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="annual">Annual</option>
+              </select>
+            </div>
+          </form>
+        </div>
+  
+        <section class="stats">
+          <div class="stat-box solved-cases" (click)="openModal('weekly')">
+            <h3>Weekly Reports</h3>
+            <p>{{ weeklyReports }}</p>
+          </div>
+          <div class="stat-box reported-cases" (click)="openModal('monthly')">
+            <h3>Monthly Reports</h3>
+            <p>{{ monthlyReports }}</p>
+          </div>
+          <div class="stat-box under-investigation" (click)="openModal('annual')">
+            <h3>Annual Reports</h3>
+            <p>{{ annualReports }}</p>
+          </div>
+        </section>
+  
+        <section class="graph-section">
+          <canvas id="casesGraph"></canvas>
+        </section>
+  
+        <div class="export">
+          <label for="exportSelect" style="padding-right: 5px;">Export All Reports:</label>
+          <select  id="exportSelect" (change)="onExportChange($event)">
+            <option value="" disabled selected>Select Export Type</option>
+            <option value="xlsx-all">Excel</option>
+            <option value="csv-all">CSV</option>
+          </select>
+        </div>
+        
+  
+     <div class="parent-modal" *ngIf="isModalOpen">
+      <div class="modal" *ngIf="isModalOpen">
+        <button class="modal-close" (click)="closeModal()">X</button>
+        <div class="modal-content">
+          <h3 *ngIf="modalType === 'weekly'">THIS WEEK'S REPORT</h3>
+          <h3 *ngIf="modalType === 'monthly'">THIS MONTH'S REPORT</h3>
+          <h3 *ngIf="modalType === 'annual'">THIS YEAR'S REPORT</h3>
+      
+          <div class="modal-table">
+            <table >
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Incident Name</th>
+                  <th>Date</th>
+                  <th>Category Name</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="modalType === 'weekly'">
+                <tr *ngIf="filteredWeekly.length>0; else noReports">
+                <tr *ngFor="let report of filteredWeekly"
+                (click)="navigateToReportEndorse(report.report_id)">
+                  <td>{{ report.report_id }}</td>
+                  <td>{{ report.subcategory_name }}</td>
+                  <td>{{ report.reported_date.slice(0, 10) + ' ' + report.reported_date.slice(11, 16) }}</td>
+                  <td>{{ report.category_name }}</td>
+                </tr>
+              </tbody>
+  
+              <tbody *ngIf="modalType === 'monthly'">
+                <tr *ngIf="filteredMonthly.length>0; else noReports"></tr>
+                <tr *ngFor="let report of filteredMonthly"
+                (click)="navigateToReportEndorse(report.report_id)">
+                  <td>{{ report.report_id }}</td>
+                  <td>{{ report.subcategory_name }}</td>
+                  <td>{{ report.reported_date.slice(0, 10) + ' ' + report.reported_date.slice(11, 16) }}</td>
+                  <td>{{ report.category_name }}</td>
+                </tr>
+              </tbody>
+  
+              <tbody *ngIf="modalType === 'annual'">
+                <tr *ngIf="filteredAnnually.length>0; else noReports"></tr>
+                <tr *ngFor="let report of filteredAnnually"
+                (click)="navigateToReportEndorse(report.report_id)">
+                  <td>{{ report.report_id }}</td>
+                  <td>{{ report.subcategory_name }}</td>
+                  <td>{{ report.reported_date.slice(0, 10) + ' ' + report.reported_date.slice(11, 16) }}</td>
+                  <td>{{ report.category_name }}</td>
+                </tr>
+              </tbody>
+  
+              <ng-template #noReports>
+                <tr>
+                  <td colspan="4" style="text-align: center; font-weight: bold;">
+                    No reports found for {{ modalType }}.
+                  </td>
+                </tr>
+              </ng-template>
+  
+            </table>
+          </div>
+  
+          <div class="export">
+            <label for="exportSelect" style="padding-right: 5px;">Export All Reports:</label>
+            <select  id="exportSelect" (change)="onExportChange($event)">
+              <option value="" disabled selected>Select Export Type</option>
+              <option value="xlsx-filtered">Excel</option>
+              <option value="csv-filtered">CSV</option>
+            </select>
+          </div>
+          
+        </div>
+      </div>
+     </div>
+        
+        
+      </main>
+    </div>
+  </div>
+  

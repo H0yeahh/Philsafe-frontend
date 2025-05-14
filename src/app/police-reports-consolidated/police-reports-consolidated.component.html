@@ -1,0 +1,469 @@
+<div class="container">
+  <div class="emergency-banner">
+    <!-- In case of emergencies, please dial your local emergency services number -->
+  </div>
+  <div class="min-h-screen bg-zinc-100 flex">
+    <aside class="w-64 bg-white shadow-md">
+      <!-- <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>  -->
+      <div class="p-4 text-center">
+        <div class="logo">
+          <img [src]="avatarUrl" alt="Profile Picture" />
+        </div>
+
+        <div *ngIf="adminDetails; else loadingTemplate">
+          <h2 class="text-lg font-semibold">
+            {{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
+            {{ adminDetails?.last_name }}
+          </h2>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div id="loading">Loading Police Details...</div>
+        </ng-template>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+      </div>
+      <nav class="mt-7">
+        <!-- Reduced margin-top to create less space -->
+        <ul class="list-none p-0">
+          <li>
+            <a
+              [routerLink]="['/dashboard']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/dashbold.svg"
+                alt="Dashboard"
+                class="w-6 h-6 mr-2"
+              />
+              <span>DASHBOARD</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              [routerLink]="['/manage-users']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS PORTAL</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/police-officers']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/police-officer.svg"
+                alt="Manage Police Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>POLICE OFFICERS</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/police-archives']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/archive-solid.png"
+                alt="Manage Police Archives Icon"
+                class="archive-icon"
+              />
+              <span>POLICE ARCHIVES</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="['/police-stations']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/manage station.svg"
+                alt="Crime Map Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>MANAGE STATION</span>
+            </a>
+            <!-- <li>
+                <a [routerLink]="['/crime-map']" routerLinkActive="active" class="nav-link">
+                  <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                  <span>CRIME MAP</span>
+                </a>
+              </li> -->
+          </li>
+
+          <li>
+            <a
+              [routerLink]="['/police-reports']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW REPORTS</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              [routerLink]="['/police-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW CASES</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="logout">
+        <button type="submit" class="logout-button mt-auto" (click)="logout()">
+          LOG OUT
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <div>
+        <h1>CEBU CITY LIST OF REPORTS</h1>
+      </div>
+      <main class="content">
+        <div class="search-container">
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search"
+            class="search-input"
+            (ngModelChange)="filterReports()"
+          />
+
+          <div class="mb-2 flex gap-4">
+            <label>
+              From:
+              <input
+                type="date"
+                [(ngModel)]="fromDate"
+                (ngModelChange)="filterReports()"
+                class="fromTo"
+              />
+            </label>
+
+            <label>
+              To:
+              <input
+                type="date"
+                [(ngModel)]="toDate"
+                (ngModelChange)="filterReports()"
+                class="fromTo"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div *ngIf="searchQuery || fromDate || toDate" class="search-results-count mb-2 text-zinc-700">
+    <ng-container *ngIf="searchQuery && !fromDate && !toDate">Search results for "{{searchQuery}}"</ng-container>
+    
+    <ng-container *ngIf="!searchQuery">
+      <ng-container *ngIf="fromDate && toDate">Filtered reports from {{fromDate | date}} to {{toDate | date}}</ng-container>
+      <ng-container *ngIf="fromDate && !toDate">Filtered reports from {{fromDate | date}}</ng-container>
+      <ng-container *ngIf="!fromDate && toDate">Filtered reports up to {{toDate | date}}</ng-container>
+    </ng-container>
+    
+    <ng-container *ngIf="searchQuery && (fromDate || toDate)">
+      <ng-container *ngIf="fromDate && toDate">Search results for "{{searchQuery}}" from {{fromDate | date}} to {{toDate | date}}</ng-container>
+      <ng-container *ngIf="fromDate && !toDate">Search results for "{{searchQuery}}" from {{fromDate | date}}</ng-container>
+      <ng-container *ngIf="!fromDate && toDate">Search results for "{{searchQuery}}" up to {{toDate | date}}</ng-container>
+    </ng-container>
+    
+    : {{filteredReports?.length || 0}} report(s) found
+  </div>
+
+        <section class="user-section">
+          <table class="user-table w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="border border-zinc-300 p-2">STATION ID</th>
+                <th class="border border-zinc-300 p-2">STATION NAME</th>
+                <th class="border border-zinc-300 p-2">REPORT ID</th>
+                <th class="border border-zinc-300 p-2">INCIDENT NAME</th>
+                <th class="border border-zinc-300 p-2">REPORTED DATE</th>
+                <!-- <th class="border border-zinc-300 p-2">STATUS</th> -->
+                <!-- <th class="border border-zinc-300 p-2">ACTION</th> -->
+              </tr>
+            </thead>
+         
+
+            <tbody>
+
+                <ng-container *ngIf="isLoading">
+                    <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"> <!-- Show 5 skeleton rows -->
+                    <td *ngFor="let j of [1,2,3,4,5]" class="border border-zinc-300 p-2">
+                        <div class="skeleton-loader"></div>
+                    </td>
+                    </tr>
+                </ng-container>
+
+
+
+                <ng-container *ngIf="!isLoading">
+
+  <ng-container
+                *ngIf="
+                  filteredReports && filteredReports.length > 0;
+                  else noResults
+                "
+              >
+                <tr
+                  *ngFor="
+                    let report of filteredReports
+                      | paginate
+                        : {
+                            id: 'report',
+                            itemsPerPage: pageSize,
+                            currentPage: currentPage,
+                            totalItems: filteredReports.length
+                          };
+                    let i = index
+                  "
+                  [id]="'report-' + report.police_id"
+                  (click)="showReportDetails(report)"
+                  class="cursor-pointer hover:bg-zinc-200"
+                >
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(report.jurisdiction_id, searchQuery)
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(report.jurisdiction_id)
+                          : report.jurisdiction_id
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(
+                          fetchStationName(report.jurisdiction_id),
+                          searchQuery
+                        )
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(fetchStationName(report.jurisdiction_id))
+                          : fetchStationName(report.jurisdiction_id)
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(report.report_id, searchQuery)
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(report.report_id)
+                          : report.report_id
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(report.subcategory_name, searchQuery)
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(report.subcategory_name)
+                          : report.subcategory_name
+                      "
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                      [class.highlight]="
+                        isFieldMatched(
+                          formatDate(report.reported_date),
+                          searchQuery
+                        )
+                      "
+                      [innerHTML]="
+                        searchQuery
+                          ? highlight(formatDate(report.reported_date))
+                          : (report.reported_date | date)
+                      "
+                    ></span>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- No results template -->
+              <ng-template #noResults>
+                <!-- Check if we're filtering (either by search or dates) -->
+                <ng-container
+                  *ngIf="searchQuery || fromDate || toDate; else allReports"
+                >
+                  <tr>
+                    <td colspan="5" class="text-center p-4">
+                      No results found matching your criteria
+                    </td>
+                  </tr>
+                </ng-container>
+
+                <!-- Default to showing all reports when no filters are applied -->
+                <ng-template #allReports>
+                  <tr
+                    *ngFor="
+                      let report of reports
+                        | paginate
+                          : {
+                              id: 'report',
+                              itemsPerPage: pageSize,
+                              currentPage: currentPage,
+                              totalItems: reports.length
+                            };
+                      let i = index
+                    "
+                    [id]="'police-' + report.police_id"
+                    (click)="showReportDetails(report)"
+                  class="cursor-pointer hover:bg-zinc-200"
+                  >
+                    <td class="border border-zinc-300 p-2">
+                      {{ report.jurisdiction_id }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ fetchStationName(report.jurisdiction_id) }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ report.report_id }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ report.subcategory_name }}
+                    </td>
+                    <td class="border border-zinc-300 p-2">
+                      {{ report.reported_date | date }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </ng-template>
+                </ng-container>
+              
+              
+              
+            </tbody>
+
+             <div *ngIf="isOpenReport" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button (click)="closeReportDetails()" class="close-button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <h2 class="title-header">Report Details</h2>
+        
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-zinc-100 p-4 rounded">
+          <h3 class="font-semibold text-lg mb-2">Report Information</h3>
+          <div class="grid grid-cols-1 gap-2">
+            <div class="report-detail">
+              <span class="font-medium">Report ID:</span> {{ selectedReport.report_id }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Blotter Number:</span> {{ selectedReport.blotter_num }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Category:</span> {{ selectedReport.category_name }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Subcategory:</span> {{ selectedReport.subcategory_name }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Incident Date:</span> {{ selectedReport.incident_date | date:'medium' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Reported Date:</span> {{ selectedReport.reported_date | date:'medium' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Spam Report:</span> {{ selectedReport.is_spam ? 'Yes' : 'No' }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-zinc-100 p-4 rounded">
+          <h3 class="modal-header">Location Details</h3>
+          <div class="grid grid-cols-1 gap-2">
+            <div class="report-detail">
+              <span class="font-medium">Region:</span> {{ selectedReport.region || 'N/A' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Province:</span> {{ selectedReport.province || 'N/A' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Municipality:</span> {{ selectedReport.municipality || 'N/A' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Barangay:</span> {{ selectedReport.barangay || 'N/A' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Street:</span> {{ selectedReport.street || 'N/A' }}
+            </div>
+            <div class="report-detail">
+              <span class="font-medium">Coordinates:</span> 
+              {{ selectedReport.latitude }}, {{ selectedReport.longitude }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 bg-zinc-100 p-4 rounded">
+        <h3 class="modal-header">Report Details</h3>
+        <p class="whitespace-pre-line">{{ selectedReport.report_body }}</p>
+      </div>
+      
+      <div class="mt-4 bg-zinc-100 p-4 rounded">
+        <h3 class="modal-header">Station Information</h3>
+        <div class="grid grid-cols-1 gap-2">
+          <div class="report-detail">
+            <span class="font-medium">Station ID:</span> {{ selectedReport.jurisdiction_id }}
+          </div>
+          <div class="report-detail">
+            <span class="font-medium">Station Name:</span> {{ fetchStationName(selectedReport.jurisdiction_id) }}
+          </div>
+        </div>
+      </div>
+      
+    
+    </div>
+  </div>
+          </table>
+
+          <pagination-controls
+            id="report"
+            (pageChange)="currentPage = $event"
+          ></pagination-controls>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+
+
+

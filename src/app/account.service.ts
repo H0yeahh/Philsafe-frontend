@@ -174,6 +174,25 @@ export class AccountService {
             })
         );
 }
+
+getMoreProfile(accountIds: number[]) {
+  const headerr = new HttpHeaders({
+    'Content-Type': 'application/json', 
+     'Authorization': this.token
+  })
+  return this.http.post(`${this.base}api/account/get/profilepics`, accountIds,  { headers: headerr })
+        .pipe(
+            tap((response: any) => {
+                console.log('Response from getProfPic:', response);
+            }),
+            catchError(error => {
+               console.error('Error fetching profile picture:', error);
+                return throwError(error);
+            })
+        );
+}
+
+
   getPersonById(id: number): Observable<IPerson> {
     const url = `${this.personURL}/retrieve/${id}`;
     return this.http.get<IPerson>(url, {headers: this.auth_token}).pipe(
@@ -182,7 +201,15 @@ export class AccountService {
   }
 
   getLocationById(id: number): Observable<any> {
-    const url = `${this.locationURL}/retrieve/${id}`;
+    const url = `${this.base}api/location/retrieve/${id}`;
+    return this.http.get<Location>(url, {headers: this.auth_token}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+  getAllLocation(){
+    const url = `${this.base}api/location/retrieve/all`;
     return this.http.get<Location>(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );

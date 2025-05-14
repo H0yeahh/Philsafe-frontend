@@ -56,11 +56,11 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
       (data) => {
         
       if (data && data.role) {
-        const validRoles = ['Police', 'Admin'];
+        const validRoles = ['Police', 'Admin', 'StationAdmin'];
         if (validRoles.includes(data.role)) {
           localStorage.setItem('userData', JSON.stringify(data));
           localStorage.setItem('role', data.role);
-          localStorage.setItem('token', data.access_token)
+          localStorage.setItem('token', data.access_token);
           console.log('Role stored in login:', localStorage.getItem('role')); 
           console.log('Data stored as userData:', localStorage.getItem('userData'));
           console.log('Token Stored', data.access_token)
@@ -72,8 +72,6 @@ submitLogin(loginData: { email: string; password: string }): Promise<Account> {
           this.accountData = data;
         } else {
           console.error(`Unauthorized: Role is not valid (${data.role})`);
-          // alert('Invalid role detected. Login failed.');
-       
           reject(new Error('Invalid role'));
         }
       } else {
@@ -145,8 +143,9 @@ async onSubmit() {
       if (account && account.role) {
         localStorage.setItem('userData', JSON.stringify(account));
         localStorage.setItem('role', account.role);
+        localStorage.setItem('reloadAfterLogin', 'true')
         
-        setTimeout(() => {
+        setTimeout(() => { 
           // this.dialogService.closeAllDialogs(); 
           // this.dialogService.closeLoadingDialog();
           this.dialogService.closeLoadingDialog(); 
@@ -154,6 +153,7 @@ async onSubmit() {
           
           setTimeout(() => {
             this.accountData = account;
+            console.log('account.role', account.role)
             this.router.navigate([this.getRedirectUrl(account.role)]);
             this.dialogService.closeAllDialogs();
           }, 2000);
@@ -169,7 +169,15 @@ async onSubmit() {
   }
 }
 
+
 private getRedirectUrl(role: string): string {
+
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const today = new Date().getDay();
+  const todayName = dayNames[today];
+  const officerOftheDay = `Police_${todayName}`;
+  console.log('Officer of the Day:', officerOftheDay);
+
   switch (role) {
     case 'Admin':
       return '/dashboard';
@@ -177,6 +185,8 @@ private getRedirectUrl(role: string): string {
       return '/station-case-queue';
     case 'Police':
       return '/station-dashboard';
+    case 'StationAdmin':
+      return '/station-admin-dashboard';
     default:
       return '/';
   }

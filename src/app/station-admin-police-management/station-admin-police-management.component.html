@@ -1,0 +1,613 @@
+<div class="container">
+    <div class="emergency-banner">
+      <!-- In case of emergencies, please dial your local emergency services number -->
+    </div>
+    <div class="min-h-screen bg-zinc-100 flex">
+      <aside class="w-64 bg-white shadow-md">
+        <div class="p-4 text-center">
+            <div class="logo">
+                <img [src]="avatarUrl" alt="CCPO Logo" />
+              </div> 
+          <div *ngIf="stationDetails; else loading">
+            <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
+          </div>
+          <ng-template #loading>
+            <p>Loading station details...</p>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Station Administrator</p>
+        </div>
+        <nav class="mt-7">
+            <ul class="list-none p-0">
+              <li>
+                <a [routerLink]="['/station-admin-dashboard']" routerLinkActive="active" class="nav-link">
+                  <img
+                    src="assets/dashbold.svg"
+                    alt="Dashboard Icon"
+                    class="w-6 h-6 mr-2"
+                  />
+                  <span>DASHBOARD</span>
+                </a>
+              </li>
+              
+            
+
+                  <li>
+                    <a [routerLink]="['/station-admin-citizens']" routerLinkActive="active" class="nav-link">
+                      <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+                      <span>SPAMMERS</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a [routerLink]="['/station-admin-reports']" routerLinkActive="active" class="nav-link">
+                      <img
+                        src="assets/reports.svg"
+                        alt="Reports Icon"
+                        class="w-6 h-6 mr-2"
+                      />
+                      <span>SPAM REPORTS</span>
+                    </a>
+                  </li>
+
+
+              <li>
+                <a [routerLink]="['/station-admin-police']" routerLinkActive="active" class="nav-link">
+                  <img
+                    src="assets/station.svg"
+                    alt="Station Icon"
+                    class="w-6 h-6 mr-2"
+                  />
+                  <span>STATION</span>
+                </a>
+              </li>
+              
+              <li>
+                  <a [routerLink]="['/station-admin-logs']" routerLinkActive="active" class="nav-link">
+                      <img
+                      src="assets/viewlog.png"
+                      alt="Station Icon"
+                      class="w-6 h-6 mr-2"
+                    />
+                    <span>VIEW LOGS</span>
+                  </a>
+                </li>
+              <!-- <li>
+                <a href="#" class="nav-link">
+                  <img
+                    src="assets/support.svg"
+                    alt="Contact Support Icon"
+                    class="w-6 h-6 mr-2"
+                  />
+                  <span>CONTACT SUPPORT</span>
+                </a>
+              </li> -->
+            </ul>
+            <div class="logout">
+              <button type="submit" class="button" (click)="logout()">
+                LOG OUT
+              </button>
+            </div>
+          </nav>
+      </aside>
+  
+  
+     <div class="main-content">
+      <div class="header">
+          <div class="header-title ">
+              <h1>LIST OF OFFICERS</h1>
+              
+          </div>
+          <div class="header-info">
+            <p id="current-date"></p>
+            <p id="current-time"></p>
+            <div class="current">
+              <p><strong>Date:</strong> {{ currentDate }}</p>
+              <p><strong>Time:</strong> {{ currentTime }}</p>
+            </div>  
+            
+          </div>
+      </div>
+      <main class="main-content">
+          <header class="header"></header>
+          <div class="search-container">
+            <input
+            type="text" [(ngModel)]="searchQuery" 
+              placeholder="Search"
+              class="search-input"
+              (ngModelChange)="filterPolice()"
+            />
+
+            <div class="add-suspect">
+              <button 
+              (click)="onAddPolice()"
+              >
+               <i class="fas fa-plus"></i> Add Police</button>
+            </div>
+
+            <!-- <div class="archives">
+              <a href="station-police-archives">            
+                POLICE ARCHIVES
+              </a>
+            </div> -->
+  
+          </div>
+
+          <div *ngIf="isAddPoliceOpen" class="modal-backdrop">
+            <div class="modal-content">
+              <h2>Register New Police</h2>
+
+              <div>
+                <label>Email:</label>
+                <input type="text" [(ngModel)]="upgraded.email" required>
+              </div>
+
+              <div>
+                <label>Password:</label>
+                <input type="password" [(ngModel)]="upgraded.password" required>
+              </div>
+          
+              <div>
+                <label>First Name:</label>
+                <input type="text" [(ngModel)]="upgraded.firstname" required>
+              </div>
+
+              <div>
+                <label>Middle Name:</label>
+                <input type="text" [(ngModel)]="upgraded.middlename" required>
+              </div>
+          
+              <div>
+                <label>Last Name:</label>
+                <input type="text" [(ngModel)]="upgraded.lastname" required>
+              </div>
+
+              <div class="form-group">
+                <label for="debut-date">Date of Birth</label>
+                <input type="date" [(ngModel)]="upgraded.birthdate" placeholder="Date of Birth" required required>
+            </div>  
+
+
+              <div>
+                <label>Gender:</label>
+                <select [(ngModel)]="upgraded.sex" required>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option >
+                  <option value="X">Prefer not to say</option>
+                </select>
+              </div>
+
+
+              <div>
+                <label>Civil Status:</label>
+                <select [(ngModel)]="upgraded.civilStatus" required>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Widow">Widow</option>
+                </select>
+              </div>
+
+              
+
+              <div>
+                <label>Telephone Number:</label>
+                <input type="text" [(ngModel)]="upgraded.telNum" required>
+              </div>
+
+              
+              <div>
+                <label>Contact Number:</label>
+                <input type="text" [(ngModel)]="upgraded.contactNum" required >
+              </div>
+
+              
+              <div>
+                <label>Region:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.region" required>
+              </div>
+
+
+              <div>
+                <label>Province:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.province" required>
+              </div>
+
+
+              <div>
+                <label>Municipality:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.municipality" required>
+              </div>
+
+              <div>
+                <label>Barangay:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.barangay" required>
+              </div>
+
+
+              <div>
+                <label>Street:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.street" required>
+              </div>
+
+              <div>
+                <label>Block:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.block" required>
+              </div>
+
+              <div>
+                <label>Zip Code:</label>
+                <input type="text" [(ngModel)]="userHomeAddress.zipCode" required>
+              </div>
+          
+              <div class="checkbox-group">
+                <input
+                (change)="onAddressCheckboxChange($event)"
+                  type="checkbox"
+                  [(ngModel)]="isSameAddress"
+                  id="isSameAddress"
+                /><span class="certification-text"
+                >Click here if the Work Address is the same as the Home
+                Address.</span
+              >
+             
+              </div>
+
+
+              <div>
+                <label>Region:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.region" required>
+              </div>
+
+
+              <div>
+                <label>Province:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.province" required>
+              </div>
+
+
+              <div>
+                <label>Municipality:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.municipality" required>
+              </div>
+
+              <div>
+                <label>Barangay:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.barangay" >
+              </div>
+
+
+              <div>
+                <label>Street:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.street" required>
+              </div>
+
+              <div>
+                <label>Block:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.block" required>
+              </div>
+
+              <div>
+                <label>Zip Code:</label>
+                <input type="text" [(ngModel)]="userWorkAddress.zipCode" required>
+              </div>
+
+              <div class="section-header">Police Information</div>
+
+              <div >
+                <label for="policeRole">Specialized Role</label>
+                  <select [(ngModel)]="upgraded.policeRole" class="role-select" placeholder="Police Role" (change)="onPoliceRoleChange($event)" required>
+                    <option value="" disabled selected>Select Specialized Role</option>
+                    <option value="Intelligence">Intelligence</option>
+                    <option value="Forensic">Forensic</option>
+                    <option value="Highway Patrol">Highway Patrol</option>
+                    <option value="Public Order">Public Order</option>
+                    <option value="Police Transport">Police Transport</option>
+                  </select>
+              </div>
+          
+              <div>
+                <label>Unit:</label>
+                <input type="text" [(ngModel)]="upgraded.unit" required>
+              </div>
+          
+              <div>
+                <label>Badge Number:</label>
+                <input type="text" [(ngModel)]="upgraded.badgeNum" required>
+              </div>
+
+              <div class="form-group">
+                <label for="debut-date">Debut Date</label>
+                <input type="date" [(ngModel)]="upgraded.debutDate" placeholder="Debut Date" required required>
+            </div>  
+
+
+            <div class="form-group">
+              <label for="datetimeCreated">Date Time Created</label>
+              <input type="date" [(ngModel)]="upgraded.dateTimeCreated" placeholder="Date Time Date" required>
+          </div>  
+
+         
+          <div class="form-group">
+            <label for="rank">Rank</label>
+            <select [(ngModel)]="upgraded.rankId" class="rank-select" placeholder="Rank" required>
+              <option value="" disabled selected>Select Rank</option>
+              <option *ngFor="let rank of ranks" [value]="rank.rank_id">
+                {{ rank.rank_full }}
+              </option>
+            </select>
+          </div>
+    
+          
+              <div class="modal-buttons">
+                <button (click)="submitPolice()" >Submit</button>
+                <button (click)="cancelAddPolice()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          
+          <section class="new-reports">
+            
+              <form>
+                  <table class="reports-table">
+                      <thead>
+                          <tr>
+                            <th>Officer of the Day</th>
+                              <th>Police ID</th>
+                              <th>Rank</th>
+                              <th>Name</th>
+                              <th>Unit</th>
+                              <th  style="text-align: center;">Action</th>
+                          </tr>
+                      </thead>
+                    
+                      <tbody>
+                      <ng-container *ngIf="searchQuery; else allPolice" >
+                        <ng-container
+                          *ngIf="filteredPolice.length > 0; else noResults"
+                        >
+                        <tr
+                          *ngFor="let police of filteredPolice 
+                          | paginate : {
+                                  id: 'police',
+                                  itemsPerPage: pageSize,
+                                  currentPage: currentPage,
+                                  totalItems: totalPolice
+                          }
+                          "
+                          [id]="'police-' + police.police_id"
+                          (click)="openEditModal(police)"
+                        >
+
+                        <td (click)="$event.stopPropagation()">
+                          <ng-container *ngIf="isOfficerOfTheDay(police.person_id); else assignBtn">
+                            <button
+                            class="cancel"
+                              (click)="removeInCharge(police.person_id, police.station_id)">
+                              Remove as In-Charge
+                            </button>
+                          </ng-container>
+                        
+                          <ng-template #assignBtn>
+                            <button
+                              class="confirm"
+                              (click)="makeInCharge(police.person_id, police.station_id)">
+                              Assign for Today
+                            </button>
+                          </ng-template>
+                        </td>
+                      <td>
+                        <span
+  
+                          [class.highlight]="
+                          isFieldMatched(police.police_id, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.police_id)"
+                        ></span>
+                      </td>
+  
+                      <td>
+                        <span
+  
+                          [class.highlight]="
+                          isFieldMatched(police.rank_full, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.rank_full)"
+                        ></span>
+                      </td>
+  
+                      <td>
+  
+                        <span
+                        [class.highlight]="
+                        isFieldMatched(police.lastname, searchQuery)
+                        "
+                        [innerHTML]="highlight(police.lastname)"
+                      ></span>
+  
+  
+                        <span
+                          [class.highlight]="
+                          isFieldMatched(police.firstname, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.firstname)"
+                        ></span>
+                      
+                  
+                      
+                   
+                    </td>
+                      
+  
+                      <td>
+                        <span
+  
+                          [class.highlight]="
+                          isFieldMatched(police.unit, searchQuery)
+                          "
+                          [innerHTML]="highlight(police.unit)"
+                        ></span>
+                      </td>
+                      <td 
+                      class="icon"
+                      (click)="$event.stopPropagation(); deletePolice(police.police_id, police.lastname)">
+                      <button class="cancel">X</button>
+                      </td>
+  
+                      <!-- <td 
+                      class="icon"
+                      (click)="editPolice()"
+                      >
+                        <img src="assets/edit.svg">
+                        
+                      </td>
+                      <td 
+                      class="icon"
+                      (click)="deletePolice(police.police_id, police.lastname)"
+                      >
+                        <img src="assets/delete.svg">
+                      </td> -->
+                      </tr>
+  
+                        </ng-container>
+                        <ng-template #noResults>
+                          <tr>
+                            <td colspan="4" class="no-results">
+                              No results found for "{{ searchQuery }}"
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </ng-container>
+                      
+  
+                      <ng-template #allPolice>
+                        <tr
+                        *ngFor="let police of policeByStation
+                        | paginate : {
+                                id: 'police',
+                                itemsPerPage: pageSize,
+                                currentPage: currentPage,
+                                totalItems: totalPolice
+                        }
+                        "
+                          (click)="openEditModal(police)"
+                        >
+                        <!-- <td>
+                          <button
+                              class="btn"
+                              [ngClass]="isOfficerOfTheDay(police.person_id) ? 'btn-success' : 'btn-outline-primary'"
+                              (click)="makeInCharge(police.person_id, police.station_id)">
+                              {{ isOfficerOfTheDay(police.person_id) ? "Today's In-Charge" : "Assign for Today" }}
+                            </button>
+                        </td> -->
+
+                        <td (click)="$event.stopPropagation()">
+                          <ng-container *ngIf="isOfficerOfTheDay(police.person_id); else assignBtn">
+                            <button
+                            class="cancel"
+                              (click)="removeInCharge(police.person_id, police.station_id)">
+                              Remove as In-Charge
+                            </button>
+                          </ng-container>
+                        
+                          <ng-template #assignBtn>
+                            <button
+                              class="confirm"
+                              (click)="makeInCharge(police.person_id, police.station_id)">
+                              Assign for Today
+                            </button>
+                          </ng-template>
+                        </td>
+                        
+                        
+                        <td>{{ police.police_id }}</td>
+                        <td>{{ police.rank_full }}</td>
+                        <td>{{ police.lastname }}, {{ police.firstname }}</td>
+                        <td>{{ police.unit }}</td>
+                        <td 
+                        class="icon"
+                        (click)="$event.stopPropagation(); deletePolice(police.police_id, police.lastname)">
+                        <button class="deletePolice">X</button>
+                        </td>
+                       
+                      
+                         
+                          <!-- <div class="modal-backdrop" *ngIf="showPasswordModal">
+                            <div class="modal">
+                              <h3>Enter Password</h3>
+                              <input 
+                              type="password" 
+                              [(ngModel)]="passwordInput" 
+                              placeholder="Password" 
+                              name="password"
+                              />
+                              <div class="modal-buttons">
+                                <button class="confirm" (click)="confirmPassword()">Confirm</button>
+                                <button class="cancel" (click)="cancelPassword()">Cancel</button>
+                              </div>
+                            </div>
+                          </div> -->
+                          
+                      </tr>
+
+                      <ng-template #editPoliceModal>
+                        <div class="modal-backdrop" *ngIf="showEditModal">
+                          <div class="modal edit-modal">
+                            <h3>Edit Police Officer</h3>
+                            <div class="form-container">
+                              <div class="form-group">
+                                <label>Rank</label>
+                                <select [(ngModel)]="editPoliceForm.rank_id" name="rank">
+                                  <option *ngFor="let rank of ranks" [value]="rank.rank_id">{{ rank.rank_full }}</option>
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                <label>Badge Number</label>
+                                <input type="text" [(ngModel)]="editPoliceForm.badge_number" name="badge_number" />
+                              </div>
+                              <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" [(ngModel)]="editPoliceForm.firstname" name="firstname" />
+                              </div>
+                              <div class="form-group">
+                                <label>Middle Name</label>
+                                <input type="text" [(ngModel)]="editPoliceForm.middlename" name="middlename" />
+                              </div>
+                              <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" [(ngModel)]="editPoliceForm.lastname" name="lastname" />
+                              </div>
+                              <div class="form-group">
+                                <label>Role</label>
+                                <input type="text" [(ngModel)]="editPoliceForm.role" name="role" />
+                              </div>
+                              <div class="form-group">
+                                <label>Unit</label>
+                                <input type="text" [(ngModel)]="editPoliceForm.unit" name="unit" />
+                              </div>
+                              <div class="form-group">
+                                <label>Password (Required for verification)</label>
+                                <input type="password" [(ngModel)]="editPoliceForm.password" name="password" />
+                              </div>
+                              <div class="modal-buttons">
+                                <button class="confirm" (click)="savePoliceChanges()" [disabled]="!editPoliceForm.password">Save Changes</button>
+                                <button class="cancel" (click)="closeEditModal()">Cancel</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-template>
+                      
+                      <!-- Add this at the bottom of your component template to make the modal available -->
+                      <ng-container *ngTemplateOutlet="editPoliceModal"></ng-container>
+  
+                      </ng-template>
+                      </tbody>
+                  </table>
+  
+                  <pagination-controls 
+                  id="police"
+                  (pageChange)="currentPage = $event">
+                </pagination-controls>
+              </form>
+          </section>
+      </main>
+  </div>
+  

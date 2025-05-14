@@ -5,11 +5,9 @@
   <div class="min-h-screen bg-zinc-100 flex">
     <aside class="w-64 bg-white shadow-md">
       <div class="p-4 text-center">
-        <img
-          src="assets/station10.png"
-          alt="CCPO Logo"
-          class="mx-auto mb-4 logo"
-        />
+        <div class="logo">
+          <img [src]="avatarUrl" alt="CCPO Logo" />
+        </div>
         <h2 class="text-lg font-semibold">{{ stationDetails.hq }}</h2>
         <p class="text-sm text-zinc-600">Cebu City Police Office</p>
       </div>
@@ -60,7 +58,7 @@
           </li>
           <li>
             <a
-              [routerLink]="['/station-crime-map']"
+              [routerLink]="['/map']"
               routerLinkActive="active"
               class="nav-link"
             >
@@ -72,18 +70,11 @@
               <span>CRIME MAP</span>
             </a>
           </li>
+          
           <li>
-            <a
-              [routerLink]="['/station-list-of-officers']"
-              routerLinkActive="active"
-              class="nav-link"
-            >
-              <img
-                src="assets/station.svg"
-                alt="Station Icon"
-                class="w-6 h-6 mr-2"
-              />
-              <span>STATION</span>
+            <a [routerLink]="['/station-citizens']" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS</span>
             </a>
           </li>
           <!-- <li>
@@ -97,11 +88,11 @@
             </a>
           </li> -->
         </ul>
-        <div class="logout">
+        <!-- <div class="logout">
           <button type="submit" class="button" (click)="logout()">
             LOG OUT
           </button>
-        </div>
+        </div> -->
       </nav>
     </aside>
 
@@ -124,6 +115,31 @@
         </div>
       </div>
       <main class="main-content">
+
+
+        <div class="profile-menu-container">
+          <div class="profile-icon" (click)="toggleProfileMenu()">
+            <img *ngIf="policePersonData?.profile_picture; else defaultAvatar" 
+                 [src]="policePersonData?.profile_picture" 
+                 alt="Profile" 
+                 class="profile-image" />
+            <ng-template #defaultAvatar>
+              <div class="default-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </ng-template>
+          </div>
+          <!-- Dropdown menu for profile -->
+          <div class="profile-dropdown" *ngIf="isProfileMenuOpen">
+            <div class="dropdown-item" [routerLink]="['/station-editpolice']">
+              <i class="fa-solid fa-user-pen"></i> Edit Profile
+            </div>
+            <div class="dropdown-item" (click)="logout()">
+              <i class="fa-solid fa-sign-out-alt"></i> Logout
+            </div>
+          </div>
+        </div>
+        
         <header class="header"></header>
         <div class="search-container">
           <input
@@ -134,14 +150,14 @@
             class="search-input"
           />
 
-          <div class="filterReports">
+          <!-- <div class="filterReports">
             <label>Filter Reports</label>
             <select [(ngModel)]="selectedRemark" (change)="filterReportsByRemark()">
               <option [value]="'all'">All</option>
               <option [value]="'forEndorse'">For Endorse</option>
               <option [value]="'markedAsSpam'">Marked as Spam</option>
             </select>
-          </div>   
+          </div>    -->
         </div>
         <section class="new-reports">
           <form [formGroup]="reportsForm" >
@@ -152,8 +168,8 @@
                   <th>Report ID</th>
                   <th>Incident Name</th>
                   <th>Date Received</th>
-                  <th>Remarks</th>
-                  <th>Action</th>
+                  <!-- <th>Remarks</th> -->
+                  <th>Incident Location</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,17 +223,19 @@
                           [innerHTML]="highlight(report.reported_date | date)"
                         ></span>
                       </td>
-                      <div *ngIf="!report.is_spam; else spamReports">
+                      <!-- <div *ngIf="!report.is_spam; else spamReports">
                         <td style="text-decoration: none; color: #00c900">For Endorse</td>
                       </div>
                       <ng-template #spamReports>
                         <td style="color: red;">Marked as Spam</td>
-                      </ng-template>
-                      <td
-                        class="icon"
-                        (click)="deleteReport(report.report_id); $event.stopPropagation()"
-                      >
-                        <img src="assets/delete.svg" />
+                      </ng-template> -->
+                     <td>
+                        <span
+                          [class.highlight]="
+                            isFieldMatched(getLocationName(report.location_id), searchQuery)
+                          "
+                          [innerHTML]="highlight(getLocationName(report.location_id))"
+                        ></span>
                       </td>
                     </tr>
                   </ng-container>
@@ -253,17 +271,14 @@
                     <td>{{ report.report_id }}</td>
                     <td>{{ report.subcategory_name }}</td>
                     <td>{{ report.reported_date | date }}</td>
-                    <div *ngIf="!report.is_spam; else spamReports">
+                    <!-- <div *ngIf="!report.is_spam; else spamReports">
                       <td style="text-decoration: none; color: #00c900">For Endorse</td>
                     </div>
                     <ng-template #spamReports>
                       <td style="color: red;">Marked as Spam</td>
-                    </ng-template>
-                    <td
-                      class="icon"
-                      (click)="deleteReport(report.report_id); $event.stopPropagation()"
-                    >
-                      <img src="assets/delete.svg" />
+                    </ng-template> -->
+                    <td>
+                      {{ getLocationName(report.location_id) }}
                     </td>
                   </tr>
                 </ng-template>

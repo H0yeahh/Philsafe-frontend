@@ -54,9 +54,14 @@ export class StationGeoanalysisComponent implements OnInit{
     filteredMonthly: any[]  = [];
     filteredAnnually: any[]  = [];
     citizens: any = [];
+    isProfileMenuOpen = false;
     // mapboxkey: string = 'pk.eyJ1IjoieWVlenp5eTI3IiwiYSI6ImNseW1mdWM0czBiODYya3B0cjlsY3J1eGYifQ.X-NbcgGcphQd9V_2N8n_JA';
     mapboxkey: string = 'pk.eyJ1IjoibWltc2gyMyIsImEiOiJjbHltZ2F3MTIxbWY2Mmtvc2YyZXd0ZWF1In0.YP4QQgS9F_Mqj3m7cB8gLw'
     markers: mapboxgl.Marker[] = [];
+    crimeCounts: { [key: string]: number } = {}
+    selectAllValue = 'All';
+    selectAllLabel = 'Select All';
+
 
 
     private map!: mapboxgl.Map;
@@ -167,6 +172,7 @@ export class StationGeoanalysisComponent implements OnInit{
         
 
           this.map.addControl(new mapboxgl.NavigationControl());
+          this.addMarkers(this.cases);
         }
 
       updateDateTime(): void {
@@ -193,7 +199,7 @@ fetchAllCases(){
       this.cases = res;
       // console.log('Cases', this.cases)
       setTimeout(() => {
-        this.addMarkers();
+        // this.addMarkers();
 
       }, 5000)
       this.loadIncidentTypes()
@@ -206,81 +212,119 @@ fetchAllCases(){
 }
 
 
-// fetchData() {
-
-//   this.personService.getLocations().subscribe({
-//     next: (locationsRes) => {
-//       this.locations = locationsRes;
-
-//       // Then fetch cases
-//       this.caseService.getAllCases().subscribe({
-//         next: (casesRes) => {
-//           this.cases = casesRes;
-
-//           this.mergeLocationsAndCases();
-//         },
-//         error: (err) => console.error('Failed to fetch cases', err)
-//       });
-//     },
-//     error: (err) => console.error('Failed to fetch locations', err)
-//   });
-// }
-
-// mergeLocationsAndCases() {
-//   this.forCrimeMap = this.locations
-//     .map(location => {
-//       const matchedCases = this.cases.filter(c => c.location_id === location.location_id);
-//       return matchedCases.length > 0 ? { location, cases: matchedCases } : null;
-//     })
-//     .filter(item => item !== null);
-
-//   // console.log('Filtered Crime Map Data:', this.forCrimeMap);
-  
-// }
 
 loadIncidentTypes() {
   const types: string = this.cases.map(c => c.incident_type.replace(/^\(Incident\) |\((Operation)\) /, '').trim());
   this.uniqueIncidentTypes = [...new Set(types)];
   console.log('Unique incident', this.uniqueIncidentTypes)
+  this.calculateCrimeCounts();
 }
 
-addMarkers() {
-  console.log('Adding markers....');
-  this.clearMarkers();
+calculateCrimeCounts(): void {
+  this.crimeCounts = this.uniqueIncidentTypes.reduce((acc, type) => {
+    acc[type] = this.cases.filter(c => c.incident_type.replace(/^\(Incident\) |\((Operation)\) /, '').trim() === type).length;
+    return acc;
+  }, {});
 
-  if (!this.cases || this.cases.length === 0) {
-    console.warn('Cases array is empty or undefined');
+  this.crimeCounts[this.selectAllValue] = this.cases.length;
+}
+
+
+
+handleOnIncident(event: any) {
+  console.log('Selection changed:', this.selectedIncidentTypes);
+
+  // If after manually changing, all are selected, mark "select all"
+  if (this.selectedIncidentTypes.length === this.uniqueIncidentTypes.length && !this.isAllSelected()) {
+    this.selectedIncidentTypes.unshift(this.selectAllValue);
+  }
+
+  // If "Select All" was removed, clear selection
+  if (this.selectedIncidentTypes.length < this.uniqueIncidentTypes.length && this.isAllSelected()) {
+    this.selectedIncidentTypes = [];
+  }
+
+  this.filterMarkers();  // Re-filter your markers after change
+}
+
+isAllSelected() {
+  return this.selectedIncidentTypes.includes(this.selectAllValue);
+}
+
+
+toggleSelectAll() {
+  if (this.isAllSelected()) {
+    // Deselect all
+    this.selectedIncidentTypes = [];
+  } else {
+    // Select all
+    this.selectedIncidentTypes = [this.selectAllValue, ...this.uniqueIncidentTypes];
+  }
+
+  this.filterMarkers();  // Re-filter markers
+}
+
+
+addMarkers(casesToShow: any[]) {
+  console.log('Adding filtered markers...');
+  
+  if (!casesToShow || casesToShow.length === 0) {
+    // console.warn('No cases to show based on the selected filter');
     return;
   }
 
-  this.cases.forEach((caseItem, index) => {
-    // console.log(`Case ${index + 1}:`, caseItem);
-
-    const latitude = caseItem.latitude;  
-    const longitude = caseItem.longitude; 
+  // Loop through each case and add a marker for it
+  casesToShow.forEach((caseItem) => {
+    const latitude = caseItem.latitude;
+    const longitude = caseItem.longitude;
 
     if (latitude === undefined || longitude === undefined) {
-      // console.warn(`Missing latitude/longitude for case ${index + 1}`, caseItem);
+      console.warn('Skipping case due to missing coordinates:', caseItem);
       return;
     }
 
     const incident_type = caseItem.incident_type?.replace(/^\(Incident\) |\((Operation)\) /, '').trim();
 
     if (!incident_type) {
-      // console.warn(`No valid incident type for case ${index + 1}`, caseItem);
       return;
     }
-
-    // console.log(`Adding marker for: ${incident_type} at (${latitude}, ${longitude})`);
 
     const iconFileName = this.getCrimeIcon(incident_type);
     const iconUrl = `assets/icons/${iconFileName}`;
 
+    // Create the marker element
+    const markerElement = this.createMarkerElement(iconUrl);
+
     const marker = new mapboxgl.Marker({
-      element: this.createMarkerElement(iconUrl)
+      element: markerElement
     })
       .setLngLat([longitude, latitude])
       .addTo(this.map);
+
+    // Add the marker to the markers array to keep track
+    this.markers.push(marker);
+
+    // Create the Popup content
+    const popupContent = `
+      <div class="popup-content">
+        <h3>${caseItem.incident_type}</h3>
+        <p><strong>Crime ID:</strong> ${caseItem.crime_id}</p>
+        <p><strong>Incident Type:</strong> ${caseItem.offense_type}</p>
+        <p><strong>Barangay:</strong> ${caseItem.barangay}</p>
+        <p><strong>Date:</strong> ${new Date(caseItem.date_committed).toLocaleString()}</p>
+        <p><strong>Case Status:</strong> ${caseItem.status}</p>
+      </div>
+    `;
+
+    // Create the popup
+    const popup = new mapboxgl.Popup({ offset: 25 })
+      .setHTML(popupContent);
+
+    marker.setPopup(popup);
+
+    markerElement.addEventListener('click', () => {
+      popup.addTo(this.map);
+    });
   });
 }
 
@@ -302,8 +346,16 @@ clearMarkers() {
 }
 
 filterMarkers() {
-  this.addMarkers();
+  // Filter the cases based on selected incident types
+  const filteredCases = this.cases.filter((caseItem) =>
+    this.selectedIncidentTypes.includes(caseItem.incident_type?.replace(/^\(Incident\) |\((Operation)\) /, '').trim())
+  );
+  this.clearMarkers();
+
+  // Add markers for filtered cases
+  this.addMarkers(filteredCases);
 }
+
 
 getCrimeIcon(incidentType: string): string {
   const defaultIcon = 'marker';
@@ -312,6 +364,10 @@ getCrimeIcon(incidentType: string): string {
   // console.log(`Matched icon: "${icon}"`); 
   return icon;
 }
+
+
+  
+
 
 
 
@@ -337,5 +393,25 @@ getCrimeIcon(incidentType: string): string {
     localStorage.removeItem('sessionData');
     localStorage.clear();
     sessionStorage.clear();
+  }
+
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+    
+    if (this.isProfileMenuOpen) {
+      setTimeout(() => {
+        document.addEventListener('click', this.closeProfileMenu);
+      }, 0);
+    }
+  }
+  
+  closeProfileMenu = (event: MouseEvent): void => {
+    const profileContainer = document.querySelector('.profile-menu-container');
+    if (profileContainer && !profileContainer.contains(event.target as Node)) {
+      this.isProfileMenuOpen = false;
+      document.removeEventListener('click', this.closeProfileMenu);
+   
+     
+    }
   }
 }

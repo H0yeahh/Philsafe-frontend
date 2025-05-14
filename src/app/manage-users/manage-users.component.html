@@ -2,15 +2,18 @@
 
 <div class="container">
     <div class="emergency-banner">
-      In case of emergencies, please dial your local emergency services number
+      <!-- In case of emergencies, please dial your local emergency services number -->
     </div>
-    <div class="flex h-screen">
+    <div class="min-h-screen bg-zinc-100 flex">
 
-      <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-        <button type="button" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>
+      <aside class="w-64 bg-white shadow-md">
+        <!-- <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>  -->
         <div class="p-4 text-center">
-          <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-
+          <div class="logo">
+            <img [src]="avatarUrl" alt="Profile Picture" >
+          </div>
+    
+  
           <div *ngIf="adminDetails; else loadingTemplate">
             <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
               {{ adminDetails?.last_name }} </h2>
@@ -19,126 +22,208 @@
           <ng-template #loadingTemplate>
             <div id="loading">Loading Police Details...</div>
           </ng-template>
-          <p class="text-sm text-zinc-600">Admin</p>
+          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
         </div>
-        <nav class="mt-4">
+        <nav class="mt-7"> <!-- Reduced margin-top to create less space -->
           <ul class="list-none p-0">
             <li>
-              <a routerLink="/dashboard" class="nav-link">
-                  <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                  <span>DASHBOARD</span>
+              <a [routerLink]="['/dashboard']" routerLinkActive="active" class="nav-link">
+                <img src="assets/dashbold.svg" alt="Dashboard" class="w-6 h-6 mr-2">
+                <span>DASHBOARD</span>
               </a>
-          </li>
+            </li>
+           
+            <li>
+              <a  [routerLink]="['/manage-users']" routerLinkActive="active" class="nav-link">
+                <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+                <span>CITIZENS PORTAL</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/police-officers" class="nav-link">
+                  <img src="assets/police-officer.svg" alt="Manage Police Icon" class="w-6 h-6 mr-2">
+                  <span>POLICE OFFICERS</span>
+              </a>
+          </li>   
           <li>
-            <a href="/police-reports" class="nav-link">
-              <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-              <span>REPORTS</span>
+            <a routerLink="/police-archives" class="nav-link">
+                <img src="assets/archive-solid.png" alt="Manage Police Archives Icon" class="archive-icon">
+                <span>POLICE ARCHIVES</span>
             </a>
-          </li>
-          <!-- <li>
-            <a href="/evidences" class="nav-link">
-              <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-              <span>EVIDENCES</span>
-            </a>
-          </li>
-          <li>
-              <a href="/police-cases" class="nav-link">
-                <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-                <span>CASES</span>
+        </li>  
+            <li>
+              <a href="/police-stations" class="nav-link">
+                <img src="assets/manage station.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                <span>MANAGE STATION</span>
               </a>
-            </li> -->
-          <li>
-              <a routerLink="/manage-users" class="nav-link">
-                  <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
-                  <span>MANAGE USER</span>
-              </a>
-          </li>
-          <li>
-            <a routerLink="/spammer-users" class="nav-link">
-                <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
-                <span>SPAMMED USER</span>
-            </a>
-        </li>
-          <li>
-              <a routerLink="/manage-station" class="nav-link">
-                  <img src="assets/manage station.svg" alt="Manage Station Icon" class="w-6 h-6 mr-2">
-                  <span>MANAGE STATION</span>
-              </a>
-          </li>
-          <li>
-              <a routerLink="/station-crime-map" class="nav-link">
+              <!-- <li>
+                <a href="/police-crime-map" class="nav-link">
                   <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
                   <span>CRIME MAP</span>
-              </a>
+                </a>
+              </li> -->
+
+                <li>
+            <a
+              [routerLink]="['/police-reports']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW REPORTS</span>
+            </a>
+          </li>
+
+             <li>
+            <a
+              [routerLink]="['/police-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW CASES</span>
+            </a>
           </li>
           </ul>
         </nav>
-        <button type="button" class="logout-button mt-auto" (click)="logout()">LOG OUT</button>            
+        <div class="logout">
+          <button type="submit" class="logout-button mt-auto" (click)="logout()" >LOG OUT</button>
+        </div>
+  
       </aside>
   
-      <!-- Main Content -->
-      <div class="main-content">
-        <!-- Top Statistics -->
-        <div class="top-stats grid grid-cols-3 gap-4">
-          <div class="stat-item bg-blue-100 rounded-lg p-4 text-center">
-            <h2 class="text-4xl font-bold text-primary">{{ totalUsers }}</h2>
-            <p class="text-lg font-semibold">No. of users</p>
-          </div>
-        </div>
   
-        <!-- User Table -->
-        <div class="table-container mt-8">
-          <!-- <div class="table-controls flex justify-between items-center mb-4"> -->
-            <form [formGroup]="userForm" class="filter" (ngSubmit)="onSubmit()">
-              <!-- <input type="text" placeholder="Search user" formControlName="search" class="search-bar" > -->
-              <!-- <input
-              type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterUsers()"
-                placeholder="Search"
-                class="search-input"
-              /> -->
-            </form>
-            <!-- <div class="pagination flex items-center">
-              <label for="entries">Display</label>
-              <select id="entries" formControlName="entries">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-              </select> -->
-              <!-- <span>/{{ totalUsers }}</span> -->
-            <!-- </div>
-          </div> -->
-          <table class="user-table w-full border-collapse">
-            <thead>
-              <tr>
-                <th class="border border-zinc-300 p-2">ID NUM</th>
-                <th class="border border-zinc-300 p-2">USER LIST</th>
-                <th class="border border-zinc-300 p-2">STATUS</th>
-                <th class="border border-zinc-300 p-2">GENDER</th>
-                <th class="border border-zinc-300 p-2">ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let user of citizen | paginate: { 
-                              id: 'citizen', 
-                              itemsPerPage: pageSize, 
-                              currentPage: currentPage, 
-                              totalItems: totalUsers 
-                            }; let i = index"
-                  [id]="'citizen-' + user.citizen_id">
-                <td class="border border-zinc-300 p-2">{{ user.citizen_id }}</td>
-                <td class="border border-zinc-300 p-2">{{ user.firstname }} {{ user.lastname }}</td>
-                <td class="border border-zinc-300 p-2">{{ user.civil_status }}</td>
-                <td class="border border-zinc-300 p-2">{{ user.sex }}</td>
-                <td class="border border-zinc-300 p-2">
-                  <button (click)="spamCitizen(+user.citizen_id)" class="action-btn delete">SPAM USER</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <pagination-controls id="citizen" (pageChange)="currentPage = $event">
-          </pagination-controls>
+      <div class="main-content">
+        
+        <div>
+          <h1>CITIZENS PORTAL</h1>
         </div>
+        <main class="content">
+          <section class="user-section">
+            <div class="nav-user">
+              <button (click)="setFilter('Certified')" [class.active]="filter === 'Certified'" class="filter-tab">
+                Verified Users
+              </button>
+              <button (click)="setFilter('Pending')" [class.active]="filter === 'Pending'" class="filter-tab">
+                Pending Verification
+              </button>
+              <button (click)="setFilter('Uncertified')" [class.active]="filter === 'Uncertified'" class="filter-tab">
+                New Users
+              </button>
+            </div>
+      
+            <table class="user-table w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="border border-zinc-300 p-2">CITIZEN ID</th>
+                  <th class="border border-zinc-300 p-2">FULL NAME</th>
+                  <th class="border border-zinc-300 p-2">EMAIL</th>
+                  <th class="border border-zinc-300 p-2">CONTACT NUMBER</th>
+                  <th class="border border-zinc-300 p-2">STATUS</th>
+                  <th class="border border-zinc-300 p-2">ACTION</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of filterCitizens() | paginate: { 
+                                id: 'citizen', 
+                                itemsPerPage: pageSize, 
+                                currentPage: currentPage, 
+                                totalItems: filterCitizens().length 
+                              }; let i = index"
+                    [id]="'citizen-' + user.citizen_id"
+                    (click)="openUserDetails(user)"
+                    >
+                  <td class="border border-zinc-300 p-2">{{ user.citizen_id }}</td>
+                  <td class="border border-zinc-300 p-2">{{ user.firstname }} {{ user.lastname }}</td>
+                  <td class="border border-zinc-300 p-2">{{ user.email }}</td>
+                  <td class="border border-zinc-300 p-2">{{ user.contact_num }}</td>
+                  <td class="border border-zinc-300 p-2">{{ user.role }}</td>
+                  <td>
+                    <div *ngIf="user.role === 'Certified'" class="status verified">
+                      Verified
+                    </div>
+                    
+                    <div *ngIf="user.role === 'Pending'" class="status pending" (click)="certifyCitizen(user.citizen_id); $event.stopPropagation()">
+                      Certify
+                    </div>
+                    
+                    <div *ngIf="user.role === 'Uncertified'" class="status uncertified">
+                      Not Verified
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div *ngIf="isUserDataOpen" class="modal-overlay">
+              <div class="modal-content">
+                <button (click)="closeModal()" class="modal-close">X</button>
+            
+                <div class="user-profile">
+                  <div class="user-pic">
+                    <img [src]="userPic" alt="User Profile Pic" class="profile-img">
+                  </div>
+                  <h2 class="user-name">{{ userData.firstname }} {{ userData.lastname }}</h2>
+                </div>
+                
+                
+            <div class="teybol">
+
+              <table class="modal-table">
+                <tr>
+                  <td class="font-semibold">Citizen ID:</td>
+                  <td style="text-align: end;">{{ userData.citizen_id }}</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">Full Name:</td>
+                  <td style="text-align: end;">{{ userData.firstname }} {{ userData.lastname }}</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">Email:</td>
+                  <td style="text-align: end;">{{ userData.email }}</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">Contact Number:</td>
+                  <td style="text-align: end;">{{ userData.contact_num }}</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">Role:</td>
+                  <td style="text-align: end;">{{ userData.role }}</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold">Submitted ID:</td>
+                  <td style="text-align: end;">
+                    <ng-container *ngIf="userProof; else noIdSubmitted">
+                      <img [src]="userProof" alt="Submitted ID" class="submitted-id-img">
+                    </ng-container>
+                    <ng-template #noIdSubmitted>
+                      No ID submitted yet
+                    </ng-template>
+                  </td>
+                </tr>
+              </table>
+            </div>
+               
+              </div>
+            </div>
+            
+            
+            <pagination-controls id="citizen" (pageChange)="currentPage = $event"></pagination-controls>
+          </section>
+        </main>
       </div>
-    </div>
-  </div>
+      
+      </div>
+
+         
   

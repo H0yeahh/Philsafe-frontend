@@ -3,6 +3,41 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angul
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from './environment';
 
+
+export interface UpgradeAccount {
+   
+  firstname: string;
+  middlename: string;
+  lastname: string;
+  sex: string;
+  birthdate?: string; 
+  bioStatus: boolean ;
+  civilStatus?: string;
+  deathDate?: string;
+  email: string;
+  password: string;
+  telNum?: string;
+  contactNum: string;
+  homeAddressId: number;
+  workAddressId: number;
+  personId?: number;
+  role: string;
+  unit?: string;
+  policeRole?: string;
+  badgeNum?: string;
+  debutDate?: string;
+  stationId?: number;
+  pfpId?: number;
+  rankId?: string;
+  createdBy?: string;
+  dateTimeCreated?: string;
+  profile_pic?:  any;
+  profile_ext?: string;
+
+  homeAddress: LocationUpgrade,
+  workAddress: LocationUpgrade
+}
+
 export interface IAccount {
   firstname: string;
   middlename: string;
@@ -51,6 +86,20 @@ export interface IPerson {
   bioStatus: boolean;
 }
 
+
+export interface LocationUpgrade {
+  region: string;
+  province: string;
+  municipality: string;
+  barangay: string;
+  street: string;
+  block?: string;
+  zipCode: number;
+  locationId?: number
+  longtitude?: any;
+  latitude?: any;
+}
+
 export interface ILocation {
   region: string;
   province: string;
@@ -59,6 +108,7 @@ export interface ILocation {
   street: string;
   blockLotUnit: string;
   zipCode: number;
+  locationId?: number
 }
 
 export interface IRank {
@@ -115,6 +165,7 @@ export class PoliceAccountsService {
   private base = `${environment.ipAddUrl}`
   private stationURL = `${this.base}api/jurisdiction`;
   private accountURL = `${this.base}api/account/signup`;
+  private upgradeAccount = `${this.base}api/account/signup/upgrade`;
   private personURL = `${this.base}api/person`;
   private locationURL = `${this.base}api/location/create/`;
   private location = `${this.base}api/location/retrieve`;
@@ -142,15 +193,19 @@ export class PoliceAccountsService {
     return this.http.get(`${this.apiUrl}/collect/some/${stationId}` , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
-  postAccount(data: IAccount): Observable<any> {
+  postAccount(data: any): Observable<any> {
     return this.http.post(this.accountURL, data , {headers: this.auth_token}).pipe(catchError(this.handleError));
+  }
+
+  postAccountUpgrade(data: any): Observable<any> {
+    return this.http.post(this.upgradeAccount, data , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
   postPerson(data: IPerson): Observable<any> {
     return this.http.post(this.personURL, data , {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
 
-  postLocation(zipCode: number, data: ILocation): Observable<any> {
+  postLocation(zipCode: number, data: any): Observable<any> {
     const url = `${this.locationURL}${zipCode}`;
     return this.http.post(url, data, {headers: this.auth_token}).pipe(catchError(this.handleError));
   }
@@ -244,9 +299,40 @@ export class PoliceAccountsService {
     );
   }
 
-  getAllPolice(pageNumber: number, pageSize: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/collect/all/${pageSize}/${pageNumber}`, {headers: this.auth_token}).pipe(
+
+
+ 
+
+
+
+  getAllPoliceArchives(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/collect/retired/all`, {headers: this.auth_token}).pipe(
       tap(response => console.log('Get all police response:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+
+
+  getAllPolice(pageNumber: number, pageSize: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/collect/all/${pageSize}/${pageNumber}`, {headers: this.auth_token}).pipe(
+      tap(response => console.log('Get all police response:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+
+  removeInCharge(accountId: number, stationId: number): Observable<any> {
+    return this.http.put(`${this.base}api/account/shift/nextDayRole/${accountId}/${stationId}`, {}, {headers: this.auth_token}).pipe(
+      tap(response => console.log('Successf Police Update:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+
+  todaysInCharge(accountId: number, stationId: number): Observable<any> {
+    return this.http.put(`${this.base}api/account/shift/currentDayRole/${accountId}/${stationId}`, {}, {headers: this.auth_token}).pipe(
+      tap(response => console.log('Successf Police Update:', response)),
       catchError(this.handleError)
     );
   }
@@ -282,8 +368,8 @@ export class PoliceAccountsService {
     );
   }
 
-  getPoliceById(data: { id: number; badgeNumber: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/retrieval/${data.id}`, data, {headers: this.auth_token}).pipe(
+  getPoliceById(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/retrieval`,  {headers: this.auth_token}).pipe(
       tap(response => console.log(`Get police by ID response:`, response)),
       catchError(this.handleError)
     );

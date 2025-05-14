@@ -64,43 +64,6 @@ export class AuthService {
       );
     }
 
-  // login(data: ILogin): Observable<any> {
-  //   return this.http.post(this.loginURL, data, {
-  //     observe: 'response', // Get full response, including headers
-  //     // withCredentials: true, // Allow cookies to be stored
-  //   }).pipe(
-  //     tap(response => {
-  //       const cookies = response.headers.get('Set-Cookie');
-  //       if (cookies) {
-  //         console.log('Set-Cookie header:', cookies);
-  //         this.authCookie = cookies.split(';')[0]; // Store only the cookie value
-  //       }
-  //     }),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-
-    // login(data: ILogin): Observable<any> {
-    //   return this.http.post(this.loginURL, data, {
-    //     observe: 'response', // Get full response, including headers
-    //     withCredentials: true, // Allow cookies to be stored
-    //   }).pipe(
-    //     tap(response => {
-    //       const cookies = response.headers.get('Set-Cookie');
-    //       if (cookies) {
-    //         console.log('Set-Cookie header:', cookies);
-    //         this.authCookie = cookies.split(';')[0]; // Store only the cookie value
-    //       }
-    //     }),
-    //     catchError(this.handleError)
-    //   );
-    // }
-  
-  
-    // private presentAlert(message: string): void {
-    //   alert(message);
-    // }
     
 
 

@@ -50,9 +50,14 @@ export class CaseQueueService {
     moveToEndorsedQueue: (reportId: number) => `${this.apiUrl}api/report/move-to-endorsed-queue/${reportId}`,  // New endpoint for moving report
     getReport: `${this.apiUrl}api/report/retrieve/citizen`,
     getCitizens: `${this.apiUrl}api/citizen/collect/citizens/all`,
+    citizenPage:  `${this.apiUrl}api/citizen/collect/citizens/all`,
     getCases: `${this.apiUrl}api/case/retrieve/local`,
     getStationReport: `${this.apiUrl}api/report/retrieve/local`,
-    getUnconnectedReport: `${this.apiUrl}api/report/retrieve/local/unconnected`
+    getUnconnectedReport: `${this.apiUrl}api/report/retrieve/local/unconnected`,
+    getLogs: `${this.apiUrl}api/jurisdiction/collect/logs`,
+    clearLogs: `${this.apiUrl}api/jurisdiction/clear/logs`,
+    spammers: `${this.apiUrl}api/citizen/collect/spammers/all`
+
   };
   private token = localStorage.getItem('token') ?? '';
 
@@ -200,6 +205,30 @@ export class CaseQueueService {
       .pipe(catchError(this.handleError));
   }
 
+
+  getLogs(stationId: number): Observable<any> {
+    return this.http.get<any>(`${this.endpoints.getLogs}/${stationId}`, {headers: this.auth_token})
+      .pipe(catchError(this.handleError));
+  }
+
+  clearLogs(stationId: number): Observable<any> {
+    return this.http.delete<any>(`${this.endpoints.clearLogs}/${stationId}`, {headers: this.auth_token})
+      .pipe(catchError(this.handleError));
+  }
+
+  getSpammers(): Observable<any> {
+   
+    return this.http.get(this.endpoints.spammers, {headers: this.auth_token})
+      .pipe(catchError(this.handleError));
+  }
+
+
+
+  getCitizensPage(pageSize: number, pageNumber: number): Observable<any> {
+    return this.http.get<any>(`${this.endpoints.citizenPage}/${pageSize}/${pageNumber}`, {headers: this.auth_token})
+      .pipe(catchError(this.handleError));
+  }
+
   fetchCases(stationId: number): Observable<any> {
     return this.http.get(`${this.endpoints.getCases}/${stationId}`, {headers: this.auth_token})
       .pipe(catchError(this.handleError));
@@ -261,6 +290,19 @@ export class CaseQueueService {
     );
   }
 
+
+  
+  reinstateReport(reportId: number): Observable<any> {
+    
+    const url = `${this.apiUrl}api/report/updatespam/${reportId}`;
+    return this.http.put<any>(url, {headers: this.auth_token})
+      .pipe(
+        catchError(this.handleError) 
+      );
+  }
+
+
+  
   spamReport(reportId: number): Observable<any> {
     
     const url = `${this.apiUrl}api/report/delete/report/${reportId}`;

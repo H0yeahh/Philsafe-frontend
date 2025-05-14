@@ -87,7 +87,11 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   filteredMonthly: any[]  = [];
   filteredAnnually: any[]  = [];
   citizens: any = [];
-
+  isInCharge: any;
+  polices: any = [];
+  mergedInChargePolice: any[] = [];
+  isProfileMenuOpen = false;
+  // defaultAvatar: string = 'asset/user-default.jpg'
 
   constructor(
     @Inject(StationDashboardService)
@@ -121,33 +125,32 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
  
     this.loadUserProfile();
-    this.fetchReportStation(this.stationId);
     this.fetchCases();
     this.fetchAccounts();
+    this.fetchPolice();
+    // this.fetchPoliceAll();
   //  this.fetchCitizens();
     // this.calculateReportsAverage();
     this.calculateReports()
     this.calculateReportsCount();
     this.updateDateTime();
-  setInterval(() => this.updateDateTime(), 60000);
+  // setInterval(() => this.updateDateTime(), 60000);
   this.intervalId = setInterval(() => this.updateDateTime(), 1000);
-  const tokenData = localStorage.getItem('AuthCookie')
-  // localStorage.setItem('AuthCookie', this.token);
 
     this.timePeriodControl = new FormControl('weekly');
 
     this.timePeriodControl.valueChanges.subscribe((value) => {
-      console.log('Time period changed:', value);
+      // console.log('Time period changed:', value);
       this.onSelect();
     });
 
     this.onSelect();
-    console.log('Initial form value:', this.timePeriodControl.value);
-    console.log('Form valid:', this.dashboardForm.valid);
+    // console.log('Initial form value:', this.timePeriodControl.value);
+    // console.log('Form valid:', this.dashboardForm.valid);
 
 
-    const authState = localStorage.getItem('auth_state');
-    console.log('Auth Cookie', authState)
+    // const authState = localStorage.getItem('auth_state');
+    // console.log('Auth Cookie', authState)
   }
 
 
@@ -165,6 +168,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       second: 'numeric',
       hour12: true // Use 12-hour format
     });
+
+    // console.log('Date', this.currentDate)
+    // console.log('Time', this.currentTime)
+
   }
 
 
@@ -198,26 +205,40 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
 
   loadUserProfile() {
+
+    const shouldReload = localStorage.getItem('reloadAfterLogin');
+  
+    if (shouldReload === 'true') {
+      localStorage.removeItem('reloadAfterLogin');
+      window.location.reload();
+      return;
+    }
+
+    
     const userData = localStorage.getItem('userData');
     const parsedData = JSON.parse(userData);
-    console.log('USER DATA SESSION', userData);
+    // console.log('USER DATA SESSION', userData);
     if (userData) {
       try {
         
         this.personId = parsedData.personId;
-        this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
+        this.policeAccountsService.getPoliceById().subscribe(
           (response) => {
             this.policePersonData = response;
-            console.log('Fetched Police Person Data', this.policePersonData);
-            this.fetchPoliceData(this.policePersonData.police_id);
-            console.log('Police ID:', this.policePersonData.police_id);
+            // console.log('Fetched Police Person Data', this.policePersonData);
+            this.fetchReportStation(this.policePersonData.station_id);
+            this.fetchStation(this.policePersonData.station_id);
+            this.fetchPoliceAll(this.policePersonData.station_id)
+            this.stationID = this.policePersonData.station_id
+            // this.fetchPoliceData(this.policePersonData.police_id);
+            // console.log('Police ID:', this.policePersonData.police_id);
           },
           (error) => {
-            console.error('Errod Police Person Data', error);
+            console.error('Error Police Person Data', error);
           }
         );
 
-        console.log('Person ID', this.personId);
+        // console.log('Person ID', this.personId);
       } catch {
         console.error('Error fetching localStorage');
       }
@@ -227,10 +248,10 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
           if (profilePicBlob) {
               // Create a URL for the Blob
               this.avatarUrl = URL.createObjectURL(profilePicBlob);
-              console.log('PROFILE PIC URL', this.avatarUrl);
+              // console.log('PROFILE PIC URL', this.avatarUrl);
 
           } else {
-              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              // console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
               this.avatarUrl = 'assets/user-default.jpg';
           }
         }
@@ -257,35 +278,46 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
   // }
 
 
-  fetchPoliceData(policeId: number) {
-    this.policeAccountsService.getAllPoliceData().subscribe(
-      (allPoliceData) => {
-        // Find the matching police data by policeId
-        const policeData = allPoliceData.find((p) => p.police_id === policeId);
-        this.policeDetails = policeData;
-        localStorage.setItem('policeDetails', JSON.stringify(policeData));
-        if (policeData) {
-          const badgeNumber = this.policeDetails.badge_number;
-          console.log('Found police data:', policeData);
-          console.log('Badge Number:', badgeNumber);
-          this.fetchStation(this.policeDetails.station_id);
-        } else {
-          console.error('Police ID not found in all police data');
-        }
+  fetchPolice(){
+    this.policeAccountsService.getPoliceById().subscribe(
+      (res) => {
+        console.log('Police',res)
       },
-      (error) => {
-        console.error('Error Fetching All Police Data:', error);
+      (err) => {
+        console.error('Error fetching Police', err)
       }
-    );
+    )
   }
+
+
+  // fetchPoliceData(policeId: number) {
+  //   this.policeAccountsService.getAllPoliceData().subscribe(
+  //     (allPoliceData) => {
+  //       // Find the matching police data by policeId
+  //       const policeData = allPoliceData.find((p) => p.police_id === policeId);
+  //       this.policeDetails = policeData;
+  //       localStorage.setItem('policeDetails', JSON.stringify(policeData));
+  //       if (policeData) {
+  //         const badgeNumber = this.policeDetails.badge_number;
+  //         // console.log('Found police data:', policeData);
+  //         // console.log('Badge Number:', badgeNumber);
+  //         this.fetchStation(this.policeDetails.station_id);
+  //       } else {
+  //         console.error('Police ID not found in all police data');
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error Fetching All Police Data:', error);
+  //     }
+  //   );
+  // }
 
   fetchStation(stationId: number) {
     this.jurisdictionService.getStation(stationId).subscribe(
       (response) => {
         this.stationDetails = response;
         localStorage.setItem('stationDetails', JSON.stringify(this.stationDetails));
-        console.log('Station Data', this.stationDetails);
-        this.fetchReportStation(this.stationDetails.station_id);
+        // console.log('Station Data', this.stationDetails);
         // this.fetchCases(this.stationDetails.station_id)
       },
       (error) => {
@@ -312,33 +344,62 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
 
   
-  fetchReportStation(stationId: number) {
-    this.caseQueueService.getReports(stationId).subscribe(
-      (response) => {
-        this.reports = response;
-        localStorage.setItem('reports', JSON.stringify(this.reports));
-        // console.log('Fetched Reports', this.reports);
-        if (this.reports && this.reports.length) {
-          // this.calculateReportsAverage();
-          this.calculateReports()
-          this.calculateReportsCount();
-          this.onSelect();
-          // this.createChart();
-        } else {
-          console.warn('No reports available.');
+  fetchReportStation(stationId: any) {
+
+
+      this.caseQueueService.getReports(stationId).subscribe(
+        (response) => {
+          this.reports = response;
+          localStorage.setItem('reports', JSON.stringify(this.reports));
+          // console.log('Fetched Reports', this.reports);
+          if (this.reports && this.reports.length) {
+            // this.calculateReportsAverage();
+            this.calculateReports()
+            this.calculateReportsCount();
+            this.onSelect();
+            // this.createChart();
+          } else {
+            console.warn('No reports available.');
+          }
+        },
+        (error) => {
+          // console.error('Error Fetching Reports in Station ', error);
         }
-      },
-      (error) => {
-        // console.error('Error Fetching Reports in Station ', error);
-      }
-    );
+      );
+   
+    
   }
+
+
+
+
+
+  fetchPoliceAll(stationId: any){
+    this.policeAccountsService.getPoliceByStation(stationId).subscribe(
+      (res) => {
+        this.polices = res;
+        console.log('Fetched All Police', this.polices)
+        this.mergeInChargeWithPolice(); 
+      },
+      (err) => {
+        console.error('Error fetching all police', err);
+      }
+    )
+  }
+
+
+
 
 
   fetchAccounts(): void {
     this.accountService.getAccount().subscribe(
       (response) => {
         this.accounts = response;
+        // console.log('Fetched Accounts:', this.accounts);
+        const isOfficer = this.accounts.filter((officer: any) => officer.is_officer_of_the_day === true);
+        console.log('Is In Charge', isOfficer)
+        this.isInCharge = isOfficer
+        this.mergeInChargeWithPolice();
         // localStorage.setItem('accounts', JSON.stringify(response));
         // console.log('Fetched Accounts', this.accounts);
        
@@ -352,6 +413,38 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
 
 
+  mergeInChargeWithPolice() {
+    if (!this.isInCharge || !this.polices) return;
+
+    const filteredInCharge = this.isInCharge.filter(officer =>
+      this.polices.some(police => police.person_id === officer.personId)
+    );
+  
+  
+    this.mergedInChargePolice = filteredInCharge.map(officer => {
+      const matchedPolice = this.polices.find(
+        p => p.person_id === officer.personId
+      );
+      return {
+        ...officer,
+        policeData: matchedPolice || null
+      };
+    });
+
+  console.log('ALL police in merged', this.polices)
+    console.log('Merged In-Charge Officers with Police Data', this.mergedInChargePolice);
+  }
+
+
+
+isOfficerOfTheDay(): boolean {
+  if (!this.policePersonData || !this.mergedInChargePolice) return false;
+
+  return this.mergedInChargePolice.some(officer =>
+    officer.first_name === this.policePersonData.firstname &&
+    officer.last_name === this.policePersonData.lastname
+  );
+}
 
 
   
@@ -361,7 +454,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
   calculateReportsCount() {
     if (!this.reports || !this.reports.length) {
-      console.warn('No reports to calculate counts.');
+      // console.warn('No reports to calculate counts.');
       return { weeklyCounts: {}, monthlyCounts: {} };
     }
 
@@ -416,9 +509,9 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       return acc;
     }, {} as { [week: string]: number });
 
-    console.log('Weekly Report Counts:', weeklyCounts);
-    console.log('Monthly Report Counts:', monthlyCounts);
-    console.log('Annual Report Counts:', annualCounts);
+    // console.log('Weekly Report Counts:', weeklyCounts);
+    // console.log('Monthly Report Counts:', monthlyCounts);
+    // console.log('Annual Report Counts:', annualCounts);
 
     return { weeklyCounts, monthlyCounts, annualCounts };
   }
@@ -481,7 +574,8 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth(); // 0-indexed (0 = Jan, 11 = Dec)
     const currentWeekStart = new Date(currentDate);
-    currentWeekStart.setDate(currentDate.getDate() - currentDate.getDay()); // Start of the current week (Sunday)
+    currentWeekStart.setDate(currentDate.getDate() - currentDate.getDay()); 
+    currentWeekStart.setHours(0, 0, 0, 0);
   
     let weeklyCount = 0;
     let monthlyCount = 0;
@@ -510,9 +604,9 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     this.monthlyReports = monthlyCount;
     this.annualReports = annualCount;
   
-    console.log("Weekly Reports:", this.weeklyReports);
-    console.log("Monthly Reports:", this.monthlyReports);
-    console.log("Annual Reports:", this.annualReports);
+    // console.log("Weekly Reports:", this.weeklyReports);
+    // console.log("Monthly Reports:", this.monthlyReports);
+    // console.log("Annual Reports:", this.annualReports);
   }
   
 
@@ -552,7 +646,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     };
 
     this.renderChart(chartConfig);
-    console.log('Weekly Chart Generated');
+    // console.log('Weekly Chart Generated');
   }
 
   createMonthlyChart() {
@@ -562,7 +656,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Monthly data:', counts.monthlyCounts);
+    // console.log('Monthly data:', counts.monthlyCounts);
 
     const monthlyData = Object.values(counts.monthlyCounts);
     const monthlyLabels = Object.keys(counts.monthlyCounts);
@@ -638,7 +732,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
     };
   
     this.renderChart(chartConfig);
-    console.log('Annual Chart Generated');
+    // console.log('Annual Chart Generated');
   }
   
 
@@ -655,7 +749,7 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Rendering chart with config:', chartConfig);
+    // console.log('Rendering chart with config:', chartConfig);
     this.chart = new Chart(ctx, chartConfig);
   }
 
@@ -792,13 +886,13 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
 
     if(type === 'weekly') {      
       this.filteredWeekly;
-      console.log('Filtered Weekly', this.filteredWeekly);
+      // console.log('Filtered Weekly', this.filteredWeekly);
     } else if (type== 'monthly') {        
       this.filteredMonthly;
-      console.log('Filtered Monthly', this.filteredMonthly);
+      // console.log('Filtered Monthly', this.filteredMonthly);
     } else if (type== 'annual') {
       this.filteredAnnually;
-      console.log('Filtered Annually', this.filteredAnnually);
+      // console.log('Filtered Annually', this.filteredAnnually);
 
     }
   }
@@ -820,5 +914,26 @@ export class StationDashboardComponent implements OnInit, OnDestroy {
       alert('Invalid report id. Please select a valid report.');
     }
   }
+
+
+toggleProfileMenu(): void {
+  this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  
+  if (this.isProfileMenuOpen) {
+    setTimeout(() => {
+      document.addEventListener('click', this.closeProfileMenu);
+    }, 0);
+  }
+}
+
+closeProfileMenu = (event: MouseEvent): void => {
+  const profileContainer = document.querySelector('.profile-menu-container');
+  if (profileContainer && !profileContainer.contains(event.target as Node)) {
+    this.isProfileMenuOpen = false;
+    document.removeEventListener('click', this.closeProfileMenu);
+ 
+   
+  }
+}
 
 }

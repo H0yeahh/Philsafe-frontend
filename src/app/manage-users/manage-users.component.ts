@@ -13,6 +13,9 @@ import { CaseQueueService } from '../case-queue.service';
 import { Subscription } from 'rxjs';
 import { CaseService } from '../case.service';
 import { environment } from '../environment';
+import { AccountService } from '../account.service';
+import { DialogService } from '../dialog/dialog.service';
+
 
 @Component({
   selector: 'app-manage-users',
@@ -24,8 +27,8 @@ export class ManageUsersComponent implements OnInit {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  citizen: ICitizen[] = [];
-  filteredCitizens: ICitizen[] = [];
+  citizen: any = [];
+  filteredCitizens: any = [];
   citizenID: string | null = null;
   // filtered: IStation[] = [];
   persons: IPerson[] = [];
@@ -41,7 +44,17 @@ export class ManageUsersComponent implements OnInit {
   Users: any;
   totalUsers: number = 0;
   currentPage: number = 1;
-  pageSize: number = 8;
+  pageSize: number = 10;
+  avatarUrl: string = 'assets/user-default.jpg';
+  filter: string = 'Certified';
+  certified: any = [];
+  pending: any = [];
+  uncertified = [];
+  isUserDataOpen: boolean = false;
+  userData: any = []
+  userPic: string = 'assets/user-default.jpg';
+  userProof: string = ''
+
  
 
   constructor(
@@ -57,17 +70,16 @@ export class ManageUsersComponent implements OnInit {
     private authService: AuthService,
     private policeDashbordService: PoliceDashbordService,
     private caseService: CaseService,
+    private accountService: AccountService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
-    this.initializeForm();
+    
     this.getCitizenId();
-    this.fetchRanks();
-    // this.fetchStations();
     this.fetchPersons();
-    this.fetchAdminData;
-    this.fetchCitizens();
-    this.loadTotalUsers();
+    this.fetchCitizen();
+    this.loadUserProfile();
 
     const userData = localStorage.getItem('userData');
     this.adminDetails = JSON.parse(userData);
@@ -75,24 +87,8 @@ export class ManageUsersComponent implements OnInit {
     console.log('Fetched Admin', this.adminDetails)
   }
 
-  // Define the form controls
-  initializeForm(): void {
-    this.userForm = this.fb.group({
-      citizen_id: ['', Validators.required],
-      person_id: ['', Validators.required],
-      firstname: ['', Validators.required],
-      middlename: ['', Validators.required],
-      sex: ['', Validators.required],
-      lastname: ['', Validators.required],
-      bio_status: [true],
-      birthdate: ['', Validators.required],
-      civil_status: ['', Validators.required],
-      location_id: ['', Validators.required],
+ 
 
-    });
-  }
-
-  // Retrieve the officer's station ID from stored details
   getCitizenId(): void {
     const citizenDetails = JSON.parse(
       localStorage.getItem('citizen_details') || '{}'
@@ -100,7 +96,7 @@ export class ManageUsersComponent implements OnInit {
     this.citizenID = citizenDetails.citizen_id || null;
 
     if (this.citizenID) {
-      this.fetchCitizen(this.citizenID);
+      // this.fetchCitizen(this.citizenID);
     } else {
       this.errorMessage = 'Station ID not found.';
     }
@@ -109,27 +105,31 @@ export class ManageUsersComponent implements OnInit {
   
   loadUserProfile() {
     const userData = localStorage.getItem('userData');
+    const parsedData = JSON.parse(userData);
     console.log('USER DATA SESSION', userData);
     if (userData) {
       try {
-        const parsedData = JSON.parse(userData);
+        
         this.personId = parsedData.personId;
-        this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
-          (response) => {
-            this.policePersonData = response;
-            console.log('Fetched Police Person Data', this.policePersonData);
-            // this.fetchPoliceData(this.policePersonData.police_id);
-            console.log('Police ID:', this.policePersonData.police_id);
-          },
-          (error) => {
-            console.error('Errod Police Person Data', error);
-          }
-        );
-
+   
         console.log('Person ID', this.personId);
       } catch {
         console.error('Error fetching localStorage');
       }
+
+      this.accountService.getProfPic(parsedData.acc_id).subscribe(
+        (profilePicBlob: Blob) => {
+          if (profilePicBlob) {
+              // Create a URL for the Blob
+              this.avatarUrl = URL.createObjectURL(profilePicBlob);
+              console.log('PROFILE PIC URL', this.avatarUrl);
+
+          } else {
+              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              this.avatarUrl = 'assets/user-default.jpg';
+          }
+        }
+      )
     }
   }
 
@@ -155,22 +155,55 @@ export class ManageUsersComponent implements OnInit {
   }
 
   // Fetch a specific station based on station ID
-  fetchCitizen(citizenId: string): void {
+  fetchCitizen(): void {
     this.isLoading = true;
-    this.manageUserService.getCitizens().subscribe(
-      (response: ICitizen[]) => {
-        this.citizen = response;
-        this.filteredCitizens = response; // Initialize filtered list as well
-        console.log('Fetched citizen:', this.citizen);
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching citizen:', error);
-        this.errorMessage = 'Failed to load citizen. Please try again.';
-        this.isLoading = false;
-      }
-    );
+    const allCitizens: any[] = [];
+    let page = 1;
+  
+    const fetchNextPage = () => {
+      this.caseQueueService.getCitizensPage(this.pageSize, page).subscribe(
+        (response) => {
+          const citizens = Array.isArray(response) ? response : response.data || [];
+          if (citizens.length === 0) {
+            // No more data, stop
+            this.citizen = allCitizens;
+            this.filteredCitizens = allCitizens;
+            this.isLoading = false;
+            console.log('Fetched all citizens:', allCitizens);
+            return;
+          }
+  
+          allCitizens.push(...citizens);
+          page++; // Go to next page
+          fetchNextPage(); // Recursive call
+        },
+        (error) => {
+          console.error('Error fetching citizens:', error);
+          this.errorMessage = 'Failed to load citizens. Please try again.';
+          this.isLoading = false;
+        }
+      );
+    };
+  
+    fetchNextPage(); // Start fetching
   }
+  
+
+
+  setFilter(filterValue: string) {
+    this.filter = filterValue;
+    this.currentPage = 1;
+  }
+  
+  
+  filterCitizens() {
+    if (this.filter) {
+      return this.citizen.filter((user: any) => user.role === this.filter);
+    }
+    return this.citizen;
+  }
+
+
 
   filterUsers() {
     if (!this.searchQuery) {
@@ -214,21 +247,7 @@ export class ManageUsersComponent implements OnInit {
       value?.toString().toLowerCase().includes(query)
     );
   }
-  // Fetch list of all stations
-  // fetchStations(): void {
-  //   this.jurisdictionService.getAll().subscribe(
-  //     (response: IStation[]) => {
-  //       this.stations = response;
-  //       this.filteredStations = response; // Initialize filtered list as well
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching stations:', error);
-  //       this.errorMessage = 'Failed to load stations. Please try again.';
-  //     }
-  //   );
-  // }
-
-  // Fetch ranks
+  
   fetchRanks(): void {
     this.policeAccountsService.getRanks().subscribe(
       (response: IRank[]) => {
@@ -270,157 +289,88 @@ export class ManageUsersComponent implements OnInit {
     );
   }
 
-  loadTotalUsers(): void {
-    this.caseService.getTotalUsers().subscribe(
-      (totalUsers: number) => {
-        console.log('Total number of users:', totalUsers);
-        this.totalUsers = totalUsers;
+  certifyCitizen(citizenId: number) {
+    
+    this.dialogService.openLoadingDialog()
+    console.log('Certifying citizen with ID:', citizenId);
+    this.caseService.certifyUser(citizenId).subscribe(
+      (res) => {
+        this.dialogService.closeLoadingDialog()
+        setTimeout(() => {
+          this.dialogService.openUpdateStatusDialog('Success', `Citizen ${citizenId} verified successfully`);
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 100)
+          
+        },1000)
+      },
+      (err) => {
+        this.dialogService.closeLoadingDialog()
+        setTimeout(() => {
+          this.dialogService.openUpdateStatusDialog('Error', `Citizen ${citizenId} failed to verify`);
+          setTimeout(() => {
+            window.location.reload();
+          }, 100)
+        },1000)
+      }
+    )
+    
+  }
+  
+
+  openUserDetails(citizen: any){
+    this.isUserDataOpen = true;
+    this.userData = citizen;
+
+    this.userPic = 'assets/user-default.jpg';
+    this.userProof = '';
+
+    
+    this.getUserProfPic(citizen.account_id);
+    this.getUserProof(citizen.citizen_id);
+  }
+
+  closeModal() {
+    this.isUserDataOpen = false;
+    this.userPic = 'assets/user-default.jpg'; 
+    this.userProof = '';
+  }
+
+  getUserProof(citizenId: any){
+    this.caseService.getCitizenProof(citizenId).subscribe(
+      (proof: Blob) => {
+        if(proof){
+          this.userProof = URL.createObjectURL(proof);
+          console.log('Citizen Proof', this.userProof)
+        } else {
+          this.userProof = '';
+          console.log('No proof submitted.');
+          }
       },
       (error) => {
-        console.error('Error fetching total users:', error);
+        console.error('Error fetching citizen proof:', error);
+        this.userProof = ''; 
       }
-    );
+    )
   }
 
+  getUserProfPic(accountId: any){
+    this.accountService.getProfPic(accountId).subscribe(
+      (profilePicBlob: Blob) => {
+        if (profilePicBlob) {
+            this.userPic = URL.createObjectURL(profilePicBlob);
+            console.log('PROFILE PIC URL', this.userPic);
 
-  // Submit the form data
-  onSubmit(): void {
-    if (this.userForm.invalid) {
-      alert('Please fill all required fields correctly.');
-      return;
-    }
-
-    this.isLoading = true;
-    const formData = this.userForm.value;
-
-    const citizen: ICitizen = {
-      citizen_id: formData.citizen_id,
-      person_id: formData.person_id,
-      location_id: formData.location_id || null,
-      is_certified: formData.is_certified,
-      firstname: formData.firstname,
-      middlename: formData.middlename,
-      lastname: formData.lastname,
-      sex: formData.sex,
-      birthdate: formData.birthdate,
-      bio_status: formData.bio_status,
-      civil_status: formData.civil_status,
-      is_spammer: false
-    };
-
-    console.log('Submitting citizen with data:', citizen);
-    this.submitManageUsersForm(citizen);
-  }
-
-  // Call service to submit the station data
-  submitManageUsersForm(citizen: ICitizen): void {
-    this.manageUserService.submitCitizen(citizen).subscribe(
-      (response: ICitizen) => {
-        this.isLoading = false;
-        this.successMessage = 'Station submitted successfully!';
-        this.errorMessage = null;
-        this.userForm.reset();
-        setTimeout(() => this.router.navigate(['/manage-station']), 2000);
-      },
-      (error) => {
-        this.isLoading = false;
-        console.error('Error during station submission:', error);
-        this.errorMessage = 'Submission failed. Please try again.';
-      }
-    );
-  }
-
-  // Search stations based on input
-  onSearch(event: Event): void {
-    const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredCitizens = this.citizen.filter(
-      (citizen) =>
-        citizen.firstname.toLowerCase().includes(searchValue) ||
-        citizen.lastname.toLowerCase().includes(searchValue) ||
-        citizen.citizen_id.toString().includes(searchValue)
-    );
-  }
-
-  // Edit station information
-  editCitizen(citizen: ICitizen): void {
-    this.userForm.patchValue({
-      citizen_id: citizen.citizen_id,
-      person_id: citizen.person_id,
-      location_id: citizen.location_id,
-      is_certified: citizen.is_certified,
-      firstname: citizen.firstname,
-      middlename: citizen.middlename,
-      lastname: citizen.lastname,
-      sex: citizen.sex,
-      birthdate: citizen.birthdate,
-      bio_status: citizen.bio_status,
-      civil_status:citizen.civil_status,
-    });
-    window.scrollTo(0, 0); // Scroll to the top for form view
-  }
-
-  // Delete station
-  // spamCitizen(citizen_id: number): void {
-  //   if (confirm('Are you sure you want to spam this citizen?')) {
-  //     this.manageUserService.spamCitizen(citizen_id).subscribe(
-  //       () => {
-  //         this.successMessage = 'Citizen spammed successfully.';
-  //         this.citizen = this.citizen.filter(
-  //           (c) => c.citizen_id !== this.citizenID
-  //         );
-  //         this.filteredCitizens = this.filteredCitizens.filter(
-  //           (citizen) => citizen.citizen_id !== this.citizenID
-  //         );
-  //       },
-  //       (error) => {
-  //         console.error('Error spamming citizen:', error);
-  //         this.errorMessage = 'Failed to spam citizen. Please try again.';
-  //       }
-  //     );
-  //   }
-  // }
-
-  spamCitizen(citizen_id: number): void {
-    if (confirm('Are you sure you want to spam this citizen?')) {
-      const apiUrl = (`${environment.ipAddUrl}api/citizen/scold/citizen/${citizen_id}`);
-
-      this.http.put(apiUrl, {}).subscribe(
-        () => {
-          this.successMessage = 'Citizen spammed successfully.';
-          this.citizen = this.citizen.filter((c) => c.citizen_id !== citizen_id);
-          this.filteredCitizens = this.filteredCitizens.filter((citizen) => citizen.citizen_id !== citizen_id);
-        },
-        (error) => {
-          console.error('Error spamming citizen:', error);
-          this.errorMessage = 'Failed to spam citizen. Please try again.';
+        } else {
+            console.log('ERROR, DEFAULT PROF PIC STREAMED', this.userPic);
+            this.userPic = 'assets/user-default.jpg';
         }
-      );
-    }
+        }
+      )
   }
 
-
-
-
-  // deleteCitizen(citizenId: number): void {
-  //   if (confirm('Are you sure you want to delete this citizen?')) {
-  //     this.manageUserService.deleteCitizen(citizenId).subscribe(
-  //       () => {
-  //         this.successMessage = 'Citizen deleted successfully.';
-  //         this.citizen = this.citizen.filter(citizen => citizen.citizen_id !== citizenId);
-  //         this.filteredCitizens = this.filteredCitizens.filter(citizen => citizen.citizen_id !== citizenId);
-  //       },
-  //       (error) => {
-  //         console.error('Error deleting station:', error);
-  //         this.errorMessage = 'Failed to delete station. Please try again.';
-  //       }
-  //     );
-  //   }
-  // }
-
-  // Navigate back to the previous screen
-  goBack(): void {
-    this.router.navigate(['/manage-police']);
-  }
+  
 
   clearSession() {
     sessionStorage.removeItem('userData');

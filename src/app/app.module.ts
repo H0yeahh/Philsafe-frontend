@@ -78,6 +78,19 @@ import { SuccessDialogComponent } from './dialog/success-dialog.component';
 import { LoadingDialogComponent } from './dialog/loading-dialog.component';
 import { UpdateStatusDialogComponent } from './dialog/update-status-dialog.component';
 import { DialogService } from './dialog/dialog.service';
+import { StationCitizensComponent } from './station-citizens/station-citizens.component';
+import { StationAdminDashboardComponent } from './station-admin-dashboard/station-admin-dashboard.component';
+import { StationAdminReportsManagementComponent } from './station-admin-reports-management/station-admin-reports-management.component';
+import { StationAdminCitizensManagementComponent } from './station-admin-citizens-management/station-admin-citizens-management.component';
+import { StationAdminLogsComponent } from './station-admin-logs/station-admin-logs.component';
+import { StationAdminPoliceManagementComponent } from './station-admin-police-management/station-admin-police-management.component';
+import { StationAdminPoliceAddComponent } from './station-admin-police-add/station-admin-police-add.component';
+import { PoliceRoosterComponent } from './police-rooster/police-rooster.component';
+import { PoliceArchivesComponent } from './police-archives/police-archives.component';
+import { PoliceStationsComponent } from './police-stations/police-stations.component';
+import { StationEditpoliceComponent } from './station-editpolice/station-editpolice.component';
+import { PoliceReportsConsolidatedComponent } from './police-reports-consolidated/police-reports-consolidated.component';
+import { PoliceCasesConsolidatedComponent } from './police-cases-consolidated/police-cases-consolidated.component';
 
 
 @NgModule({
@@ -140,7 +153,20 @@ import { DialogService } from './dialog/dialog.service';
     ConfirmationDialogComponent,
     SuccessDialogComponent,
     LoadingDialogComponent,
-    UpdateStatusDialogComponent],
+    UpdateStatusDialogComponent,
+    StationCitizensComponent,
+    StationAdminDashboardComponent,
+    StationAdminReportsManagementComponent,
+    StationAdminCitizensManagementComponent,
+    StationAdminLogsComponent,
+    StationAdminPoliceManagementComponent,
+    StationAdminPoliceAddComponent,
+    PoliceRoosterComponent,
+    PoliceArchivesComponent,
+    PoliceStationsComponent,
+    StationEditpoliceComponent,
+    PoliceReportsConsolidatedComponent,
+    PoliceCasesConsolidatedComponent],
 
   imports: [
     BrowserModule,

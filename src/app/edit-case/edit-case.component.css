@@ -915,7 +915,7 @@ tbody td a {
     padding: 5px 10px 5px 10px;
     border-radius: 15px;
     border: #bdbaba solid 0.2px;
-    width: 86%;
+    width: 84%;
     /* text-align: end; */
   }
 
@@ -1148,7 +1148,7 @@ tbody td a {
     justify-content: flex-end;
   }
 
-  .loading-overlay {
+  /* .loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1160,7 +1160,7 @@ tbody td a {
     align-items: center;
     color: white;
     font-size: 18px;
-  }
+  } */
   
   .spinner {
     width: 40px;

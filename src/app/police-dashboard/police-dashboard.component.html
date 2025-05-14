@@ -1,14 +1,15 @@
 <div class="container">
   <div class="emergency-banner">
-    In case of emergencies, please dial your local emergency services number
+    <!-- In case of emergencies, please dial your local emergency services number -->
   </div>
   <div class="flex h-screen">
-    <aside class="bg-zinc-100 sidebar p-4 flex flex-col items-center">
-      <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button> <!-- Removed mt-6 class -->
+    <aside class="w-64 bg-white shadow-md">
+      <!-- <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>  -->
       <div class="p-4 text-center">
-        <img src="assets/general.png" alt="Profile Picture" class="rounded-full mb-4" style="width: 180px; height: 180px;">
-        <!-- <h2 class="text-lg font-semibold">PCT Jason P. Enriquez</h2>
-        <p class="text-sm text-zinc-600">Police Station 2, Abellana </p> -->
+        <div class="logo">
+          <img [src]="avatarUrl" alt="Profile Picture" >
+        </div>
+  
 
         <div *ngIf="adminDetails; else loadingTemplate">
           <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
@@ -18,60 +19,82 @@
         <ng-template #loadingTemplate>
           <div id="loading">Loading Police Details...</div>
         </ng-template>
-        <p class="text-sm text-zinc-600">Admin</p>
+        <p class="text-sm text-zinc-600">Cebu City Police Office</p>
       </div>
-      <nav class="mt-4"> <!-- Reduced margin-top to create less space -->
+      <nav class="mt-7"> <!-- Reduced margin-top to create less space -->
         <ul class="list-none p-0">
           <li>
-            <a href="/dashboard" class="nav-link">
-              <img src="assets/dashbold.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
+            <a [routerLink]="['/dashboard']" routerLinkActive="active" class="nav-link">
+              <img src="assets/dashbold.svg" alt="Dashboard" class="w-6 h-6 mr-2">
               <span>DASHBOARD</span>
             </a>
           </li>
+         
           <li>
-            <a href="/police-reports" class="nav-link">
-              <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-              <span>REPORTS</span>
-            </a>
-          </li>
-          <!-- <li>
-            <a href="/evidences" class="nav-link">
-              <img src="assets/ticket request.svg" alt="Reports Icon" class="w-6 h-6 mr-2">
-              <span>EVIDENCES</span>
+            <a  [routerLink]="['/manage-users']" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS PORTAL</span>
             </a>
           </li>
           <li>
-            <a href="/police-cases" class="nav-link">
-              <img src="assets/cases.svg" alt="Dashboard Icon" class="w-6 h-6 mr-2">
-              <span>CASES</span>
-            </a>
-          </li> -->
-          <li>
-            <a href="/manage-users" class="nav-link">
-              <img src="assets/manage user.svg" alt="Inbox Icon" class="w-6 h-6 mr-2">
-              <span>MANAGE USER</span>
-            </a>
-          </li>
-          <li>
-            <a routerLink="/spammer-users" class="nav-link">
-                <img src="assets/manage user.svg" alt="Manage User Icon" class="w-6 h-6 mr-2">
-                <span>SPAMMED USER</span>
+            <a routerLink="/police-officers" routerLinkActive="active" class="nav-link">
+                <img src="assets/police-officer.svg" alt="Manage Police Icon" class="w-6 h-6 mr-2">
+                <span>POLICE OFFICERS</span>
             </a>
         </li>   
+        <li>
+          <a routerLink="/police-archives" routerLinkActive="active" class="nav-link">
+              <img src="assets/archive-solid.png" alt="Manage Police Archives Icon" class="archive-icon">
+              <span>POLICE ARCHIVES</span>
+          </a>
+      </li>  
           <li>
-            <a href="/manage-station" class="nav-link">
+            <a href="/police-stations" class="nav-link">
               <img src="assets/manage station.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
               <span>MANAGE STATION</span>
             </a>
-            <li>
+            <!-- <li>
               <a href="/police-crime-map" class="nav-link">
                 <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
                 <span>CRIME MAP</span>
               </a>
-            </li>
+            </li> -->
+             <li>
+            <a
+              [routerLink]="['/police-reports']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW REPORTS</span>
+            </a>
+          </li>
+
+             <li>
+            <a
+              [routerLink]="['/police-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW CASES</span>
+            </a>
+          </li>
+         
         </ul>
       </nav>
-      <button type="submit" class="logout-button mt-auto" (click)="logout()" >LOG OUT</button> <!-- Centered logout button -->
+      <div class="logout">
+        <button type="submit" class="logout-button mt-auto" (click)="logout()" >LOG OUT</button>
+      </div>
+
     </aside>
 
 
@@ -130,13 +153,14 @@
       <div></div>
       <form [formGroup]="policedashboardForm">
         <div class="filter">
-          <label for="timePeriodSelect">Select Time Period:</label>
+          <label for="timePeriodSelect">Select Data to be rendered:</label>
           <select 
             id="timePeriodSelect" 
             [formControl]="timePeriodControl"
             (change)="onSelect()">
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
+            <option value="citizens">Registered Citizens</option>
+            <option value="polices">Registered Police</option>
+            <option value="stations">All Stations</option>
           </select>
           <!-- Removed the separate button since we're handling change event -->
         </div>
@@ -144,24 +168,116 @@
     </div>
 
     <section class="stats">
-      <div class="stat-box solved-cases">
-        <h3>Weekly Reports</h3>
-        <p>{{ weeklyAvg }}</p>
+      <div class="stat-box solved-cases" (click)="openModal('citizens')">
+        <h3>Registered Citizens</h3>
+        <p>{{ citizensCount }}</p>
       </div>
-      <div class="stat-box reported-cases">
-        <h3>Monthly Reports</h3>
-        <p>{{ monthlyAvg }}</p>
+      <div class="stat-box reported-cases" (click)="openModal('polices')">
+        <h3>Registered Police</h3>
+        <p>{{ policesCount }}</p>
       </div>
-      <div class="stat-box under-investigation">
-        <h3>Annual Reports</h3>
-        <p>{{ annualAvg}}</p>
+      <div class="stat-box under-investigation" (click)="openModal('stations')">
+        <h3>All Stations</h3>
+        <p>{{ stationsCount }}</p>
       </div>
     </section>
 
     <section class="graph-section">
       <canvas id="casesGraph"></canvas>
     </section>
+
+    
     
   </main>
-</div>
-</div>
+
+  <div class="parent-modal" *ngIf="isModalOpen">
+    <div class="modal">
+      <button class="modal-close" (click)="closeModal()">X</button>
+      <div class="modal-content">
+        <h3 *ngIf="modalType === 'citizens'">All Citizens</h3>
+        <h3 *ngIf="modalType === 'polices'">All Polices</h3>
+        <h3 *ngIf="modalType === 'stations'">All Stations</h3>
+  
+        <div class="modal-table">
+          <table>
+            <thead>
+              <tr *ngIf="modalType === 'citizens'">
+                <th>Citizen ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Contact Number</th>
+                <th>Verification Status</th>
+              </tr>
+              <tr *ngIf="modalType === 'polices'">
+                <th>Station ID</th>
+                <th>Police ID</th>
+                <th>Full Name</th>
+                <th>Badge Number</th>
+                <th>Specialized Role</th>
+                <th>Unit</th>
+
+              </tr>
+              <tr *ngIf="modalType === 'stations'">
+                <th>Station ID</th>
+                <th>Station Name</th>
+                <th>Barangay</th>
+                <th>Province</th>
+                <th>Municipality</th>
+              </tr>
+            </thead>
+  
+            <tbody *ngIf="modalType === 'citizens'">
+              <ng-container *ngIf="citizens && citizens.length > 0; else noData">
+                <tr *ngFor="let citizen of citizens">
+                  <td>{{ citizen.citizen_id }}</td>
+                  <td>{{ citizen.firstname }}, {{ citizen.lastname }} </td>
+                  <td>{{ citizen.email }}</td>
+
+                  <td>{{ citizen.contact_num }}</td>
+                  <td>{{ citizen.role }}</td>
+
+                </tr>
+              </ng-container>
+            </tbody>
+  
+            <tbody *ngIf="modalType === 'polices'">
+              <ng-container *ngIf="polices && polices.length > 0; else noData">
+                <tr *ngFor="let police of polices">
+                  <td>{{ police.station_id }}</td>
+                  <td>{{ police.police_id }}</td>
+                  <td>{{police.rank_abbr}} {{ police.firstname }}, {{ police.lastname }}</td>
+                  <td>{{ police.badge_number }}</td>
+                  <td>{{ police.role }}</td>
+                  <td>{{ police.unit }}</td>
+
+                </tr>
+              </ng-container>
+            </tbody>
+  
+            <tbody *ngIf="modalType === 'stations'">
+              <ng-container *ngIf="stations && stations.length > 0; else noData">
+                <tr *ngFor="let station of stations">
+                  <td>{{ station.station_id }}</td>
+                  <td>{{ station.hq }}</td>
+                  <td>{{ station.barangay }}</td>
+                  <td>{{ station.province }}</td>
+                  <td>{{ station.municipality }}</td>
+
+                </tr>
+              </ng-container>
+            </tbody>
+  
+            <ng-template #noData>
+              <tr>
+                <td colspan="3" style="text-align: center; font-weight: bold;">
+                  No data available for {{ modalType }}.
+                </td>
+              </tr>
+            </ng-template>
+  
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  

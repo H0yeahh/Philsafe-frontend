@@ -6,24 +6,24 @@ import { environment } from './environment';
 
 export interface ICreateParam {
   hq: string;
-  locationId: number;
-  isApproved: boolean;
-  abbr: string;
-  rank: string;
-  officerInChargeId: number;
+  locationId?: number;
+  isApproved?: boolean;
+  abbr?: string;
+  rank?: string;
+  officerInChargeId?: number;
 }
 
 export interface IStation {
   station_id: number;
   hq: string;
-  location_id: number;
-  abbr: string;
-  rank: string;
-  province: string;
-  municipality: string;
-  street: string;
-  region: string;
-  barangay: string;
+  location_id?: number;
+  abbr?: string;
+  rank?: string;
+  province?: string;
+  municipality?: string;
+  street?: string;
+  region?: string;
+  barangay?: string;
   is_approved: boolean;
 }
 
@@ -61,6 +61,13 @@ export class JurisdictionService {
     );
   }
 
+  addStation(data: any): Observable<any> {
+    const url = `${this.base}api/jurisdiction`;
+    return this.http.post(url, data, {headers: this.auth_token}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   getAll(): Observable<any> {
     const url = `${this.base}api/jurisdiction/collect`;
     return this.http.get(url, {headers: this.auth_token}).pipe(
@@ -78,7 +85,7 @@ export class JurisdictionService {
 
   // Delete station method
   delete(stationId: number): Observable<any> {
-    const url = `${this.base}api/jurisdiction/discard/{StationId}`;
+    const url = `${this.base}api/jurisdiction/discard/${stationId}`;
     return this.http.delete(url, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );

@@ -1,0 +1,255 @@
+<!-- station-editpolice.component.html -->
+<div class="container mx-auto p-8">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-3xl mx-auto">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="title-head">Edit Police Officer Profile</h1>
+        <button 
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+          (click)="goBack()">
+          <i class="fa-solid fa-arrow-left mr-2"></i>
+          Back to Dashboard
+        </button>
+      </div>
+  
+      <div class="border-b border-gray-200 mb-6"></div>
+  
+      <div *ngIf="isLoaded; else loading">
+        <!-- Profile Picture Section -->
+        <div class="flex flex-col items-center mb-6">
+          <!-- <div class="profile-picture-container mb-4">
+            <img 
+              [src]="previewImageUrl || userProfile.profile_picture || 'assets/default-avatar.png'" 
+              alt="Profile Picture" 
+              class="profile-picture" />
+          </div> -->
+          <!-- <div class="flex space-x-4">
+            <label for="profile-upload" class="upload-button">
+              <i class="fa-solid fa-upload mr-2"></i>
+              Upload New Photo
+            </label>
+            <input 
+              type="file" 
+              id="profile-upload" 
+              accept="image/*" 
+              (change)="onFileSelect($event)" 
+              class="hidden" />
+            
+            <button 
+              type="button" 
+              class="remove-photo-button" 
+              *ngIf="previewImageUrl || userProfile.profile_picture"
+              (click)="removePhoto()">
+              <i class="fa-solid fa-trash mr-2"></i>
+              Remove Photo
+            </button>
+          </div> -->
+        </div>
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Personal Information -->
+          <div class="form-group">
+            <label for="firstname">First Name</label>
+            <input 
+              type="text" 
+              id="firstname" 
+              name="firstname"
+              [(ngModel)]="userProfile.firstname" 
+              class="form-control" 
+              required />
+            <div class="error-message" *ngIf="firstNameError">
+              First name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="firstname">Middle Name</label>
+            <input 
+              type="text" 
+              id="firstname" 
+              name="firstname"
+              [(ngModel)]="userProfile.middlename" 
+              class="form-control" 
+              />
+                     </div>
+  
+          <div class="form-group">
+            <label for="lastname">Last Name</label>
+            <input 
+              type="text" 
+              id="lastname" 
+              name="lastname"
+              [(ngModel)]="userProfile.lastname" 
+              class="form-control" 
+              required />
+            <div class="error-message" *ngIf="lastNameError">
+              Last name is required
+            </div>
+          </div>
+  
+          <!-- <div class="form-group">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              [(ngModel)]="userProfile.email" 
+              class="form-control" 
+              required />
+            <div class="error-message" *ngIf="emailError">
+              Valid email is required
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              name="phone"
+              [(ngModel)]="userProfile.phone" 
+              class="form-control" 
+              required />
+            <div class="error-message" *ngIf="phoneError">
+              Valid phone number is required
+            </div>
+          </div> -->
+  
+          <!-- Police Officer Information -->
+          <div class="form-group">
+            <label for="badge">Badge Number</label>
+            <input 
+              type="text" 
+              id="badge" 
+              name="badge"
+              [(ngModel)]="userProfile.badge_number" 
+              class="form-control" 
+              readonly />
+          </div>
+  
+          <div class="form-group">
+            <label for="rank">Rank</label>
+            <input 
+              type="text" 
+              id="rank" 
+              name="rank"
+              [(ngModel)]="userProfile.rank_full" 
+              class="form-control" 
+              readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="lastname">Input Password for verification</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password"
+              [(ngModel)]="userProfile.password" 
+              class="form-control" 
+              required />
+            <div class="error-message" *ngIf="passwordError">
+              Password is required
+            </div>
+          </div>
+  
+          <!-- Password Change Section -->
+          <!-- <div class="md:col-span-2 mt-6">
+            <h2 class="text-xl font-semibold mb-4">Change Password</h2>
+            <div class="border-b border-gray-200 mb-4"></div>
+          </div>
+   -->
+          <!-- <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <div class="password-input-container">
+              <input 
+                [type]="showPassword.current ? 'text' : 'password'" 
+                id="currentPassword" 
+                name="currentPassword"
+                [(ngModel)]="passwordData.currentPassword" 
+                class="form-control" />
+              <button 
+                type="button" 
+                class="password-toggle" 
+                (click)="togglePasswordVisibility('current')">
+                <i [class]="showPassword.current ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="currentPasswordError">
+              Current password is required to change password
+            </div>
+          </div> -->
+  
+          <!-- <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <div class="password-input-container">
+              <input 
+                [type]="showPassword.new ? 'text' : 'password'" 
+                id="newPassword" 
+                name="newPassword"
+                [(ngModel)]="passwordData.newPassword" 
+                class="form-control" />
+              <button 
+                type="button" 
+                class="password-toggle" 
+                (click)="togglePasswordVisibility('new')">
+                <i [class]="showPassword.new ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="newPasswordError">
+              Password must be at least 8 characters
+            </div>
+          </div> -->
+  
+          <!-- <div class="form-group md:col-span-2">
+            <label for="confirmPassword">Confirm New Password</label>
+            <div class="password-input-container">
+              <input 
+                [type]="showPassword.confirm ? 'text' : 'password'" 
+                id="confirmPassword" 
+                name="confirmPassword"
+                [(ngModel)]="passwordData.confirmPassword" 
+                class="form-control" />
+              <button 
+                type="button" 
+                class="password-toggle" 
+                (click)="togglePasswordVisibility('confirm')">
+                <i [class]="showPassword.confirm ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="confirmPasswordError">
+              Passwords do not match
+            </div>
+          </div> -->
+        </div>
+  
+        <!-- Submit Buttons -->
+        <div class="saveChanges">
+          <!-- <button 
+            type="button" 
+            class="cancel-button" 
+            (click)="goBack()">
+            Cancel
+          </button> -->
+          <button 
+            type="button" 
+            class="submit-button" 
+            [disabled]="isSubmitting"
+            (click)="onSubmit()">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting">
+              <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+              Saving...
+            </span>
+          </button>
+        </div>
+      </div>
+  
+      <ng-template #loading>
+        <div class="flex justify-center items-center h-64">
+          <div class="spinner">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            <p class="mt-4">Loading profile data...</p>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>

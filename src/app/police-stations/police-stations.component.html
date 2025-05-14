@@ -1,0 +1,607 @@
+
+
+<div class="container">
+    <div class="emergency-banner">
+      <!-- In case of emergencies, please dial your local emergency services number -->
+    </div>
+    <div class="min-h-screen bg-zinc-100 flex">
+
+      <aside class="w-64 bg-white shadow-md">
+        <!-- <button type="submit" class="back-button mt-6" style="align-self: flex-start;" (click)="goBack()">BACK</button>  -->
+        <div class="p-4 text-center">
+          <div class="logo">
+            <img [src]="avatarUrl" alt="Profile Picture" >
+          </div>
+    
+  
+          <div *ngIf="adminDetails; else loadingTemplate">
+            <h2 class="text-lg font-semibold">{{ adminDetails?.rank_abbr }} {{ adminDetails?.first_name }}
+              {{ adminDetails?.last_name }} </h2>
+          </div>
+    
+          <ng-template #loadingTemplate>
+            <div id="loading">Loading Police Details...</div>
+          </ng-template>
+          <p class="text-sm text-zinc-600">Cebu City Police Office</p>
+        </div>
+        <nav class="mt-7"> <!-- Reduced margin-top to create less space -->
+          <ul class="list-none p-0">
+            <li>
+              <a [routerLink]="['/dashboard']" routerLinkActive="active" class="nav-link">
+                <img src="assets/dashbold.svg" alt="Dashboard" class="w-6 h-6 mr-2">
+                <span>DASHBOARD</span>
+              </a>
+            </li>
+           
+            <li>
+              <a  [routerLink]="['/manage-users']" routerLinkActive="active" class="nav-link">
+                <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+                <span>CITIZENS PORTAL</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/police-officers']" routerLinkActive="active" class="nav-link">
+                  <img src="assets/police-officer.svg" alt="Manage Police Icon" class="w-6 h-6 mr-2">
+                  <span>POLICE OFFICERS</span>
+              </a>
+          </li>   
+          <li>
+            <a [routerLink]="['/police-archives']" routerLinkActive="active" class="nav-link">
+                <img src="assets/archive-solid.png" alt="Manage Police Archives Icon" class="archive-icon">
+                <span>POLICE ARCHIVES</span>
+            </a>
+        </li>  
+            <li>
+              <a [routerLink]="['/police-stations']" routerLinkActive="active" class="nav-link">
+                <img src="assets/manage station.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                <span>MANAGE STATION</span>
+              </a>
+              <!-- <li>
+                <a [routerLink]="['/crime-map']" routerLinkActive="active" class="nav-link">
+                  <img src="assets/crime-map.svg" alt="Crime Map Icon" class="w-6 h-6 mr-2">
+                  <span>CRIME MAP</span>
+                </a>
+              </li> -->
+
+                 <li>
+            <a
+              [routerLink]="['/police-reports']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/reports.svg"
+                alt="Inbox Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW REPORTS</span>
+            </a>
+          </li>
+
+             <li>
+            <a
+              [routerLink]="['/police-cases']"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <img
+                src="assets/cases.svg"
+                alt="Reports Icon"
+                class="w-6 h-6 mr-2"
+              />
+              <span>VIEW CASES</span>
+            </a>
+          </li>
+          </ul>
+        </nav>
+        <div class="logout">
+          <button type="submit" class="logout-button mt-auto" (click)="logout()" >LOG OUT</button>
+        </div>
+  
+      </aside>
+  
+  
+      <div class="main-content">
+        
+        <div>
+          <h1>MANAGE STATIONS</h1>
+        </div>
+        <main class="content">
+
+          <div class="search-container">
+            <input
+            type="text" [(ngModel)]="searchQuery" 
+              placeholder="Search"
+              class="search-input"
+              (ngModelChange)="filterPolice()"
+            />
+
+            <div class="add-station">
+              <button 
+              (click)="onAddStation()"
+              >
+               <i class="fas fa-plus"></i> Add Station</button>
+            </div>
+  
+          </div>
+
+
+          <section class="user-section">
+           
+            <table class="user-table w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="border border-zinc-300 p-2">STATION ID</th>
+                  <th class="border border-zinc-300 p-2">STATION NAME</th>
+                  <th class="border border-zinc-300 p-2">BARANGAY</th>
+                  <th class="border border-zinc-300 p-2">MUNICIPALITY</th>
+                  <th class="border border-zinc-300 p-2" >ACTION</th>
+                  <!-- <th class="border border-zinc-300 p-2">ACTION</th> -->
+
+                </tr>
+              </thead>
+              <tbody>
+
+                <ng-container *ngIf="searchQuery; else allStations">
+                  <ng-container
+                  *ngIf="filteredStations.length > 0; else noResults"
+                  >
+                    <tr *ngFor="let station of filteredStations | paginate: { 
+                      id: 'police', 
+                      itemsPerPage: pageSize, 
+                      currentPage: currentPage, 
+                      totalItems: filteredStations.length 
+                    }; let i = index"
+                    [id]="'polce-' + station.police_id"
+                    
+                    >
+                  <td class="border border-zinc-300 p-2">
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(station.station_id, searchQuery)"
+                    [innerHTML]="highlight(station.station_id)"
+                    ></span>
+                  </td>
+                  <td class="border border-zinc-300 p-2">  
+
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(station.hq, searchQuery)"
+                    [innerHTML]="highlight(station.hq)">
+                  </span>
+                  
+                    <span
+                    [class.highlight]="
+                      isFieldMatched(station.barangay, searchQuery)"
+                    [innerHTML]="highlight(station.barangay)">
+                  </span>
+
+                  <span
+                    [class.highlight]="
+                      isFieldMatched(station.municipality, searchQuery)"
+                    [innerHTML]="highlight(station.municipality)">
+                  </span>
+                  
+                  </td>
+                   
+                  </ng-container>
+                  <ng-template #noResults>
+                    <tr>
+                      <td colspan="4" class="no-results">
+                        No results found for "{{ searchQuery }}"
+                      </td>
+                    </tr>
+                  </ng-template>
+                </ng-container>
+
+                <ng-template #allStations>
+                <tr *ngFor="let station of stations | paginate: { 
+                                id: 'police', 
+                                itemsPerPage: pageSize, 
+                                currentPage: currentPage, 
+                                totalItems: stations.length 
+                              }; let i = index"
+                    [id]="'citizen-' + station.police_id"
+                    (click)="openDetailsModal(station)"
+                    >
+                  <td class="border border-zinc-300 p-2">{{ station.station_id }}</td>
+                  <td class="border border-zinc-300 p-2">{{ station.hq }} </td>
+                  <td class="border border-zinc-300 p-2">{{ station.barangay }}</td>
+                  <td class="border border-zinc-300 p-2">{{ station.municipality }}</td>
+                  
+                  <!-- <td
+                    class="icon"
+                    (click)="viewLocation(station.longitude, station.latitude); $event.stopPropagation()"
+                  >
+                    <button class="confirm">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        View Location
+                    </button>
+                  </td> -->
+                  <td class="icon">
+                    <button class="confirm" (click)="viewLocation(station.longitude, station.latitude); $event.stopPropagation()">
+                      <i class="fas fa-map-marker-alt"></i> View Location
+                    </button>
+                  </td>
+                 
+                </tr>
+              </ng-template>
+              </tbody>
+            </table>
+
+            <!-- <div class="map-modal" [class.show]="showMapModal">
+                <div class="map-modal-content">
+                  <button class="close-btn" (click)="closeMapModal()">X</button>
+                  <div id="map" class="map-container"></div>
+                </div>
+              </div> -->
+
+              <div class="map-modal" [class.show]="showMapModal">
+                <div class="map-modal-content">
+                  <button class="close-btn" (click)="closeMapModal()">X</button>
+                  <div id="map" class="map-container"></div>
+                </div>
+              </div>
+
+       <!-- Station Details Modal -->
+        
+<!-- Station Details Modal -->
+<div class="details-modal" [class.show]="showDetailsModal">
+    <div class="details-modal-content">
+        <button class="close-btn" (click)="closeDetailsModal()">×</button>
+        <h2 class="modal-title">Station Details</h2>
+    
+        <div *ngIf="selectedStation" class="details-list">
+            <div class="detail-row"><span>ID:</span> {{ selectedStation.station_id }}</div>
+            <div class="detail-row"><span>Name:</span> {{ selectedStation.hq }}</div>
+            <div class="detail-row"><span>Barangay:</span> {{ selectedStation.barangay }}</div>
+            <div class="detail-row"><span>Municipality:</span> {{ selectedStation.municipality }}</div>
+            <div class="detail-row"><span>Longitude:</span> {{ selectedStation.longitude }}</div>
+            <div class="detail-row"><span>Latitude:</span> {{ selectedStation.latitude }}</div>
+            
+          
+           <!-- Admin Section in the Station Details Modal -->
+<div class="admin-section">
+    <div class="section-header">
+        <h3 class="section-title">Station Administrators</h3>
+        <div class="add-admin">
+            <button (click)="onAddAdmin(selectedStation.station_id)">
+                <i class="fas fa-plus"></i> Add Admin
+            </button>
+        </div>
+    </div>
+    
+    <div *ngIf="selectedStationAdmins.length > 0; else noAdmin">
+        <!-- Loop through each admin in the array -->
+        <div *ngFor="let admin of selectedStationAdmins; let i = index" class="admin-card">
+            <h4 class="admin-title">Administrator {{i+1}}</h4>
+            <div class="detail-row"><span>Name:</span> {{ admin.first_name }} {{ admin.last_name }}</div>
+            <div class="detail-row"><span>Email:</span> {{ admin.email }}</div>
+            <div class="detail-row"><span>Phone:</span> {{ admin.tel_num || 'Not provided' }}</div>
+        </div>
+    </div>
+    
+    <ng-template #noAdmin>
+        <div class="no-admin-message">No administrators assigned to this station.</div>
+    </ng-template>
+</div>
+
+<div class="action-buttons">
+  <button class="delete-station-btn" (click)="deleteStation(selectedStation.station_id)">
+      <i class="fas fa-trash"></i> Delete Station
+  </button>
+</div>
+
+<div *ngIf="isAddAdminOpen" class="modal-backdrop">
+    <div class="modal-content">
+        <h2>Register New Station Administrator</h2>
+
+        <div>
+            <label>Email:</label>
+            <input type="text" [(ngModel)]="upgraded.email" required>
+        </div>
+
+        <div>
+            <label>Password:</label>
+            <input type="password" [(ngModel)]="upgraded.password" required>
+        </div>
+    
+        <div>
+            <label>First Name:</label>
+            <input type="text" [(ngModel)]="upgraded.firstname" required>
+        </div>
+
+        <div>
+            <label>Middle Name:</label>
+            <input type="text" [(ngModel)]="upgraded.middlename">
+        </div>
+    
+        <div>
+            <label>Last Name:</label>
+            <input type="text" [(ngModel)]="upgraded.lastname" required>
+        </div>
+
+        <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" [(ngModel)]="upgraded.birthdate" placeholder="Date of Birth" required>
+        </div>  
+
+        <div>
+            <label>Gender:</label>
+            <select [(ngModel)]="upgraded.sex" required>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="X">Prefer not to say</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Civil Status:</label>
+            <select [(ngModel)]="upgraded.civilStatus" required>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Widow">Widow</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Telephone Number:</label>
+            <input type="text" [(ngModel)]="upgraded.telNum" required>
+        </div>
+
+        <div>
+            <label>Contact Number:</label>
+            <input type="text" [(ngModel)]="upgraded.contactNum" required>
+        </div>
+
+        <!-- Home Address Section -->
+        <div class="section-header">Home Address</div>
+        
+        <div>
+            <label>Region:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.region" required>
+        </div>
+
+        <div>
+            <label>Province:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.province" required>
+        </div>
+
+        <div>
+            <label>Municipality:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.municipality" required>
+        </div>
+
+        <div>
+            <label>Barangay:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.barangay" required>
+        </div>
+
+        <div>
+            <label>Street:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.street" required>
+        </div>
+
+        <div>
+            <label>Block:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.block">
+        </div>
+
+        <div>
+            <label>Zip Code:</label>
+            <input type="text" [(ngModel)]="userHomeAddress.zipCode" required>
+        </div>
+    
+        <!-- Same Address Checkbox -->
+        <div class="checkbox-group">
+            <input
+                (change)="onAddressCheckboxChange($event)"
+                type="checkbox"
+                [(ngModel)]="isSameAddress"
+                id="isSameAddress"
+            />
+            <span class="certification-text">
+                Click here if the Work Address is the same as the Home Address.
+            </span>
+        </div>
+
+        <!-- Work Address Section -->
+        <div class="section-header">Work Address</div>
+        
+        <div>
+            <label>Region:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.region" required>
+        </div>
+
+        <div>
+            <label>Province:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.province" required>
+        </div>
+
+        <div>
+            <label>Municipality:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.municipality" required>
+        </div>
+
+        <div>
+            <label>Barangay:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.barangay" required>
+        </div>
+
+        <div>
+            <label>Street:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.street" required>
+        </div>
+
+        <div>
+            <label>Block:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.block">
+        </div>
+
+        <div>
+            <label>Zip Code:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.zipCode" required>
+        </div>
+
+        <div>
+            <label>Zip Code:</label>
+            <input type="text" [(ngModel)]="userWorkAddress.zipCode" required>
+        </div>
+
+        <div class="section-header">Police Information</div>
+
+
+        <div >
+            <label for="policeRole">Specialized Role</label>
+              <select [(ngModel)]="upgraded.policeRole" class="role-select" placeholder="Police Role" (change)="onPoliceRoleChange($event)" required>
+                <option value="" disabled selected>Select Specialized Role</option>
+                <option value="Intelligence">Intelligence</option>
+                <option value="Forensic">Forensic</option>
+                <option value="Highway Patrol">Highway Patrol</option>
+                <option value="Public Order">Public Order</option>
+                <option value="Police Transport">Police Transport</option>
+              </select>
+          </div>
+
+          <div>
+            <label>Unit:</label>
+            <input type="text" [(ngModel)]="upgraded.unit" required>
+          </div>
+
+          <div>
+            <label>Badge Number:</label>
+            <input type="text" [(ngModel)]="upgraded.badgeNum" required>
+          </div>
+
+          <div class="form-group">
+            <label for="debut-date">Debut Date</label>
+            <input type="date" [(ngModel)]="upgraded.debutDate" placeholder="Debut Date" required required>
+        </div>  
+
+
+        <div class="form-group">
+          <label for="datetimeCreated">Date Time Created</label>
+          <input type="date" [(ngModel)]="upgraded.dateTimeCreated" placeholder="Date Time Date" required>
+      </div>  
+
+     
+      <div class="form-group">
+        <label for="rank">Rank</label>
+        <select [(ngModel)]="upgraded.rankId" class="rank-select" placeholder="Rank" required>
+          <option value="" disabled selected>Select Rank</option>
+          <option *ngFor="let rank of ranks" [value]="rank.rank_id">
+            {{ rank.rank_full }}
+          </option>
+        </select>
+      </div>
+      
+
+        <div class="modal-buttons">
+            <button (click)="submitAdmin()">Submit</button>
+            <button (click)="cancelAddAdmin()">Cancel</button>
+        </div>
+    </div>
+</div>
+            
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="isStationOpen" class="modal-backdrop">
+  <div class="modal-content">
+    <h2 style="display: flex; justify-content: space-between; align-items: center;">
+      Register New Station
+      <button class="map-toggle-btn" (click)="toggleAddStationMap()">
+        <i class="fas fa-map-marked-alt"></i> {{ isMapOpen ? 'Hide Map' : 'Use Map' }}
+      </button>
+    </h2>
+
+    <div *ngIf="isMapOpen" class="add-station-map-container">
+      <div id="map-station" class="map-container"></div>
+
+      <div class="map-actions">
+        <button class="map-btn" (click)="resetMapView()">
+          <i class="fas fa-sync-alt"></i> Reset Map
+        </button>
+        <button class="map-btn" (click)="centerMapView()">
+          <i class="fas fa-crosshairs"></i> Center Map
+        </button>
+      </div>
+
+      <div class="map-instructions">Click on the map to set coordinates</div>
+    </div>
+
+    <div>
+      <label>Station Name:</label>
+      <input type="text" [(ngModel)]="station.hq" required>
+    </div>
+
+    <div>
+      <label>Region:</label>
+      <input type="text" [(ngModel)]="stationAddress.region" required>
+    </div>
+
+    <div>
+      <label>Province:</label>
+      <input type="text" [(ngModel)]="stationAddress.province" required>
+    </div>
+
+    <div>
+      <label>Municipality:</label>
+      <input type="text" [(ngModel)]="stationAddress.municipality">
+    </div>
+
+    <div>
+      <label>Barangay:</label>
+      <input type="text" [(ngModel)]="stationAddress.barangay" required>
+    </div>
+
+    <div class="form-group">
+      <label>Street</label>
+      <input type="text" [(ngModel)]="stationAddress.street" required>
+    </div>
+
+    <div class="form-group">
+      <label>Zip Code</label>
+      <input type="text" [(ngModel)]="stationAddress.zipCode" required>
+    </div>
+
+    <div class="form-group">
+      <label>Longitude</label>
+      <input type="text" [(ngModel)]="stationAddress.longtitude" required>
+    </div>
+
+    <div class="form-group">
+      <label>Latitude</label>
+      <input type="text" [(ngModel)]="stationAddress.latitude" required>
+    </div>
+
+    <div class="modal-buttons">
+      <button (click)="submitStation()">Submit</button>
+      <button (click)="cancelStation()">Cancel</button>
+    </div>
+  </div>
+</div>
+<!-- <div class="map-modal" [class.show]="isMapOpen">
+  <div class="map-modal-content">
+    <button class="close-btn" (click)="closeMapModal()">X</button>
+    
+
+    <div id="map-station" class="map-container"></div>
+  </div>
+</div> -->
+
+
+
+                        
+            
+            <pagination-controls id="police" (pageChange)="currentPage = $event"></pagination-controls>
+          </section>
+        </main>
+      </div>
+      
+      </div>
+
+         
+  

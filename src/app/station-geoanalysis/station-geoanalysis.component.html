@@ -53,7 +53,7 @@
               </a>
             </li>
             <li>
-              <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
+              <a [routerLink]="['/map']" routerLinkActive="active" class="nav-link">
                 <img
                   src="assets/crime-map.svg"
                   alt="Crime Map Icon"
@@ -62,7 +62,7 @@
                 <span>CRIME MAP</span>
               </a>
             </li>
-            <li>
+            <!-- <li>
               <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
                 <img
                   src="assets/station.svg"
@@ -71,27 +71,48 @@
                 />
                 <span>STATION</span>
               </a>
-            </li>
-            <!-- <li>
-              <a href="#" class="nav-link">
-                <img
-                  src="assets/support.svg"
-                  alt="Contact Support Icon"
-                  class="w-6 h-6 mr-2"
-                />
-                <span>CONTACT SUPPORT</span>
-              </a>
             </li> -->
+            <li>
+              <a [routerLink]="['/station-citizens']" routerLinkActive="active" class="nav-link">
+                <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+                <span>CITIZENS</span>
+              </a>
+            </li>
+      
           </ul>
-          <div class="logout">
+          <!-- <div class="logout">
             <button type="submit" class="button" (click)="logout()">
               LOG OUT
             </button>
-          </div>
+          </div> -->
         </nav>
       </aside>
   
       <main class="content">
+
+        <div class="profile-menu-container">
+          <div class="profile-icon" (click)="toggleProfileMenu()">
+            <img *ngIf="policePersonData?.profile_picture; else defaultAvatar" 
+                 [src]="policePersonData?.profile_picture" 
+                 alt="Profile" 
+                 class="profile-image" />
+            <ng-template #defaultAvatar>
+              <div class="default-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </ng-template>
+          </div>
+          <!-- Dropdown menu for profile -->
+          <div class="profile-dropdown" *ngIf="isProfileMenuOpen">
+            <div class="dropdown-item" [routerLink]="['/station-editpolice']">
+              <i class="fa-solid fa-user-pen"></i> Edit Profile
+            </div>
+            <div class="dropdown-item" (click)="logout()">
+              <i class="fa-solid fa-sign-out-alt"></i> Logout
+            </div>
+          </div>
+        </div>
+
         <div class="welcome flex justify-between items-center mb-4">
            
             <div class="text-left date-time">
@@ -101,23 +122,30 @@
           </div>
 
           <section class="section-map">
-            <!-- Incident Type Filter -->
-<!-- <div class=filter>
-    <label for="incidentTypeFilter">Filter by Incident Type</label>
-    <select multiple id="incidentTypeFilter" [(ngModel)]="selectedIncidentTypes" (change)="filterMarkers()">
-      <option *ngFor="let type of uniqueIncidentTypes" [value]="type">{{ type }}</option>
-    </select>
-  </div> -->
+
 
             <mat-form-field>
-              <mat-label>Filter by Incident Type</mat-label>
-              <mat-select multiple [(ngModel)]="selectedIncidentTypes" >
-                <mat-option class="mat-select-option" *ngFor="let type of uniqueIncidentTypes" [value]="type">
+              <mat-label>Incident Type</mat-label>
+              <mat-select multiple [(ngModel)]="selectedIncidentTypes" (selectionChange)="handleOnIncident($event)">
+                <mat-option [value]="selectAllValue" [selected]="isAllSelected()" (click)="toggleSelectAll()">
+                  {{ selectAllLabel }}
+                </mat-option>
+                <mat-option *ngFor="let type of uniqueIncidentTypes" [value]="type">
                   <img [src]="'assets/icons/' + getCrimeIcon(type)" class="incident-icon"> {{ type }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
-                    
+            
+            <div class="incident-count" *ngIf="selectedIncidentTypes.length > 0">
+              <div *ngFor="let type of selectedIncidentTypes">
+                <span>{{ type }}: {{ crimeCounts[type] || 0 }}</span>
+              </div>
+            </div>
+            
+        
+            <div *ngIf="selectedIncidentTypes.length === 0">
+              <span>No incident types selected</span>
+            </div>
   
             <div id="map-container" class="map"></div>
           </section>

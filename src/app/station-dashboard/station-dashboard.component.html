@@ -1,9 +1,28 @@
 
 
 <div class="container">
-  <div class="emergency-banner">
-    <!-- In case of emergencies, please dial your local emergency services number -->
+  <!-- <div class="emergency-banner">
+    OFFICER OF THE DAY
+  </div> -->
+  <div class="text-container" *ngIf="mergedInChargePolice && mergedInChargePolice.length > 0; else noInCharge">
+    <div class="text-item text-1">OFFICER OF THE DAY</div>
+  
+    <div 
+      class="text-item text-2" 
+      *ngFor="let officer of mergedInChargePolice">
+      {{ officer.policeData?.rank_full }} {{ officer.first_name }} {{ officer.last_name }}
+    </div>
   </div>
+  
+  <ng-template #noInCharge>
+    <div class="text-container">
+      <div class="text-item text-1">OFFICER OF THE DAY</div>
+      <div class="text-item text-2 text-red-600 font-semibold">No In-Charge, Contact Administrator</div>
+    </div>
+  </ng-template>
+  
+  
+  
   <div class="min-h-screen bg-zinc-100 flex">
     <aside class="w-64 bg-white shadow-md">
       <div class="p-4 text-center">
@@ -53,7 +72,7 @@
             </a>
           </li>
           <li>
-            <a [routerLink]="['/station-crime-map']" routerLinkActive="active" class="nav-link">
+            <a [routerLink]="['/map']" routerLinkActive="active" class="nav-link">
               <img
                 src="assets/crime-map.svg"
                 alt="Crime Map Icon"
@@ -62,14 +81,11 @@
               <span>CRIME MAP</span>
             </a>
           </li>
+         
           <li>
-            <a [routerLink]="['/station-list-of-officers']" routerLinkActive="active" class="nav-link">
-              <img
-                src="assets/station.svg"
-                alt="Station Icon"
-                class="w-6 h-6 mr-2"
-              />
-              <span>STATION</span>
+            <a [routerLink]="['/station-citizens']" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-users" style="margin-right: 10px"></i>
+              <span>CITIZENS</span>
             </a>
           </li>
           <!-- <li>
@@ -83,11 +99,11 @@
             </a>
           </li> -->
         </ul>
-        <div class="logout">
+        <!-- <div class="logout">
           <button type="submit" class="button" (click)="logout()">
             LOG OUT
           </button>
-        </div>
+        </div> -->
       </nav>
     </aside>
 
@@ -129,15 +145,45 @@
 </div> -->
 
     <main class="content">
+
+      <div class="profile-menu-container">
+        <div class="profile-icon" (click)="toggleProfileMenu()">
+          <img *ngIf="policePersonData?.profile_picture; else defaultAvatar" 
+               [src]="policePersonData?.profile_picture" 
+               alt="Profile" 
+               class="profile-image" />
+          <ng-template #defaultAvatar>
+            <div class="default-avatar">
+              <i class="fa-solid fa-user"></i>
+            </div>
+          </ng-template>
+        </div>
+        <!-- Dropdown menu for profile -->
+        <div class="profile-dropdown" *ngIf="isProfileMenuOpen">
+          <div class="dropdown-item" [routerLink]="['/station-editpolice']">
+            <i class="fa-solid fa-user-pen"></i> Edit Profile
+          </div>
+          <div class="dropdown-item" (click)="logout()">
+            <i class="fa-solid fa-sign-out-alt"></i> Logout
+          </div>
+        </div>
+      </div>
+
       <div class="welcome flex justify-between items-center mb-4">
         <div class="sub-welcome">
           <h3>Welcome back,</h3>
        
-          <h1 *ngIf="policeDetails; else loading">
-            {{ policeDetails?.rank_abbr }} {{ policeDetails?.firstname }}
-            {{ policeDetails?.lastname }}
+          <h1 *ngIf="policePersonData; else loading">
+            {{ policePersonData?.rank_abbr }} {{ policePersonData?.firstname }}
+            {{ policePersonData?.lastname }}
           </h1> 
         
+           <p *ngIf="isOfficerOfTheDay(); else notInCharge" class="in-charge">
+            Officer of the Day
+          </p>
+          <ng-template #notInCharge>
+            <p class="not-incharge">Not in charge today</p>
+          </ng-template>
         <ng-template #loading>
           <p id="loading">Loading User...</p>
         </ng-template>

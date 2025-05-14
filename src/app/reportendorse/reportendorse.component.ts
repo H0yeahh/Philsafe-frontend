@@ -20,6 +20,10 @@ import { expandCollapse } from '../animations/expand';
 import { DialogService } from '../dialog/dialog.service';  
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import html2pdf from 'html2pdf.js';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
 
 @Component({
   selector: 'app-reportendorse',
@@ -99,7 +103,7 @@ export class ReportEndorseComponent implements OnInit {
   victimDesc: any = [];
   victimDescriptions: any = [];
   forExport: boolean = false;
-  
+  userData: any = [];
 
 
   constructor(
@@ -119,7 +123,8 @@ export class ReportEndorseComponent implements OnInit {
     private dialogService: DialogService
 
 
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     // console.log('ReportEndorseComponent initialized!');
@@ -137,6 +142,7 @@ export class ReportEndorseComponent implements OnInit {
     this.fetchSuspects();
     this.fetchAccounts();
     this.fetchCases();
+    this.getAllLocation();
    
 
     const policeData = localStorage.getItem('policeDetails');
@@ -145,6 +151,8 @@ export class ReportEndorseComponent implements OnInit {
     const accountsData = localStorage.getItem('accounts');
     const caseDetails = localStorage.getItem('cases');
     const personDetails = localStorage.getItem('persons');
+    const userData = localStorage.getItem('userData');
+
 
     // Parse and assign the data if it exists
     if (policeData) {
@@ -168,6 +176,11 @@ export class ReportEndorseComponent implements OnInit {
 
     if (personDetails) {
       this.persons = JSON.parse(personDetails);
+    }
+
+    if (userData) {
+      this.userData = JSON.parse(userData);
+      console.log('Fetched User Data', this.userData);
     }
 
     // console.log('Retrieved Police Details:', this.policeDetails);
@@ -239,10 +252,24 @@ export class ReportEndorseComponent implements OnInit {
     // }
   }
 
+
+  onRestrict(action: (...args: any[]) => void, ...params: any[]): void {
+    if (!this.userData?.is_officer_of_the_day) {
+      this.dialogService.openUpdateStatusDialog('RESTRICTED', 'You are not In-Charge for today');
+      return;
+    }
+  
+    action(...params);
+  }
+
   fetchPerson(){
     
   }
 
+
+  onShowModal() {
+    this.showModal = true;
+  }
 
 
 
@@ -427,6 +454,60 @@ export class ReportEndorseComponent implements OnInit {
         this.errorMessage = 'Failed to load persons. Please try again.';
       }
     );
+  }
+
+    deleteReport(reportId: number) {
+    // const userConfirmed = window.confirm(`Please be informed that this report can no longer be retrieved. Are you sure you want to permanently delete the report?`);
+
+    this.dialogService.openConfirmationDialog('Are you sure you want to delete the report?').then(
+      (userConfirmed) => {
+        if (userConfirmed) {
+          this.dialogService.openLoadingDialog();
+      this.caseQueueService.spamReport(reportId).subscribe(
+        () => {
+          // alert(`Report ${reportId} has been successfully deleted.`);
+          
+          setTimeout(() => {
+            this.dialogService.closeLoadingDialog();
+            this.dialogService.openUpdateStatusDialog('Success', `Report ${reportId} has been successfully deleted.`);
+            
+            setTimeout(() => {
+              this.dialogService.closeAllDialogs();
+              this.router.navigate(['/station-case-queue']); 
+            }, 2000);
+          }, 5000);
+  
+          // this.dialogService.closeAllDialogs();
+          this.reports = this.reports.filter(report => report.report_id !== reportId);
+        }
+      );
+    } else {
+      this.dialogService.closeLoadingDialog();
+      this.dialogService.openUpdateStatusDialog('Report deletion was canceled', 'The report deletion was canceled.');
+      console.log('Report deletion was canceled');
+    }
+      }
+    )
+  
+    
+  }
+
+   getAllLocation(){
+    this.accountService.getAllLocation().subscribe(
+      (res) => {
+        this.locations = res;
+        // console.log('All Location', this.locations)
+      },
+      (err) => {
+        console.error('Error fetching location', err)
+      }
+    )
+  }
+
+
+  getLocationName(locationId: any){
+    const location = this.locations.find((loc: any) => loc.location_id === locationId);
+    return location ? `${location.street}, ${location.barangay}, ${location.province}`  : "Unknown Location"
   }
 
  
@@ -649,10 +730,12 @@ export class ReportEndorseComponent implements OnInit {
         return 'Male';
       case 'F':
         return 'Female';
+      case 'U':
+        return 'Undetermined';
       case 'X':
         return 'Prefer not to say';
       default:
-        return 'No gender found';
+        return 'Undetermined';
     }
   }
   
@@ -1000,102 +1083,7 @@ export class ReportEndorseComponent implements OnInit {
   }
   
 
-  // exportToPDF(reportId: any) {
 
-  //   const content = document.getElementById('report-content'); // Make sure this ID exists in your HTML
-  //   this.dialogService.openLoadingDialog(); 
-  //   if (content) {
-  //     this.forExport = true;
-  //     html2canvas(content).then((canvas) => {
-  //       const imgData = canvas.toDataURL('image/png');
-  //       const pdf = new jsPDF('p', 'mm', 'a4');
-
-  //       const imgWidth = 190;
-  //       const pageHeight = pdf.internal.pageSize.height;
-  //       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-  //       let heightLeft = imgHeight;
-  //       let position = 10;
-
-  //       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-  //       heightLeft -= pageHeight;
-
-  //       while (heightLeft > 0) {
-  //         position = heightLeft - imgHeight;
-  //         pdf.addPage();
-  //         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-  //         heightLeft -= pageHeight;
-  //       }
-
-  //       setTimeout(() => {
-  //         this.dialogService.closeLoadingDialog();
-  //         this.dialogService.openUpdateStatusDialog('Success', 'Report successfully exported');
-  //         this.dialogService.closeAllDialogs();
-          
-  //         setTimeout(() => {
-  //           pdf.save(`Report ${reportId}.pdf`);
-  //         }, 2000);
-  //       }, 5000);
-
-  //     });
-  //   } else {
-  //     this.dialogService.closeAllDialogs();
-  //     this.dialogService.openUpdateStatusDialog('Error', 'Unable to save, contact your administrator');
-  //     console.error("Element not found!");
-  //   }
-  // }
-
-
-//   exportToPDF(reportId: any) {
-
-// this.forExport = true;
-    
-// setTimeout(() => {
-//   const content = document.getElementById('report-content'); // Make sure this ID exists in your HTML
-//   this.dialogService.openLoadingDialog(); 
-//   console.log('content', content)
-//   if (content) {
- 
-//     html2canvas(content).then((canvas) => {
-//       const imgData = canvas.toDataURL('image/png');
-//       const pdf = new jsPDF('p', 'mm', 'a4');
-
-//       const imgWidth = 190;
-//       const pageHeight = pdf.internal.pageSize.height;
-//       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-//       let heightLeft = imgHeight;
-//       let position = 10;
-
-//       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-//       heightLeft -= pageHeight;
-
-
-//       while (heightLeft > 0) {
-//         position = heightLeft - imgHeight;
-//         pdf.addPage();
-//         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-//         heightLeft -= pageHeight;
-//       }
-//       setTimeout(() => {
-//         this.dialogService.closeLoadingDialog();
-//         this.dialogService.openUpdateStatusDialog('Success', 'Report successfully exported');
-        
-//         setTimeout(() => {
-//           pdf.save(`Report ${reportId}.pdf`);
-//           this.dialogService.closeAllDialogs();
-//         }, 2000);
-//       }, 5000);
-
-//     });
-//   } else {
-//     this.dialogService.closeAllDialogs();
-//     this.dialogService.openUpdateStatusDialog('Error', 'Unable to save, contact your administrator');
-//     console.error("Element not found!");
-//   }
-// }, 5000)
-     
-//   }
 exportToPDF(reportId: any) {
   this.forExport = true;
   
@@ -1124,13 +1112,12 @@ exportToPDF(reportId: any) {
       }
       
       html2canvas(content, {
-        // Add options to improve rendering
         logging: true,
         allowTaint: true,
         useCORS: true,
-        scale: 2 // Higher quality
+        scale: 2
       }).then((canvas) => {
-        // Check if canvas is empty or very small
+    
         if (canvas.width < 10 || canvas.height < 10) {
           console.error('Canvas is too small, likely empty content');
           this.dialogService.closeAllDialogs();
@@ -1174,9 +1161,8 @@ exportToPDF(reportId: any) {
     }
   }, 1000); // Increase timeout to 1 second
 }
-  
-  
-  
+
+
 
   isFieldMatched(fieldValue: any, query: string): boolean {
     if (!query) return false;

@@ -12,6 +12,7 @@ import {
 import { PersonService } from '../person.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-station-cases',
@@ -47,6 +48,11 @@ export class StationCasesComponent implements OnDestroy{
     filteredCases: any[] = [];
     searchQuery = '';
     selectedStatus: string | null = null;
+    avatarUrl: string = 'assets/ccpo_logo.jpg';
+    policePersonData: any;
+    personId: any
+    isProfileMenuOpen = false;
+
 
     currentDate: string = '';
     currentTime: string = '';
@@ -62,12 +68,14 @@ export class StationCasesComponent implements OnDestroy{
       private router: Router,
       private http: HttpClient,
       private authService: AuthService,
+      private accountService: AccountService
     ) {}
   
     // Initialize the form and fetch reports, stations, and ranks
     ngOnInit(): void {
 
       this.fetchCitizens();
+      this.loadUserProfile();
 
       localStorage.removeItem('sessionData');
 
@@ -100,6 +108,49 @@ export class StationCasesComponent implements OnDestroy{
       
     }
 
+
+    loadUserProfile() {
+      const userData = localStorage.getItem('userData');
+      const parsedData = JSON.parse(userData);
+      console.log('USER DATA SESSION', userData);
+      if (userData) {
+        try {
+          
+          this.personId = parsedData.personId;
+          this.policeAccountsService.getPoliceById().subscribe(
+            (response) => {
+              this.policePersonData = response;
+              console.log('Fetched Police Person Data', this.policePersonData);
+              // this.fetchPoliceData(this.policePersonData.police_id);
+              console.log('Police ID:', this.policePersonData.police_id);
+            },
+            (error) => {
+              console.error('Error Police Person Data', error);
+            }
+          );
+  
+          console.log('Person ID', this.personId);
+        } catch {
+          console.error('Error fetching localStorage');
+        }
+  
+        this.accountService.getProfPic(parsedData.acc_id).subscribe(
+          (profilePicBlob: Blob) => {
+            if (profilePicBlob) {
+                // Create a URL for the Blob
+                this.avatarUrl = URL.createObjectURL(profilePicBlob);
+                console.log('PROFILE PIC URL', this.avatarUrl);
+  
+            } else {
+                console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+                this.avatarUrl = 'assets/user-default.jpg';
+            }
+          }
+        )
+      }
+    }
+
+    
 
     updateDateTime(): void {
       const now = new Date();
@@ -365,6 +416,27 @@ export class StationCasesComponent implements OnDestroy{
         default:
           console.log('Unmatched status:', status); 
           return '#9E9E9E';
+      }
+    }
+
+
+    toggleProfileMenu(): void {
+      this.isProfileMenuOpen = !this.isProfileMenuOpen;
+      
+      if (this.isProfileMenuOpen) {
+        setTimeout(() => {
+          document.addEventListener('click', this.closeProfileMenu);
+        }, 0);
+      }
+    }
+    
+    closeProfileMenu = (event: MouseEvent): void => {
+      const profileContainer = document.querySelector('.profile-menu-container');
+      if (profileContainer && !profileContainer.contains(event.target as Node)) {
+        this.isProfileMenuOpen = false;
+        document.removeEventListener('click', this.closeProfileMenu);
+     
+       
       }
     }
 

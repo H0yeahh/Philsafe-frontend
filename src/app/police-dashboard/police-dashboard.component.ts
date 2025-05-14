@@ -32,6 +32,7 @@ import { AuthService } from '../auth.service';
 import { CaseQueueService } from '../case-queue.service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
 import { PoliceDashbordService } from '../police-dashbord.service';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-police-dashboard',
@@ -45,7 +46,7 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
   successMessage: string | null = null;
   errorMessage: string | null = null;
   reports: any = [];
-  stations: IStation[] = [];
+  // stations: IStation[] = [];
   persons: IPerson[] = [];
   cases: any = []
 
@@ -70,6 +71,24 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
   adminData: any
   currentPage: number = 1;
   pageSize: number = 10;
+  avatarUrl: string = 'assets/user-default.jpg';
+  token: string;
+  showModal = false;
+  showSubModal = false;
+  modalType: 'citizens' | 'polices' | 'stations' | null = null;
+  selectedReports: any[] = [];
+  isModalOpen: boolean = false;
+  filteredWeekly: any[] = [];
+  filteredMonthly: any[] = [];
+  filteredAnnually: any[] = [];
+  citizensCount: number = 0;
+  policesCount: number = 0;
+  stationsCount: number = 0;
+
+  citizens: any = [];
+  polices: any = [];
+  stations: any = [];
+
   
 
   constructor(
@@ -83,7 +102,8 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private caseQueueService: CaseQueueService,
-    private policeDashbordService: PoliceDashbordService
+    private policeDashbordService: PoliceDashbordService,
+    private accountService: AccountService
   ) {
     Chart.register(
       CategoryScale,
@@ -105,15 +125,18 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
     // this.initializeForm();
     // this.getOfficerStationId();
     // this.fetchRanks();
-    // this.fetchStations();
+    this.fetchCitizens();
+    this.fetchPolices();
+    this.fetchStations();
     // this.fetchPersons();
     // this.fetchNationwideReports();
     this.loadUserProfile();
     // this.fetchReportStation(this.stationId);
-    this.calculateReportsAverage();
+    // this.calculateReportsAverage();
     this.calculateReportsCount();
     this.fetchReport();
-    this.timePeriodControl = new FormControl('weekly');
+    // this.calculateReports()
+    this.timePeriodControl = new FormControl('polices');
 
     this.timePeriodControl.valueChanges.subscribe((value) => {
       console.log('Time period changed:', value);
@@ -131,26 +154,25 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
   }
 
   onSelect() {
-    console.log(
-      'onSelect called, current value:',
-      this.timePeriodControl.value
-    );
-
-    // Destroy existing chart if it exists
+    console.log('onSelect called, current value:', this.timePeriodControl.value);
+  
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
     }
-
-    const timePeriod = this.timePeriodControl.value;
-    console.log('Selected time period:', timePeriod);
-
-    if (timePeriod === 'weekly') {
-      this.createWeeklyChart();
-    } else if (timePeriod === 'monthly') {
-      this.createMonthlyChart();
+  
+    const selectedData = this.timePeriodControl.value;
+    console.log('Selected data:', selectedData);
+  
+    if (selectedData === 'polices') {
+      this.createPolicesChart();
+    } else if (selectedData === 'citizens') {
+      this.createCitizensChart();
+    } else if (selectedData === 'stations') {
+      this.createStationsChart();
     }
   }
+  
 
   // fetchCases(stationId){
   //   this.caseQueueService.fetchCases(stationId, this.currentPage, this.pageSize).subscribe(
@@ -174,31 +196,55 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
 
 
   loadUserProfile() {
+
+
+    const shouldReload = localStorage.getItem('reloadAfterLogin');
+  
+    if (shouldReload === 'true') {
+      localStorage.removeItem('reloadAfterLogin');
+      window.location.reload();
+      return;
+    }
+
     const userData = localStorage.getItem('userData');
+    const parsedData = JSON.parse(userData);
     console.log('USER DATA SESSION', userData);
     if (userData) {
       try {
-        const parsedData = JSON.parse(userData);
+        
         this.personId = parsedData.personId;
-        this.policeAccountsService.getPoliceByPersonId(this.personId).subscribe(
-          (response) => {
-            this.policePersonData = response;
-            console.log('Fetched Police Person Data', this.policePersonData);
-            // this.fetchPoliceData(this.policePersonData.police_id);
-            console.log('Police ID:', this.policePersonData.police_id);
-          },
-          (error) => {
-            console.error('Errod Police Person Data', error);
-          }
-        );
+        // this.policeAccountsService.getPoliceById().subscribe(
+        //   (response) => {
+        //     this.policePersonData = response;
+        //     console.log('Fetched Police Person Data', this.policePersonData);
+            
+        //     console.log('Police ID:', this.policePersonData.police_id);
+        //   },
+        //   (error) => {
+        //     console.error('Errod Police Person Data', error);
+        //   }
+        // );
 
         console.log('Person ID', this.personId);
       } catch {
         console.error('Error fetching localStorage');
       }
+
+      this.accountService.getProfPic(parsedData.acc_id).subscribe(
+        (profilePicBlob: Blob) => {
+          if (profilePicBlob) {
+              // Create a URL for the Blob
+              this.avatarUrl = URL.createObjectURL(profilePicBlob);
+              console.log('PROFILE PIC URL', this.avatarUrl);
+
+          } else {
+              console.log('ERROR, DEFAULT PROF PIC STREAMED', this.avatarUrl);
+              this.avatarUrl = 'assets/user-default.jpg';
+          }
+        }
+      )
     }
   }
-
   // fetchPoliceData(policeId: number) {
   //   this.policeAccountsService.getAllPoliceData().subscribe(
   //     (allPoliceData) => {
@@ -280,6 +326,49 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
   //   );
   // }
 
+
+  fetchCitizens(){
+    this.caseQueueService.getCitizens().subscribe(
+      (res) => {
+        console.log('Fetched Citizens', res)
+        this.citizens = res;
+        this.citizensCount = this.citizens.length;
+      },
+      (err) => {
+        console.error('Error fetching citizens', err)
+      }
+    )
+  }
+
+
+  fetchPolices(){
+    this.policeAccountsService.getAllPoliceData().subscribe(
+      (res) => {
+        console.log('Fetched Polices', res)
+        this.polices = res;
+        this.policesCount = this.polices.length;
+      },
+      (err) => {
+        console.error('Error fetching polices', err)
+      }
+    )
+  }
+
+
+  
+  fetchStations(){
+    this.jurisdictionService.getAll().subscribe(
+      (res) => {
+        console.log('Fetched Stations', res)
+        this.stations = res;
+        this.stationsCount = this.stations.length;
+      },
+      (err) => {
+        console.error('Error fetching stations', err)
+      }
+    )
+  }
+
   fetchReport() {
     this.caseQueueService.getNationwideReports().subscribe(
       (response) => {
@@ -287,7 +376,8 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
         localStorage.setItem('reports', JSON.stringify(this.reports));
         console.log('Fetched Reports', this.reports);
         if (this.reports && this.reports.length) {
-          this.calculateReportsAverage();
+          // this.calculateReportsAverage();
+          this.calculateReports()
           this.calculateReportsCount();
           this.onSelect();
           // this.createChart();
@@ -300,6 +390,7 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
       }
     );
   }
+
 
 
   calculateReportsCount() {
@@ -316,6 +407,7 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
     }[] = [];
 
     const monthlyCounts: { [month: string]: number } = {};
+    const annualCounts: { [year: string]: number } = {};
 
     this.reports.forEach((report) => {
       const reportedDate = new Date(report.reported_date);
@@ -342,7 +434,12 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
         month: 'short',
       })}-${reportedDate.getFullYear()}`;
       monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
+
+      const yearKey = reportedDate.getFullYear().toString();
+      annualCounts[yearKey] = (annualCounts[yearKey] || 0) + 1;
     });
+
+    
 
     // Sort weeks by start date
     weekData.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
@@ -355,83 +452,97 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
 
     console.log('Weekly Report Counts:', weeklyCounts);
     console.log('Monthly Report Counts:', monthlyCounts);
+    console.log('Annual Report Counts:', annualCounts);
 
-    return { weeklyCounts, monthlyCounts };
+    return { weeklyCounts, monthlyCounts, annualCounts };
   }
 
-  calculateReportsAverage() {
-    // if (!this.reports || !this.reports.length) {
-    //     console.warn('No reports to calculate averages.');
-    //     return;
-    // }
 
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
+  // calculateReportsAverage() {
 
-    // Group reports by week, month, and year
-    const weeklyReports: { [week: string]: number } = {};
-    const monthlyReports: { [month: string]: number } = {};
-    const annualReports: { [year: string]: number } = {};
+  //   const currentDate = new Date();
+  //   const currentYear = currentDate.getFullYear();
 
-    this.reports.forEach((report) => {
-      const reportedDate = new Date(report.reported_date);
-      const weekKey = `Week${Math.ceil(reportedDate.getDate() / 7)}-${
-        reportedDate.getMonth() + 1
-      }-${reportedDate.getFullYear()}`;
-      const monthKey = `${reportedDate.toLocaleString('default', {
-        month: 'short',
-      })}-${reportedDate.getFullYear()}`;
-      const yearKey = `${reportedDate.getFullYear()}`;
+  //   // Group reports by week, month, and year
+  //   const weeklyReports: { [week: string]: number } = {};
+  //   const monthlyReports: { [month: string]: number } = {};
+  //   const annualReports: { [year: string]: number } = {};
 
-      weeklyReports[weekKey] = (weeklyReports[weekKey] || 0) + 1;
-      monthlyReports[monthKey] = (monthlyReports[monthKey] || 0) + 1;
-      annualReports[yearKey] = (annualReports[yearKey] || 0) + 1;
+  //   this.reports.forEach((report) => {
+  //     const reportedDate = new Date(report.reported_date);
+  //     const weekKey = `Week${Math.ceil(reportedDate.getDate() / 7)}-${
+  //       reportedDate.getMonth() + 1
+  //     }-${reportedDate.getFullYear()}`;
+  //     const monthKey = `${reportedDate.toLocaleString('default', {
+  //       month: 'short',
+  //     })}-${reportedDate.getFullYear()}`;
+  //     const yearKey = `${reportedDate.getFullYear()}`;
+
+  //     weeklyReports[weekKey] = (weeklyReports[weekKey] || 0) + 1;
+  //     monthlyReports[monthKey] = (monthlyReports[monthKey] || 0) + 1;
+  //     annualReports[yearKey] = (annualReports[yearKey] || 0) + 1;
+  //   });
+
+  //   // Calculate weekly and monthly averages
+  //   const totalWeeks = Object.keys(weeklyReports).length;
+  //   const totalMonths = Object.keys(monthlyReports).length;
+  //   const totalAnnualReports = Object.keys(annualReports).length;
+
+  //   const weeklyAverage = totalWeeks
+  //     ? Math.round(this.reports.length / totalWeeks)
+  //     : 0;
+  //   const monthlyAverage = totalMonths
+  //     ? Math.round(this.reports.length / totalMonths)
+  //     : 0;
+  //   const annualAverage = totalAnnualReports
+  //     ? Math.round(
+  //         Object.values(annualReports).reduce((a, b) => a + b, 0) /
+  //           totalAnnualReports
+  //       )
+  //     : 0;
+
+  //   this.weeklyAvg = weeklyAverage;
+  //   this.monthlyAvg = monthlyAverage;
+  //   this.annualAvg = annualAverage;
+
+  //   console.log('Weekly Average:', this.weeklyAvg);
+  //   console.log('Monthly Average:', this.monthlyAvg);
+  //   console.log('Annual Average:', this.annualAvg);
+  // }
+  createCitizensChart() {
+    const monthlyCounts: { [month: string]: number } = {};
+  
+    this.citizens.forEach(citizen => {
+      const date = new Date(citizen.datetime_created);
+  
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        // console.warn('Invalid citizen date:', citizen);
+        return; // Skip this citizen
+      }
+  
+      const monthYear = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}`;
+  
+      if (monthlyCounts[monthYear]) {
+        monthlyCounts[monthYear]++;
+      } else {
+        monthlyCounts[monthYear] = 1;
+      }
     });
-
-    // Calculate weekly and monthly averages
-    const totalWeeks = Object.keys(weeklyReports).length;
-    const totalMonths = Object.keys(monthlyReports).length;
-    const totalAnnualReports = Object.keys(annualReports).length;
-
-    const weeklyAverage = totalWeeks
-      ? Math.round(this.reports.length / totalWeeks)
-      : 0;
-    const monthlyAverage = totalMonths
-      ? Math.round(this.reports.length / totalMonths)
-      : 0;
-    const annualAverage = totalAnnualReports
-      ? Math.round(
-          Object.values(annualReports).reduce((a, b) => a + b, 0) /
-            totalAnnualReports
-        )
-      : 0;
-
-    this.weeklyAvg = weeklyAverage;
-    this.monthlyAvg = monthlyAverage;
-    this.annualAvg = annualAverage;
-
-    console.log('Weekly Average:', this.weeklyAvg);
-    console.log('Monthly Average:', this.monthlyAvg);
-    console.log('Annual Average:', this.annualAvg);
-  }
-
-  createWeeklyChart() {
-    const counts = this.calculateReportsCount();
-    if (!counts || !counts.weeklyCounts) return;
-
-    const weeklyData = Object.values(counts.weeklyCounts) as number[];
-    const weeklyLabels = Object.keys(counts.weeklyCounts);
-
+  
+    const labels = Object.keys(monthlyCounts).sort();
+    const data = labels.map(label => monthlyCounts[label]);
+  
     const chartConfig: ChartConfiguration<'bar', number[], string> = {
       type: 'bar',
       data: {
-        labels: weeklyLabels,
+        labels,
         datasets: [
           {
-            label: 'Weekly Reports',
-            data: weeklyData,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            label: 'Registered Citizens Per Month',
+            data,
+            backgroundColor: 'rgba(113, 235, 168, 0.56)',
+            borderColor: 'rgb(127, 240, 212)',
             borderWidth: 1,
           },
         ],
@@ -440,42 +551,53 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: {
-            beginAtZero: true,
-          },
-          y: {
-            beginAtZero: true,
-          },
+          x: { beginAtZero: true },
+          y: { beginAtZero: true },
         },
       },
     };
-
+  
     this.renderChart(chartConfig);
-    console.log('Weekly Chart Generated');
+    console.log('Citizens Chart Generated (Monthly)');
   }
-
-  createMonthlyChart() {
-    const counts = this.calculateReportsCount();
-    if (!counts || !counts.monthlyCounts) {
-      console.warn('No monthly data available');
-      return;
-    }
-
-    console.log('Monthly data:', counts.monthlyCounts);
-
-    const monthlyData = Object.values(counts.monthlyCounts);
-    const monthlyLabels = Object.keys(counts.monthlyCounts);
-
+  
+  
+  createPolicesChart() {
+    const monthlyCounts: { [month: string]: number } = {};
+  
+    this.polices.forEach(police => {
+      if (police.datetime_created) { 
+        const date = new Date(police.datetime_created);
+  
+        if (!isNaN(date.getTime())) {
+          const monthYear = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}`; // format: YYYY-MM
+  
+          if (monthlyCounts[monthYear]) {
+            monthlyCounts[monthYear]++;
+          } else {
+            monthlyCounts[monthYear] = 1;
+          }
+        } else {
+          // console.warn('Invalid date found for police:', police);
+        }
+      } else {
+        console.warn('Missing datetime_created for police:', police);
+      }
+    });
+  
+    const labels = Object.keys(monthlyCounts).sort();
+    const data = labels.map(label => monthlyCounts[label]);
+  
     const chartConfig: ChartConfiguration<'bar', number[], string> = {
       type: 'bar',
       data: {
-        labels: monthlyLabels,
+        labels,
         datasets: [
           {
-            label: 'Monthly Reports',
-            data: monthlyData,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
+            label: 'Registered Polices Per Month',
+            data,
+            backgroundColor: 'rgba(99, 245, 255, 0.5)',
+            borderColor: 'rgb(10, 177, 199)',
             borderWidth: 1,
           },
         ],
@@ -484,19 +606,69 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: {
-            beginAtZero: true,
-          },
-          y: {
-            beginAtZero: true,
-          },
+          x: { beginAtZero: true },
+          y: { beginAtZero: true },
         },
       },
     };
-
+  
     this.renderChart(chartConfig);
+    console.log('Polices Chart Generated (Monthly)');
+  }
+  
+  
+  createStationsChart() {
+    const monthlyCounts: { [month: string]: number } = {};
+  
+    this.stations.forEach(station => {
+      const date = new Date(station.datetime_created);
+  
+      if (isNaN(date.getTime())) {
+        // console.warn('Invalid station date:', station);
+        return;
+      }
+  
+      const monthYear = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}`;
+  
+      if (monthlyCounts[monthYear]) {
+        monthlyCounts[monthYear]++;
+      } else {
+        monthlyCounts[monthYear] = 1;
+      }
+    });
+  
+    const labels = Object.keys(monthlyCounts).sort();
+    const data = labels.map(label => monthlyCounts[label]);
+  
+    const chartConfig: ChartConfiguration<'bar', number[], string> = {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Registered Stations Per Month',
+            data,
+            backgroundColor: 'rgba(231, 205, 118, 0.56)',
+            borderColor: 'rgb(248, 196, 24)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { beginAtZero: true },
+          y: { beginAtZero: true },
+        },
+      },
+    };
+  
+    this.renderChart(chartConfig);
+    console.log('Stations Chart Generated (Monthly)');
   }
 
+  
   renderChart(chartConfig: ChartConfiguration) {
     const canvas = document.getElementById('casesGraph') as HTMLCanvasElement;
     if (!canvas) {
@@ -513,6 +685,90 @@ export class PoliceDashboardComponent implements OnInit, OnDestroy {
     console.log('Rendering chart with config:', chartConfig);
     this.chart = new Chart(ctx, chartConfig);
   }
+
+
+
+  calculateReports() {
+    if (!this.reports || !this.reports.length) {
+      console.warn('No reports to calculate counts.');
+      return;
+    }
+    
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth(); // 0-indexed (0 = Jan, 11 = Dec)
+    
+    // Get start of current week (Sunday)
+    const currentWeekStart = new Date(currentDate);
+    currentWeekStart.setDate(currentDate.getDate() - currentDate.getDay());
+    
+    // Clear previous filtered arrays
+    this.filteredWeekly = [];
+    this.filteredMonthly = [];
+    this.filteredAnnually = [];
+    
+    let weeklyCount = 0;
+    let monthlyCount = 0;
+    let annualCount = 0;
+    
+    this.reports.forEach((report) => {
+      const reportedDate = new Date(report.reported_date);
+      
+      // Check for annual reports (same year)
+      if (reportedDate.getFullYear() === currentYear) {
+        annualCount++;
+        this.filteredAnnually.push(report);
+        
+        // Check for monthly reports (same month and year)
+        if (reportedDate.getMonth() === currentMonth) {
+          monthlyCount++;
+          this.filteredMonthly.push(report);
+          
+          // Check for weekly reports (in current week)
+          if (reportedDate >= currentWeekStart) {
+            weeklyCount++;
+            this.filteredWeekly.push(report);
+          }
+        }
+      }
+    });
+    
+    this.weeklyReports = weeklyCount;
+    this.monthlyReports = monthlyCount;
+    this.annualReports = annualCount;
+    
+    console.log("Weekly Reports:", this.weeklyReports);
+    console.log("Monthly Reports:", this.monthlyReports);
+    console.log("Annual Reports:", this.annualReports);
+  }
+
+  openModal(type: 'citizens' | 'polices' | 'stations') {
+    this.modalType = type;
+    this.isModalOpen = true;
+  
+    console.log(`Opened modal: ${type}`);
+  }
+
+ 
+  closeModal() {
+    this.isModalOpen = false;
+    this.modalType = null;
+  }
+    
+  
+  navigateToReportEndorse(reportId: number): void {
+    if (reportId) {
+      console.log('Navigating with Report ID:', reportId);
+      this.router.navigate(['/report-endorse'], {
+        queryParams: { reportID: reportId },
+      });
+    } else {
+      console.error('report ID not found for the selected report.');
+      alert('Invalid report id. Please select a valid report.');
+    }
+  }
+
+
 
   goBack(): void {
     this.router.navigate(['/manage-police']);

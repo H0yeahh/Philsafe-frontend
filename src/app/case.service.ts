@@ -81,7 +81,7 @@ export class CaseService {
     getAllCitizen: `${this.baseUrl}citizen/collect/citizens/all`,
     getAllSpammers: `${this.baseUrl}citizen/collect/spammers/all`,
     getAllSpammedReports: `${this.baseUrl}report/retrieve/archivedReports`,
-    getAllReportss: `${this.baseUrl}report/retrieve/nationwide`,
+    getAllReports: `${this.baseUrl}report/retrieve/nationwide`,
     submitReport: `${this.baseUrl}report/submit`, // Add the endpoint for submitting report
   };
 
@@ -130,6 +130,20 @@ export class CaseService {
   //   );
   // }
 
+  certifyUser(citizenId: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}citizen/certify/${citizenId}`, {}, {headers: this.auth_token}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getCitizenProof(citizenId: any) {
+    const url = `${this.baseUrl}citizen/retrieve/proof/${citizenId}`;
+    return this.http.get(url, {headers: this.auth_token, responseType: 'blob'}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
   getTotalUsers(): Observable<number> {
     return this.http.get<any[]>(`${this.baseUrl}citizen/collect/citizens/all`, {headers: this.auth_token}).pipe(
       map(users => users.length)
@@ -145,6 +159,14 @@ export class CaseService {
   getAllCases(): Observable<any> {  
     
     return this.http.get<any>(this.endpoints.getAllCases, {headers: this.auth_token}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+    getAllCasesPage(pageSize: any, pageNumber: any): Observable<any> {  
+    
+    return this.http.get<any>(`${this.endpoints.getAllCases}/${pageSize}/${pageNumber}`, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }
@@ -168,7 +190,13 @@ export class CaseService {
   }
 
   getAllReports(): Observable<any> {  
-    return this.http.get<any>(this.endpoints.getAllReportss, {headers: this.auth_token}).pipe(
+    return this.http.get<any>(this.endpoints.getAllReports, {headers: this.auth_token}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAllReportsPage(pageSize: any, pageNumber: any): Observable<any> {  
+    return this.http.get<any>(`${this.endpoints.getAllReports}/${pageSize}/${pageNumber}`, {headers: this.auth_token}).pipe(
       catchError(this.handleError)
     );
   }

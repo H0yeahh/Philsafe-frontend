@@ -1,10 +1,63 @@
-.emergency-banner {
+/* .emergency-banner {
     background-color: #1e40af;
     color: white;
     text-align: center;
     padding: 1rem;
     margin-top: -1rem;
-  }
+  } */
+
+  .text-container {
+    position: relative;
+    height: 60px;
+    width: 100;
+    overflow: hidden;
+    /* border: 2px solid hsla(260, 11%, 95%, 1); */
+    background-color: #1e40af;
+}
+
+.text-item {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    color: white;
+    font-weight: bold;
+    left: 0;
+    right: 0;
+}
+
+.text-1 {
+    animation: slideText 6s linear infinite;
+}
+
+.text-2 {
+    animation: slideText 6s linear infinite 3s; /* Delayed by half cycle */
+}
+
+@keyframes slideText {
+    0%, 100% {
+        top: 100%; /* Start/end below the container */
+        opacity: 0;
+    }
+    8%, 42% {
+        top: 0; /* Move up to fully visible */
+        opacity: 1;
+    }
+    50% {
+        top: -100%; /* Move up and out of view */
+        opacity: 0;
+    }
+    51%, 99% {
+        top: -100%; /* Stay out of view */
+        opacity: 0;
+    }
+}
+
+
+
+
+
+
   .flex {
     display: flex;
   }
@@ -517,20 +570,6 @@
 
 /* Modaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaal */
 .modal {
-  /* position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  z-index: 1000;
-  width: 80%;
-  max-height: 100vh;
-  height: 80%;
-  overflow: auto; */
-
   position: fixed;
     top: 50%;
     left: 50%;
@@ -629,4 +668,115 @@ tr:hover {
   margin-right: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+
+.profile-menu-container {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  z-index: 50;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e5e7eb;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.profile-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.default-avatar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #4b5563;
+}
+
+/* Dropdown menu styling */
+.profile-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 180px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 100;
+  border: 1px solid #e5e7eb;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown-item i {
+  margin-right: 8px;
+  width: 16px;
+}
+
+
+.welcome {
+  padding-top: 2rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-dropdown {
+  animation: fadeIn 0.2s ease-out;
+} 
+
+.in-charge {
+  padding: 10px;
+    background-color: rgb(91, 226, 91);
+    width: 10rem;
+    border-radius: 20px;
+    color: hsl(120.74deg 79.84% 16.99%);
+    font-weight: 800;
+    box-shadow: 1px 3px 2px 1px #2b8152;
+    text-align: center
+}
+
+.not-incharge {
+  padding: 10px;
+    background-color: red;
+    width: 10rem;
+    border-radius: 20px;
+    color: white;
+    font-weight: 800;
+    box-shadow: 1px 3px 2px 1px #bb4c4c;
+    text-align: center;
 }

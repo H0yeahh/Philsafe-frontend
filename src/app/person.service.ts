@@ -55,6 +55,8 @@ export class PersonService {
   private personUrl = `${this.apiUrl}/person`;
   private policeUrl = `${this.apiUrl}/police`;
   private locationUrl = `${this.apiUrl}/location/retrieve/all`;
+  private citizenUrl = `${this.apiUrl}/citizen/scold/citizen`;
+  private reportUrl = `${this.apiUrl}/report/retrieve/citizen`;
 
   private token = localStorage.getItem('token') ?? '';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': this.token });
@@ -100,12 +102,35 @@ export class PersonService {
       .pipe(catchError(this.handleError));
   }
 
+  
+  getReportsByCitizen() {
+    return this.http
+    .get<any>(this.reportUrl, {headers: this.auth_token})
+    .pipe(catchError(this.handleError));
+  }
+
+
 
   getALocation(locationId: number): Observable<any> {
     return this.http
       .get<any>(`${this.apiUrl}/location/retrieve/${locationId}`, {headers: this.auth_token})
       .pipe(catchError(this.handleError));
   }
+
+  spamCitizen(citizenId: number): Observable<any> {
+    return this.http
+      .put<any>(`${this.citizenUrl}/${citizenId}`, {}, {headers: this.auth_token})
+      .pipe(catchError(this.handleError));
+  }
+
+
+  removeCitizen(personId: number): Observable<any> {
+    return this.http
+      .delete<any>(`${this.apiUrl}/citizen/banish/citizen/${personId}`, {headers: this.auth_token})
+      .pipe(catchError(this.handleError));
+  }
+
+
 
   postAccount(data: IAccount): Observable<any> {
     return this.http
